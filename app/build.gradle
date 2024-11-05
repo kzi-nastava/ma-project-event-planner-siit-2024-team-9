@@ -43,4 +43,7 @@ dependencies {
     androidTestImplementation libs.espresso.core
     implementation libs.material.v1110alpha01
     implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation "androidx.navigation:navigation-fragment-ktx:2.7.0"
+    implementation "androidx.navigation:navigation-ui-ktx:2.7.0"
 }

@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:theme="@style/ThemeOverlay.Eventify.FullscreenContainer"
+    android:id="@+id/services"
     android:orientation="vertical"
-    tools:context=".ServicesFragment">
+    tools:context=".ServicesActivity">
 
     <TextView
         android:layout_width="match_parent"
@@ -25,6 +24,7 @@
         android:orientation="horizontal">
 
         <SearchView
+            android:id="@+id/search"
             android:layout_width="330dp"
             android:layout_height="50dp"
             android:layout_margin="10dp"
@@ -38,16 +38,14 @@
             android:background="@drawable/filer_list" />
     </LinearLayout>
 
-    <GridView
-        android:id="@+id/grid_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:numColumns="2"
-        android:verticalSpacing="8dp"
-        android:horizontalSpacing="8dp"
-        android:stretchMode="columnWidth"
-        tools:listitem="@layout/fragment_card" />
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/frame"
+        tools:context=".ServicesListFragment"/>
 
 
 
-</androidx.appcompat.widget.LinearLayoutCompat>
+
+
+</LinearLayout>
