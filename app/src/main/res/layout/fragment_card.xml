@@ -3,9 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="190dp"
-    android:layout_height="350dp"
-    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="190sp"
+    android:orientation="horizontal"
     android:background="@drawable/card"
     android:paddingVertical="15dp"
     android:layout_margin="10dp"
@@ -15,22 +15,30 @@
     >
     <ImageView
         android:id="@+id/product_image"
-        android:layout_width="match_parent"
-        android:layout_height="160dp">
+        android:layout_width="140sp"
+        android:layout_height="match_parent">
 
     </ImageView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="5dp"
+        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/product_title"
             android:layout_width="match_parent"
             android:layout_height="30dp"
+            android:textColor="@color/black"
             android:paddingHorizontal="5dp"
             android:textSize="20sp"
             android:textStyle="bold"/>
         <TextView
             android:id="@+id/product_description"
             android:layout_width="match_parent"
-            android:layout_height="90dp"
+            android:textColor="@color/black"
+            android:layout_height="90sp"
             android:padding="5dp"
             android:textSize="14sp">
         </TextView>
@@ -43,6 +51,10 @@
             style="@style/Widget.Material3.Button.OutlinedButton"
             app:cornerRadius="10dp"
             android:text="@string/view_details" />
+
+    </LinearLayout>
+
+
 
 
     </LinearLayout>

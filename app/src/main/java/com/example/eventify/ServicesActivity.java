@@ -1,8 +1,10 @@
 package com.example.eventify;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import com.example.eventify.databinding.ActivityServicesBinding;
@@ -19,6 +21,8 @@ public class ServicesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityServicesBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.medium_gray));
 
         prepareProductList(products);
         loadServicesListFragment();
