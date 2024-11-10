@@ -4,5 +4,10 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">30sp</item>
         <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="CustomSearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="textColorSearchUrl">@color/black</item>
     </style>
 </resources>

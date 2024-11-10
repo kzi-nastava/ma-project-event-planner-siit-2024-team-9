@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -59,7 +60,6 @@ public class ServicesListFragment extends Fragment {
 
         // Set up RecyclerView with adapter
         if (mProducts != null) {
-            binding.recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2)); // 2 columns
             binding.recyclerView.setAdapter(adapter);
         }
 
