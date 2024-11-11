@@ -13,19 +13,26 @@
         android:theme="@style/Theme.Eventify"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".SplashActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="true"
+            android:label="@string/title_activity_splash"
+            android:theme="@style/Theme.Eventify.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
         <activity
-            android:name=".ServicesActivity"
+            android:name=".MainActivity"
             android:exported="true">
 
         </activity>
+        <activity
+            android:name=".ServicesActivity"
+            android:exported="true" />
     </application>
 
 </manifest>
