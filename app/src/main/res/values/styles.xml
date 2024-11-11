@@ -1,22 +1,13 @@
 <resources>
 
+    <style name="Widget.Theme.Eventify.ButtonBar.Fullscreen" parent="">
+        <item name="android:background">@color/white</item>
+        <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
+    </style>
+
     <style name="header_text">
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">30sp</item>
         <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textColor">@color/black</item>
-    </style>
-
-    <style name="CustomSearchViewStyle" parent="Widget.AppCompat.SearchView">
-        <item name="textColorSearchUrl">@color/black</item>
-    </style>
-
-    <style name="Widget.Theme.Eventify.ActionBar.Fullscreen" parent="Widget.AppCompat.ActionBar">
-        <item name="android:background">@color/black_overlay</item>
-    </style>
-
-    <style name="Widget.Theme.Eventify.ButtonBar.Fullscreen" parent="">
-        <item name="android:background">@color/black_overlay</item>
-        <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
     </style>
 </resources>

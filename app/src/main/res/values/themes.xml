@@ -11,10 +11,4 @@
         <item name="fullscreenBackgroundColor">@color/white</item>
         <item name="fullscreenTextColor">@color/black</item>
     </style>
-
-    <style name="Theme.Eventify.Fullscreen" parent="Theme.Eventify">
-        <item name="android:actionBarStyle">@style/Widget.Theme.Eventify.ActionBar.Fullscreen</item>
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:windowBackground">@null</item>
-    </style>
 </resources>
