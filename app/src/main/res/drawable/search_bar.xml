@@ -4,8 +4,6 @@
     <!-- Corner radius -->
     <corners android:radius="1000dp" />
 
-    <!-- Background color (optional) -->
-    <solid android:color="@android:color/white" />
 
     <!-- Stroke (border) -->
     <stroke
