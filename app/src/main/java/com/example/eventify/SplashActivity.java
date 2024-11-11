@@ -31,7 +31,7 @@ public class SplashActivity extends AppCompatActivity {
         /*
          * Ovom opcijom je sakriven toolbar unutar ove aktivnosti
          * */
-        int SPLASH_TIME_OUT = 3000;
+        int SPLASH_TIME_OUT = 5000;
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -43,7 +43,7 @@ public class SplashActivity extends AppCompatActivity {
                  * Druga opcija je implicitni intent, gde ne moramo da kažemo gde prelazimo ali moramo
                  * da kažemo šta planiramo da uradimo.
                  */
-                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                 /*
                  * Pozivom startActivity metode, saljemo poruku Android-u da on za nas pokrene drugu aktivnost,
                  * nakon cega korisnik biva prebacen na novu aktivnost.

@@ -9,4 +9,22 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="registerButtonText">Register</string>
+    <string name="loginButtonText">Login</string>
+    <string name="continue_as_guestLoginText">Continue as guest</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome!"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="login_title_text">Welcome back! Glad to see you, Again!</string>
+    <string name="forgot_password_login">Forogt password?</string>
+    <string name="register_fragment_title">Hello! Register to get started</string>
+    <string name="register_radio_button_lable">What’s your role?</string>
+    <string name="event_organizer_radio_button_text">Event organizer</string>
+    <string name="business_owner_radio_button_text">Business owner</string>
 </resources>
