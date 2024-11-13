@@ -27,7 +27,8 @@ public class ServicesActivity extends AppCompatActivity {
 
         binding.floatingActionButton.setOnClickListener(v -> {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(binding.fragmentContent.getId(), ServicesFormFragment.newInstance("gas","gas")); // Assuming you have a container for the fragment
+            transaction.replace(binding.fragmentContent.getId(), ServicesFormFragment.newInstance("gas","gas"));
+            transaction.addToBackStack(null);
             transaction.commit();
         });
 

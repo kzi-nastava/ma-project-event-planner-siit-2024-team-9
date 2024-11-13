@@ -4,174 +4,162 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/white"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
-        tools:context=".YourActivity"
-       >
+        android:padding="20dp"
+        tools:context=".YourActivity">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
+            android:text="New service"
+            android:theme="@style/header_text" />
+
 
         <!-- Name -->
-        <com.google.android.material.textfield.TextInputLayout
+        <EditText
+            android:id="@+id/nameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Name"
-            android:textColorHint="@android:color/black"
-            android:layout_marginBottom="16dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@android:color/black"
-                android:backgroundTint="@android:color/black" />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:textColorHint="@color/black"
+            android:selectAllOnFocus="true"
+            android:textColor="@android:color/black"
+            android:backgroundTint="@android:color/black"
+            android:layout_marginBottom="20dp" />
 
         <!-- Category (DropDown) -->
-        <com.google.android.material.textfield.TextInputLayout
+        <Spinner
+            android:id="@+id/categorySpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Category"
-            android:textColorHint="@android:color/black"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="20dp"
+            android:backgroundTint="@android:color/black" />
 
-            <AutoCompleteTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
-                android:backgroundTint="@android:color/black" />
-        </com.google.android.material.textfield.TextInputLayout>
+        <!-- Event Types (DropDown) -->
+        <Spinner
+            android:id="@+id/typeSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:backgroundTint="@android:color/black" />
+
 
         <!-- Description -->
-        <com.google.android.material.textfield.TextInputLayout
+        <EditText
+            android:id="@+id/descriptionEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Description"
-            android:textColorHint="@android:color/black"
-            android:layout_marginBottom="16dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:minLines="3"
-                android:textColor="@android:color/black"
-                android:backgroundTint="@android:color/black" />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:textColorHint="@color/black"
+            android:inputType="textMultiLine"
+            android:minLines="1"
+            android:textColor="@android:color/black"
+            android:backgroundTint="@android:color/black"
+            android:layout_marginBottom="20dp" />
 
         <!-- Specifities -->
-        <com.google.android.material.textfield.TextInputLayout
+        <EditText
+            android:id="@+id/specifitiesEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColorHint="@color/black"
             android:hint="Specifities"
-            android:textColorHint="@android:color/black"
-            android:layout_marginBottom="16dp">
+            android:inputType="textMultiLine"
+            android:minLines="1"
+            android:textColor="@android:color/black"
+            android:backgroundTint="@android:color/black"
+            android:layout_marginBottom="20dp" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:minLines="3"
-                android:textColor="@android:color/black"
-                android:backgroundTint="@android:color/black" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Price -->
-        <com.google.android.material.textfield.TextInputLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Price"
-            android:textColorHint="@android:color/black"
-            android:layout_marginBottom="16dp">
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <!-- Price -->
+            <EditText
+                android:id="@+id/priceEditText"
+                android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="Price"
+                android:textColorHint="@color/black"
                 android:inputType="numberDecimal"
                 android:textColor="@android:color/black"
-                android:backgroundTint="@android:color/black" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:backgroundTint="@android:color/black"
+                android:layout_marginBottom="20dp" />
 
-        <!-- Discount -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Discount"
-            android:textColorHint="@android:color/black"
-            android:layout_marginBottom="16dp">
-
-            <com.google.android.material.textfield.TextInputEditText
+            <!-- Discount -->
+            <EditText
+                android:layout_weight="1"
+                android:id="@+id/discountEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="Discount"
+                android:textColorHint="@color/black"
                 android:inputType="numberDecimal"
                 android:textColor="@android:color/black"
-                android:backgroundTint="@android:color/white" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:backgroundTint="@android:color/black"
+                android:layout_marginBottom="20dp" />
+
+
+        </LinearLayout>
+
 
         <!-- Images Selection -->
         <Button
+            android:id="@+id/btnSelectedImages"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Select Images"
-            android:id="@+id/btnSelectImages"
-            style="@style/Widget.Material3.Button"
-            android:textColor="@android:color/white"
+            android:layout_marginHorizontal="60dp"
             android:backgroundTint="@color/black"
-            android:layout_marginBottom="16dp" />
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="20dp"
+            style="@style/Widget.Material3.Button" />
 
-        <!-- Event Types (DropDown) -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Event Types"
-            android:textColorHint="@android:color/black"
-            android:layout_marginBottom="16dp">
-
-            <AutoCompleteTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@android:color/black"
-                android:backgroundTint="@android:color/white" />
-        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Duration and Reservation Deadline (Side-by-Side Sliders) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="16dp"
-            android:gravity="center">
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
 
             <!-- Duration Slider -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Duration"
-                android:textColor="@android:color/black"
-                style="@style/TextAppearance.Material3.BodyMedium" />
+                android:textColor="@android:color/black"/>
 
             <com.google.android.material.slider.Slider
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1"
-                android:valueFrom="0"
-                android:valueTo="24"
                 android:stepSize="1"
-                android:value="1" />
+                android:value="0"
+                android:valueFrom="0"
+                android:valueTo="20"
+                app:trackColor="@color/medium_gray"
+                app:thumbColor="@color/red"
+                app:tickColor="@color/black" />
         </LinearLayout>
 
-        <!-- Min Engagement and Max Engagement (Side-by-Side Sliders) -->
+        <!-- Min Engagement Slider -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="16dp"
-            android:gravity="center">
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
 
-            <!-- Min Engagement Slider -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -180,42 +168,25 @@
                 style="@style/TextAppearance.Material3.BodyMedium" />
 
             <com.google.android.material.slider.Slider
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1"
                 android:valueFrom="0"
-                android:valueTo="500"
+                android:valueTo="20"
                 android:stepSize="1"
-                android:value="0" />
+                android:value="0"
+                app:trackColor="@color/medium_gray"
+                app:thumbColor="@color/red"
+                app:tickColor="@color/black" />
         </LinearLayout>
 
-        <!-- Visibility (Switch) -->
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Visibility"
-            android:textColor="@android:color/black"
-            android:checked="true"
-            android:layout_marginBottom="16dp" />
-
-        <!-- Availability (Switch) -->
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Availability"
-            android:textColor="@android:color/black"
-            android:checked="true"
-            android:layout_marginBottom="16dp" />
-
-        <!-- Reservation Deadline and Cancellation (Side-by-Side Sliders) -->
+        <!-- Reservation Deadline Slider -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="16dp"
-            android:gravity="center">
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
 
-            <!-- Reservation Deadline Slider -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -224,23 +195,25 @@
                 style="@style/TextAppearance.Material3.BodyMedium" />
 
             <com.google.android.material.slider.Slider
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1"
                 android:valueFrom="0"
-                android:valueTo="30"
+                android:valueTo="20"
                 android:stepSize="1"
-                android:value="0" />
+                android:value="0"
+                app:trackColor="@color/medium_gray"
+                app:thumbColor="@color/red"
+                app:tickColor="@color/black" />
         </LinearLayout>
 
-        <!-- Cancellation (Slider) -->
+        <!-- Cancellation Slider -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
 
-            <!-- Cancellation Slider -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -249,36 +222,83 @@
                 style="@style/TextAppearance.Material3.BodyMedium" />
 
             <com.google.android.material.slider.Slider
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1"
                 android:valueFrom="0"
-                android:valueTo="30"
+                android:valueTo="20"
                 android:stepSize="1"
-                android:value="0" />
+                android:value="0"
+                app:trackColor="@color/medium_gray"
+                app:thumbColor="@color/red"
+                app:tickColor="@color/black" />
+        </LinearLayout>
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Select Images"
-                android:id="@+id/btnSubmit"
-                style="@style/Widget.Material3.Button"
-                android:textColor="@android:color/white"
-                android:backgroundTint="@color/black"
-                android:layout_marginBottom="16dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40dp"
+            android:orientation="horizontal">
 
-            <Button
-                android:layout_width="match_parent"
+            <!-- Visibility Switch -->
+            <Switch
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Select Images"
-                android:id="@+id/btnCancel"
-                style="@style/Widget.Material3.Button"
-                android:textColor="@android:color/white"
-                android:backgroundTint="@color/black"
-                android:layout_marginBottom="16dp" />
+                android:text="Visibility"
+                android:checked="true"
+                android:textColor="@android:color/black"
+                android:thumbTint="@color/black"
+                android:trackTint="@color/black"
+                android:layout_marginEnd="30dp"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+            <!-- Availability Switch -->
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:thumbTint="@color/black"
+                android:trackTint="@color/black"
+                android:text="Availability"
+                android:checked="true"
+                android:textColor="@android:color/black"
+                tools:ignore="UseSwitchCompatOrMaterialXml"
+                />
+
 
 
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:paddingHorizontal="60dp"
+            android:layout_height="wrap_content">
+
+            <!-- Submit Button -->
+            <Button
+                android:id="@+id/btnSubmit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Submit"
+                android:backgroundTint="@color/black"
+                android:textColor="@android:color/white"
+                android:layout_marginBottom="10dp"
+                style="@style/Widget.Material3.Button" />
+
+            <!-- Cancel Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cancel"
+                android:backgroundTint="@color/white"
+                android:textColor="@color/red"
+                android:layout_marginBottom="20dp"
+                style="@style/Widget.Material3.Button.OutlinedButton" />
+
+        </LinearLayout>
+
+
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
