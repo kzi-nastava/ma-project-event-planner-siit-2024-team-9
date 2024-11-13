@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        tools:context=".YourActivity"
+       >
+
+        <!-- Name -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Name"
+            android:textColorHint="@android:color/black"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:backgroundTint="@android:color/black" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Category (DropDown) -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Category"
+            android:textColorHint="@android:color/black"
+            android:layout_marginBottom="16dp">
+
+            <AutoCompleteTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:backgroundTint="@android:color/black" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Description -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Description"
+            android:textColorHint="@android:color/black"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:minLines="3"
+                android:textColor="@android:color/black"
+                android:backgroundTint="@android:color/black" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Specifities -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Specifities"
+            android:textColorHint="@android:color/black"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:minLines="3"
+                android:textColor="@android:color/black"
+                android:backgroundTint="@android:color/black" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Price -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Price"
+            android:textColorHint="@android:color/black"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:textColor="@android:color/black"
+                android:backgroundTint="@android:color/black" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Discount -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Discount"
+            android:textColorHint="@android:color/black"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:textColor="@android:color/black"
+                android:backgroundTint="@android:color/white" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Images Selection -->
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Select Images"
+            android:id="@+id/btnSelectImages"
+            style="@style/Widget.Material3.Button"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/black"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Event Types (DropDown) -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Event Types"
+            android:textColorHint="@android:color/black"
+            android:layout_marginBottom="16dp">
+
+            <AutoCompleteTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:backgroundTint="@android:color/white" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Duration and Reservation Deadline (Side-by-Side Sliders) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp"
+            android:gravity="center">
+
+            <!-- Duration Slider -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Duration"
+                android:textColor="@android:color/black"
+                style="@style/TextAppearance.Material3.BodyMedium" />
+
+            <com.google.android.material.slider.Slider
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:valueFrom="0"
+                android:valueTo="24"
+                android:stepSize="1"
+                android:value="1" />
+        </LinearLayout>
+
+        <!-- Min Engagement and Max Engagement (Side-by-Side Sliders) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp"
+            android:gravity="center">
+
+            <!-- Min Engagement Slider -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Min Engagement"
+                android:textColor="@android:color/black"
+                style="@style/TextAppearance.Material3.BodyMedium" />
+
+            <com.google.android.material.slider.Slider
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:valueFrom="0"
+                android:valueTo="500"
+                android:stepSize="1"
+                android:value="0" />
+        </LinearLayout>
+
+        <!-- Visibility (Switch) -->
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Visibility"
+            android:textColor="@android:color/black"
+            android:checked="true"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Availability (Switch) -->
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Availability"
+            android:textColor="@android:color/black"
+            android:checked="true"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Reservation Deadline and Cancellation (Side-by-Side Sliders) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp"
+            android:gravity="center">
+
+            <!-- Reservation Deadline Slider -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reservation Deadline"
+                android:textColor="@android:color/black"
+                style="@style/TextAppearance.Material3.BodyMedium" />
+
+            <com.google.android.material.slider.Slider
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:valueFrom="0"
+                android:valueTo="30"
+                android:stepSize="1"
+                android:value="0" />
+        </LinearLayout>
+
+        <!-- Cancellation (Slider) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <!-- Cancellation Slider -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cancellation"
+                android:textColor="@android:color/black"
+                style="@style/TextAppearance.Material3.BodyMedium" />
+
+            <com.google.android.material.slider.Slider
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:valueFrom="0"
+                android:valueTo="30"
+                android:stepSize="1"
+                android:value="0" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select Images"
+                android:id="@+id/btnSubmit"
+                style="@style/Widget.Material3.Button"
+                android:textColor="@android:color/white"
+                android:backgroundTint="@color/black"
+                android:layout_marginBottom="16dp" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select Images"
+                android:id="@+id/btnCancel"
+                style="@style/Widget.Material3.Button"
+                android:textColor="@android:color/white"
+                android:backgroundTint="@color/black"
+                android:layout_marginBottom="16dp" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

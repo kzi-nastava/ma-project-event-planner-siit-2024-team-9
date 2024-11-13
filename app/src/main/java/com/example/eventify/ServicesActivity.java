@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -23,6 +24,12 @@ public class ServicesActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.medium_gray));
+
+        binding.floatingActionButton.setOnClickListener(v -> {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(binding.fragmentContent.getId(), ServicesFormFragment.newInstance("gas","gas")); // Assuming you have a container for the fragment
+            transaction.commit();
+        });
 
         prepareProductList(products);
         loadServicesListFragment();
