@@ -235,10 +235,7 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/businessNameEditText"
-                app:boxCornerRadiusBottomEnd="3dp"
-                app:boxCornerRadiusBottomStart="3dp"
-                app:boxCornerRadiusTopEnd="3dp"
-                app:boxCornerRadiusTopStart="3dp"
+                style="@style/Theme.Eventify.TextInputLayout"
                 >
 
                 <com.google.android.material.textfield.TextInputEditText

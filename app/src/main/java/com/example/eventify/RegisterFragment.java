@@ -16,6 +16,9 @@ import android.widget.Toast;
 
 import com.example.eventify.databinding.FragmentRegisterBinding;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class RegisterFragment extends Fragment {
 
 
@@ -23,6 +26,8 @@ public class RegisterFragment extends Fragment {
 
     private static final int REQUEST_IMAGE_PICK = 1;
     private ActivityResultLauncher<Intent> imagePickerLauncher;
+
+    private List<View> businessOwnerViews;
 
     public RegisterFragment() {
         // Required empty public constructor
@@ -34,8 +39,16 @@ public class RegisterFragment extends Fragment {
 
         binding = FragmentRegisterBinding.inflate(inflater, container, false);
 
+        businessOwnerViews = List.of(
+                binding.businessNameEditText,
+                binding.descriptionInputLayout
+        );
+
         binding.buttonSelectImage.setOnClickListener(v -> openImagePicker());
         binding.registerButton.setOnClickListener(v -> register());
+        binding.radioGroup.setOnCheckedChangeListener((group, checkedId) -> radioButtonHandler());
+
+        radioButtonHandler(); // Hide business owner views by default
 
         // Register the launcher with a callback to handle the result
         imagePickerLauncher = registerForActivityResult(
@@ -63,6 +76,14 @@ public class RegisterFragment extends Fragment {
         Toast.makeText(requireContext(), "Validate inputs", Toast.LENGTH_SHORT).show();
         Toast.makeText(requireContext(), "Please activate your account in the email we sent you", Toast.LENGTH_SHORT).show();
         requireActivity().getOnBackPressedDispatcher().onBackPressed();
+    }
+
+    private void radioButtonHandler(){
+        if(binding.businessOwnerRadioButton.isChecked()){
+            businessOwnerViews.forEach(view -> view.setVisibility(View.VISIBLE));
+        } else {
+            businessOwnerViews.forEach(view -> view.setVisibility(View.GONE));
+        }
     }
     
 
