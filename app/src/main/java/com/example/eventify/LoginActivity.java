@@ -16,7 +16,11 @@ import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowInsets;
+import android.widget.Toast;
+
 import com.example.eventify.databinding.ActivityLoginBinding;
+
+import java.util.List;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -25,6 +29,7 @@ import com.example.eventify.databinding.ActivityLoginBinding;
 public class LoginActivity extends AppCompatActivity {
 
     private ActivityLoginBinding binding;
+    List<View> componentsToHide;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,14 +42,25 @@ public class LoginActivity extends AppCompatActivity {
         binding.loginButton.setOnClickListener(v -> openLoginFragment());
         binding.registerButton.setOnClickListener(v -> openRegisterFragment());
 
+        componentsToHide = List.of(
+                binding.titleTextView,
+                binding.emailEditText,
+                binding.passwordEditText,
+                binding.forgotPasswordTextView,
+                binding.loginButton,
+                binding.registerButton,
+                binding.continueAsGuestTextView
+        );
+
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 // Check if there's a fragment in the container
                 if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                    findViewById(R.id.loginButton).setVisibility(View.VISIBLE);
-                    findViewById(R.id.registerButton).setVisibility(View.VISIBLE);
-                    findViewById(R.id.continueAsGuestTextView).setVisibility(View.VISIBLE);
+                    for(View view: componentsToHide){
+                        view.setVisibility(View.VISIBLE);
+                    }
+
                     findViewById(R.id.fragment_container).setVisibility(View.GONE);
                 } else {
                     // If no fragment in the back stack, just perform normal back press
@@ -54,6 +70,7 @@ public class LoginActivity extends AppCompatActivity {
         };
         // Add the callback to the back press dispatcher
         getOnBackPressedDispatcher().addCallback(this, callback);
+
     }
 
     private void continueAsGuest(){
@@ -62,20 +79,28 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void openLoginFragment(){
-        findViewById(R.id.loginButton).setVisibility(View.GONE);
-        findViewById(R.id.registerButton).setVisibility(View.GONE);
-        findViewById(R.id.continueAsGuestTextView).setVisibility(View.GONE);
-        findViewById(R.id.fragment_container).setVisibility(View.VISIBLE);
+        String email = binding.emailEditText.getText().toString();
+        final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
 
-        LoginFragment loginFragment = new LoginFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, loginFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        if(email.matches(EMAIL_REGEX)){
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+        } else{
+            Toast.makeText(this, "Please enter a valid email address", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void openRegisterFragment(){
+        for(View view: componentsToHide){
+            view.setVisibility(View.GONE);
+        }
+        binding.fragmentContainer.setVisibility(View.VISIBLE);
 
+        RegisterFragment registerFragment = new RegisterFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container,registerFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
 }

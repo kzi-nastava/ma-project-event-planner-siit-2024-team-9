@@ -27,4 +27,14 @@
     <string name="register_radio_button_lable">What’s your role?</string>
     <string name="event_organizer_radio_button_text">Event organizer</string>
     <string name="business_owner_radio_button_text">Business owner</string>
+    <string name="prompt_name">Name</string>
+    <string name="prompt_surname">Surname</string>
+    <string name="prompt_confirm_password">Confirm password</string>
+    <string name="prompt_business_name">Business name</string>
+    <string name="description_prompt">Description</string>
+    <string name="address_prompt">Address</string>
+    <string name="phone_prompt">Phone</string>
+    <string name="profile_picture">Profile picture</string>
+    <string name="select_picture_prompt">Select Picture</string>
+    <string name="profile_picture_textview">Profile picture</string>
 </resources>
