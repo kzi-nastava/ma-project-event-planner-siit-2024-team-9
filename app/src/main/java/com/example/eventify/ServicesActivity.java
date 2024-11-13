@@ -17,6 +17,8 @@ public class ServicesActivity extends AppCompatActivity {
     public static ArrayList<com.example.eventify.Service> products = new ArrayList<>();
     private ActivityServicesBinding binding;
 
+    private boolean filterOn = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +32,20 @@ public class ServicesActivity extends AppCompatActivity {
             transaction.replace(binding.fragmentContent.getId(), ServicesFormFragment.newInstance("gas","gas"));
             transaction.addToBackStack(null);
             transaction.commit();
+        });
+
+        binding.filterBtn.setOnClickListener(v -> {
+            if (!filterOn) {
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(binding.frame.getId(), ServiceFilterFragment.newInstance("gas","gas"));
+                transaction.addToBackStack(null);
+                filterOn = true;
+                transaction.commit();
+            } else {
+                filterOn = false;
+                getSupportFragmentManager().popBackStack();
+            }
+
         });
 
         prepareProductList(products);

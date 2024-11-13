@@ -138,6 +138,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Duration"
+                android:layout_marginBottom="10dp"
                 android:textColor="@android:color/black"/>
 
             <com.google.android.material.slider.Slider
@@ -164,6 +165,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Min Engagement"
+                android:layout_marginBottom="10dp"
                 android:textColor="@android:color/black"
                 style="@style/TextAppearance.Material3.BodyMedium" />
 
@@ -191,6 +193,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Reservation Deadline"
+                android:layout_marginBottom="10dp"
                 android:textColor="@android:color/black"
                 style="@style/TextAppearance.Material3.BodyMedium" />
 
@@ -218,6 +221,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cancellation"
+                android:layout_marginBottom="10dp"
                 android:textColor="@android:color/black"
                 style="@style/TextAppearance.Material3.BodyMedium" />
 
