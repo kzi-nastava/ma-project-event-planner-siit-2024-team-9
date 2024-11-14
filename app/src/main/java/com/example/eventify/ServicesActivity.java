@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import com.example.eventify.databinding.ActivityServicesBinding;
+import com.example.eventify.databinding.FragmentCardBinding;
 
 import java.util.ArrayList;
 
@@ -26,13 +27,6 @@ public class ServicesActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.medium_gray));
-
-        binding.floatingActionButton.setOnClickListener(v -> {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(binding.fragmentContent.getId(), ServicesFormFragment.newInstance("gas","gas"));
-            transaction.addToBackStack(null);
-            transaction.commit();
-        });
 
         binding.filterBtn.setOnClickListener(v -> {
             if (!filterOn) {

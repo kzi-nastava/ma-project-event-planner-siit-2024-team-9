@@ -5,8 +5,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.eventify.databinding.ActivityMainBinding;
 
@@ -28,6 +27,13 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
 
 
+        });
+
+        binding.addService.setOnClickListener(v -> {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(binding.frame.getId(), ServicesFormFragment.newInstance("gas","gas"));
+            transaction.addToBackStack(null);
+            transaction.commit();
         });
     }
 }
