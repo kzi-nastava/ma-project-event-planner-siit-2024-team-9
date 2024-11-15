@@ -1,12 +1,11 @@
-package com.example.Activities;
+package com.example.eventify.Activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentTransaction;
 
+import com.example.eventify.R;
 import com.example.eventify.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {

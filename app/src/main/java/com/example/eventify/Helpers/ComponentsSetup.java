@@ -1,9 +1,11 @@
-package com.example.eventify;
+package com.example.eventify.Helpers;
 
 import android.content.Context;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+
+import com.example.eventify.R;
 
 import java.util.ArrayList;
 
