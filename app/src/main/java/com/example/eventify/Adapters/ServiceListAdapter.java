@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.eventify.Fragments.SolutionDetailsFragment;
 import com.example.eventify.databinding.FragmentCardBinding;
 import com.example.eventify.databinding.FragmentSolutionFormBinding;
 
@@ -72,6 +73,14 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
             holder.productDescription.setText(product.getDescription());
 
             // Set up the button click listener for each item
+            holder.itemView.setOnClickListener(v -> {
+                // Use the FragmentManager to perform the transaction
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.replace(R.id.fragment_content, SolutionDetailsFragment.newInstance("gas", "gas"));
+                transaction.addToBackStack(null);
+                transaction.commit();
+            });
+
             holder.detailsBtn.setOnClickListener(v -> {
                 // Use the FragmentManager to perform the transaction
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -79,6 +88,8 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
                 transaction.addToBackStack(null);
                 transaction.commit();
             });
+
+
         }
     }
 

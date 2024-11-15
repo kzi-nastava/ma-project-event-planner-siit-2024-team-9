@@ -43,6 +43,17 @@ public class SolutionsActivity extends AppCompatActivity {
 
         });
 
+        servicesBinding.addBtn.setOnClickListener(v -> {
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(servicesBinding.fragmentContent.getId(), com.example.eventify.SolutionFormFragment.newInstance("gas","gas"));
+                transaction.addToBackStack(null);
+                filterOn = true;
+                transaction.commit();
+
+        });
+
+
+
         prepareProductList(products);
         loadServicesListFragment();
 

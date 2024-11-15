@@ -29,11 +29,5 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        binding.addService.setOnClickListener(v -> {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(binding.frame.getId(), SolutionFormFragment.newInstance("gas","gas"));
-            transaction.addToBackStack(null);
-            transaction.commit();
-        });
     }
 }

@@ -17,7 +17,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="20dp"
+            android:layout_marginBottom="40dp"
+            android:layout_marginTop="20dp"
             android:text="Filter services"
             android:theme="@style/header2_text" />
 
@@ -39,39 +40,12 @@
             android:backgroundTint="@android:color/black" />
 
 
-        <!-- Min Engagement Slider -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Price"
-                android:layout_marginBottom="10dp"
-                android:textColor="@android:color/black"
-                style="@style/TextAppearance.Material3.BodyMedium" />
-
-            <com.google.android.material.slider.Slider
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:valueFrom="0"
-                android:valueTo="20"
-                android:stepSize="1"
-                android:value="0"
-                app:trackColor="@color/medium_gray"
-                app:thumbColor="@color/red"
-                app:tickColor="@color/black" />
-        </LinearLayout>
-
         <!-- Name -->
         <EditText
             android:id="@+id/nameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Event organizer"
+            android:hint="Price"
             android:textColorHint="@color/black"
             android:selectAllOnFocus="true"
             android:textColor="@android:color/black"

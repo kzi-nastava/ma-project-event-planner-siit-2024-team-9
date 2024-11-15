@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Eventify</string>
     <string name="services_panel">Your services</string>
-    <string name="view_details">View details</string>
+    <string name="edit_details">Edit details</string>
     <string name="services">Services</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
