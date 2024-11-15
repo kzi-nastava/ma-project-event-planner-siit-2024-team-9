@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.os.Build;
@@ -28,6 +29,9 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.medium_gray));
+        
         /*
          * Ovom opcijom je sakriven toolbar unutar ove aktivnosti
          * */

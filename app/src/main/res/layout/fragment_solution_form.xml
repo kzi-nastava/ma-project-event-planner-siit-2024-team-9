@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp"
+        tools:context=".YourActivity">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
+            android:text="New service"
+            android:theme="@style/header_text" />
+
+
+        <!-- Name -->
+        <EditText
+            android:id="@+id/nameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Name"
+            android:textColorHint="@color/black"
+            android:selectAllOnFocus="true"
+            android:textColor="@android:color/black"
+            android:backgroundTint="@android:color/black"
+            android:layout_marginBottom="20dp" />
+
+        <!-- Category (DropDown) -->
+        <Spinner
+            android:id="@+id/categorySpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginStart="5dp"
+            android:backgroundTint="@android:color/white" />
+
+        <!-- Event Types (DropDown) -->
+        <Spinner
+            android:id="@+id/typeSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginStart="5dp"
+            android:backgroundTint="@android:color/white" />
+
+
+        <!-- Description -->
+        <EditText
+            android:id="@+id/descriptionEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Description"
+            android:textColorHint="@color/black"
+            android:inputType="textMultiLine"
+            android:minLines="1"
+            android:textColor="@android:color/black"
+            android:backgroundTint="@android:color/black"
+            android:layout_marginBottom="20dp" />
+
+        <!-- Specifities -->
+        <EditText
+            android:id="@+id/specifitiesEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColorHint="@color/black"
+            android:hint="Specifities"
+            android:inputType="textMultiLine"
+            android:minLines="1"
+            android:textColor="@android:color/black"
+            android:backgroundTint="@android:color/black"
+            android:layout_marginBottom="20dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+
+            <!-- Price -->
+            <EditText
+                android:id="@+id/priceEditText"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Price"
+                android:textColorHint="@color/black"
+                android:inputType="numberDecimal"
+                android:textColor="@android:color/black"
+                android:backgroundTint="@android:color/black"
+                android:layout_marginBottom="20dp" />
+
+            <!-- Discount -->
+            <EditText
+                android:layout_weight="1"
+                android:id="@+id/discountEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Discount"
+                android:textColorHint="@color/black"
+                android:inputType="numberDecimal"
+                android:textColor="@android:color/black"
+                android:backgroundTint="@android:color/black"
+                android:layout_marginBottom="20dp" />
+
+
+        </LinearLayout>
+
+
+        <!-- Images Selection -->
+        <Button
+            android:id="@+id/btnSelectedImages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Select Images"
+            android:layout_marginHorizontal="60dp"
+            android:backgroundTint="@color/black"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="20dp"
+            style="@style/Widget.Material3.Button" />
+
+
+        <!-- Duration and Reservation Deadline (Side-by-Side Sliders) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
+
+            <!-- Duration Slider -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Duration"
+                android:layout_marginBottom="10dp"
+                android:textColor="@android:color/black"/>
+
+            <com.google.android.material.slider.Slider
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:stepSize="1"
+                android:value="0"
+                android:valueFrom="0"
+                android:valueTo="20"
+                app:trackColor="@color/medium_gray"
+                app:thumbColor="@color/red"
+                app:tickColor="@color/black" />
+        </LinearLayout>
+
+        <!-- Min Engagement Slider -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Min Engagement"
+                android:layout_marginBottom="10dp"
+                android:textColor="@android:color/black"
+                style="@style/TextAppearance.Material3.BodyMedium" />
+
+            <com.google.android.material.slider.Slider
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:valueFrom="0"
+                android:valueTo="20"
+                android:stepSize="1"
+                android:value="0"
+                app:trackColor="@color/medium_gray"
+                app:thumbColor="@color/red"
+                app:tickColor="@color/black" />
+        </LinearLayout>
+
+        <!-- Max Engagement Slider -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Max Engagement"
+                android:layout_marginBottom="10dp"
+                android:textColor="@android:color/black"
+                style="@style/TextAppearance.Material3.BodyMedium" />
+
+            <com.google.android.material.slider.Slider
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:valueFrom="0"
+                android:valueTo="20"
+                android:stepSize="1"
+                android:value="0"
+                app:trackColor="@color/medium_gray"
+                app:thumbColor="@color/red"
+                app:tickColor="@color/black" />
+        </LinearLayout>
+
+        <!-- Reservation Deadline Slider -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reservation Deadline"
+                android:layout_marginBottom="10dp"
+                android:textColor="@android:color/black"
+                style="@style/TextAppearance.Material3.BodyMedium" />
+
+            <com.google.android.material.slider.Slider
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:valueFrom="0"
+                android:valueTo="20"
+                android:stepSize="1"
+                android:value="0"
+                app:trackColor="@color/medium_gray"
+                app:thumbColor="@color/red"
+                app:tickColor="@color/black" />
+        </LinearLayout>
+
+        <!-- Cancellation Slider -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cancellation"
+                android:layout_marginBottom="10dp"
+                android:textColor="@android:color/black"
+                style="@style/TextAppearance.Material3.BodyMedium" />
+
+            <com.google.android.material.slider.Slider
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:valueFrom="0"
+                android:valueTo="20"
+                android:stepSize="1"
+                android:value="0"
+                app:trackColor="@color/medium_gray"
+                app:thumbColor="@color/red"
+                app:tickColor="@color/black" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40dp"
+            android:orientation="horizontal">
+
+            <!-- Visibility Switch -->
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Visibility"
+                android:checked="true"
+                android:textColor="@android:color/black"
+                android:thumbTint="@color/black"
+                android:trackTint="@color/black"
+                android:layout_marginEnd="30dp"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+            <!-- Availability Switch -->
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:thumbTint="@color/black"
+                android:trackTint="@color/black"
+                android:text="Availability"
+                android:checked="true"
+                android:textColor="@android:color/black"
+                tools:ignore="UseSwitchCompatOrMaterialXml"
+                />
+
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:paddingHorizontal="60dp"
+            android:layout_height="wrap_content">
+
+            <!-- Submit Button -->
+            <Button
+                android:id="@+id/btnSubmit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Submit"
+                android:backgroundTint="@color/black"
+                android:textColor="@android:color/white"
+                android:layout_marginBottom="10dp"
+                style="@style/Widget.Material3.Button" />
+
+            <!-- Cancel Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cancel"
+                android:backgroundTint="@color/white"
+                android:textColor="@color/red"
+                android:layout_marginBottom="20dp"
+                style="@style/Widget.Material3.Button.OutlinedButton" />
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

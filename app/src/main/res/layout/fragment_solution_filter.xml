@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="520dp"
+    android:background="@color/white">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:context=".YourActivity">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
+            android:text="Filter services"
+            android:theme="@style/header2_text" />
+
+
+        <!-- Category (DropDown) -->
+        <Spinner
+            android:id="@+id/categorySpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:backgroundTint="@android:color/black" />
+
+        <!-- Event Types (DropDown) -->
+        <Spinner
+            android:id="@+id/typeSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:backgroundTint="@android:color/black" />
+
+
+        <!-- Min Engagement Slider -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Price"
+                android:layout_marginBottom="10dp"
+                android:textColor="@android:color/black"
+                style="@style/TextAppearance.Material3.BodyMedium" />
+
+            <com.google.android.material.slider.Slider
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:valueFrom="0"
+                android:valueTo="20"
+                android:stepSize="1"
+                android:value="0"
+                app:trackColor="@color/medium_gray"
+                app:thumbColor="@color/red"
+                app:tickColor="@color/black" />
+        </LinearLayout>
+
+        <!-- Name -->
+        <EditText
+            android:id="@+id/nameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Event organizer"
+            android:textColorHint="@color/black"
+            android:selectAllOnFocus="true"
+            android:textColor="@android:color/black"
+            android:backgroundTint="@android:color/black"
+            android:layout_marginBottom="20dp" />
+
+        <!-- Availability Switch -->
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:thumbTint="@color/black"
+            android:trackTint="@color/black"
+            android:text="Availability"
+            android:layout_marginBottom="40dp"
+            android:checked="true"
+            android:textColor="@android:color/black"
+            tools:ignore="UseSwitchCompatOrMaterialXml"
+            />
+
+        <!-- Filter Button -->
+        <Button
+            android:id="@+id/btnSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Filter"
+            android:backgroundTint="@color/black"
+            android:textColor="@android:color/white"
+            android:layout_marginHorizontal="40dp"
+            style="@style/Widget.Material3.Button" />
+
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
