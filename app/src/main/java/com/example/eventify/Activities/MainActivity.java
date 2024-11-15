@@ -1,4 +1,4 @@
-package com.example.eventify;
+package com.example.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,12 +16,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.medium_gray));
+
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        /*
         binding.serviceButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, SolutionsActivity.class);
             startActivity(intent);
@@ -35,5 +36,7 @@ public class MainActivity extends AppCompatActivity {
             transaction.addToBackStack(null);
             transaction.commit();
         });
+
+         */
     }
 }
