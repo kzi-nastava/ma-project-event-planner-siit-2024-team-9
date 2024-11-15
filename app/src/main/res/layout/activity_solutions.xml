@@ -17,7 +17,7 @@
             android:layout_height="match_parent"
             android:padding="20dp"
             android:orientation="vertical"
-            tools:context=".SolutionsActivity">
+            tools:context=".Activities.SolutionsActivity">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -28,7 +28,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:context=".SolutionsActivity">
+                tools:context=".Activities.SolutionsActivity">
 
             </LinearLayout>
 
@@ -83,7 +83,7 @@
                 android:id="@+id/frame"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:context=".SolutionListFragment" />
+                tools:context=".Fragments.SolutionListFragment" />
 
         </LinearLayout>
 

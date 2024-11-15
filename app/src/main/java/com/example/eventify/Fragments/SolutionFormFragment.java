@@ -1,4 +1,4 @@
-package com.example.eventify;
+package com.example.eventify.Fragments;
 
 import android.os.Bundle;
 
@@ -8,6 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Spinner;
+
+import com.example.eventify.Helpers.ComponentsSetup;
+import com.example.eventify.R;
 
 import java.util.ArrayList;
 

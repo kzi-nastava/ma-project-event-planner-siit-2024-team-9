@@ -13,13 +13,13 @@
         android:theme="@style/Theme.Eventify"
         tools:targetApi="31" >
         <activity
-            android:name=".LoginActivity"
+            android:name=".Activities.LoginActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false"
             android:label="@string/title_activity_login"
             android:theme="@style/Theme.Eventify.Fullscreen" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".Activities.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true"
             android:theme="@style/Theme.Eventify.Fullscreen" >
@@ -30,11 +30,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".Activities.MainActivity"
             android:exported="true" >
         </activity>
         <activity
-            android:name=".SolutionsActivity"
+            android:name=".Activities.SolutionsActivity"
             android:exported="true" />
     </application>
 

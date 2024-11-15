@@ -1,4 +1,4 @@
-package com.example.eventify;
+package com.example.eventify.Fragments;
 
 import android.os.Bundle;
 
@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.eventify.Adapters.ServiceListAdapter;
+import com.example.eventify.Model.Service;
 import com.example.eventify.databinding.FragmentSolutionListBinding;
 
 import java.util.ArrayList;

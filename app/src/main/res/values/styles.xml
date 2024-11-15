@@ -17,6 +17,13 @@
         <item name="textColorSearchUrl">@color/black</item>
     </style>
 
+    <style name="CustomBottomNavBarStyle" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="android:background">@color/medium_gray</item>
+        <item name="itemIconTint">@color/nav_item_background_color</item>
+        <item name="itemTextColor">@color/nav_item_background_color</item>
+        <item name="activeIndicatorLabelPadding">4dp</item>
+    </style>
+
 
     <style name="Widget.Theme.Eventify.ActionBar.Fullscreen" parent="Widget.AppCompat.ActionBar">
         <item name="android:background">@color/black_overlay</item>

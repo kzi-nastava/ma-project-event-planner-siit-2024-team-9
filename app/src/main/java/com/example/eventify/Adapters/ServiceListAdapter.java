@@ -1,4 +1,4 @@
-package com.example.eventify;
+package com.example.eventify.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -14,6 +14,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.eventify.R;
+import com.example.eventify.Model.Service;
+import com.example.eventify.Fragments.SolutionFormFragment;
 import com.example.eventify.databinding.FragmentCardBinding;
 import com.example.eventify.databinding.FragmentSolutionFormBinding;
 

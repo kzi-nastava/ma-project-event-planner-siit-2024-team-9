@@ -1,4 +1,4 @@
-package com.example.eventify;
+package com.example.eventify.Fragments;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import com.example.eventify.databinding.FragmentRegisterBinding;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class RegisterFragment extends Fragment {
