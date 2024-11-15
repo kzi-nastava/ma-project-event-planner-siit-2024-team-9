@@ -1,4 +1,4 @@
-package com.example.eventify;
+package com.example.eventify.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -7,6 +7,11 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
 
+import com.example.eventify.Fragments.SolutionFormFragment;
+import com.example.eventify.Model.Service;
+import com.example.eventify.R;
+import com.example.eventify.Fragments.SolutionFilterFragment;
+import com.example.eventify.Fragments.SolutionListFragment;
 import com.example.eventify.databinding.ActivitySolutionsBinding;
 import com.example.eventify.databinding.FragmentCardBinding;
 
@@ -14,7 +19,7 @@ import java.util.ArrayList;
 
 public class SolutionsActivity extends AppCompatActivity {
 
-    public static ArrayList<com.example.eventify.Service> products = new ArrayList<>();
+    public static ArrayList<Service> products = new ArrayList<>();
     private ActivitySolutionsBinding servicesBinding;
     private FragmentCardBinding cardBinding;
 
@@ -45,7 +50,7 @@ public class SolutionsActivity extends AppCompatActivity {
 
         servicesBinding.addBtn.setOnClickListener(v -> {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(servicesBinding.fragmentContent.getId(), com.example.eventify.SolutionFormFragment.newInstance("gas","gas"));
+                transaction.replace(servicesBinding.fragmentContent.getId(), SolutionFormFragment.newInstance("gas","gas"));
                 transaction.addToBackStack(null);
                 filterOn = true;
                 transaction.commit();
@@ -74,16 +79,16 @@ public class SolutionsActivity extends AppCompatActivity {
 
     }
 
-    private void prepareProductList(ArrayList<com.example.eventify.Service> products) {
+    private void prepareProductList(ArrayList<Service> products) {
         products.clear();
-        products.add(new com.example.eventify.Service(1L, "Samsung S23 Ultra White", "Description 1", R.drawable.s23));
-        products.add(new com.example.eventify.Service(2L, "Samsung S23 Ultra Gray", "Description 2", R.drawable.s23));
-        products.add(new com.example.eventify.Service(3L, "Samsung S23 Ultra White", "Description 1", R.drawable.s23));
-        products.add(new com.example.eventify.Service(4L, "Samsung S23 Ultra Gray", "Description 2", R.drawable.s23));
-        products.add(new com.example.eventify.Service(5L, "Samsung S23 Ultra White", "Description 1", R.drawable.s23));
-        products.add(new com.example.eventify.Service(6L, "Samsung S23 Ultra Gray", "Description 2", R.drawable.s23));
-        products.add(new com.example.eventify.Service(7L, "Samsung S23 Ultra White", "Description 1", R.drawable.s23));
-        products.add(new com.example.eventify.Service(8L, "Samsung S23 Ultra Gray", "Description 2", R.drawable.s23));
+        products.add(new Service(1L, "Samsung S23 Ultra White", "Description 1", R.drawable.s23));
+        products.add(new Service(2L, "Samsung S23 Ultra Gray", "Description 2", R.drawable.s23));
+        products.add(new Service(3L, "Samsung S23 Ultra White", "Description 1", R.drawable.s23));
+        products.add(new Service(4L, "Samsung S23 Ultra Gray", "Description 2", R.drawable.s23));
+        products.add(new Service(5L, "Samsung S23 Ultra White", "Description 1", R.drawable.s23));
+        products.add(new Service(6L, "Samsung S23 Ultra Gray", "Description 2", R.drawable.s23));
+        products.add(new Service(7L, "Samsung S23 Ultra White", "Description 1", R.drawable.s23));
+        products.add(new Service(8L, "Samsung S23 Ultra Gray", "Description 2", R.drawable.s23));
     }
 
 

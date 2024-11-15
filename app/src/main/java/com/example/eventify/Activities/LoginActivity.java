@@ -1,24 +1,18 @@
-package com.example.eventify;
-
-import android.annotation.SuppressLint;
+package com.example.eventify.Activities;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
-import android.os.Build;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowInsets;
 import android.widget.Toast;
 
+import com.example.eventify.Fragments.RegisterFragment;
+import com.example.eventify.R;
 import com.example.eventify.databinding.ActivityLoginBinding;
 
 import java.util.List;
@@ -32,6 +26,10 @@ public class LoginActivity extends AppCompatActivity {
     private ActivityLoginBinding binding;
     List<View> componentsToHide;
 
+    private View fragmentContainer;
+
+    private Color primaryColor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +42,8 @@ public class LoginActivity extends AppCompatActivity {
         binding.continueAsGuestTextView.setOnClickListener(v -> continueAsGuest());
         binding.loginButton.setOnClickListener(v -> openLoginFragment());
         binding.registerButton.setOnClickListener(v -> openRegisterFragment());
+
+        fragmentContainer = binding.fragmentContainer;
 
         componentsToHide = List.of(
                 binding.titleTextView,
@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
                         view.setVisibility(View.VISIBLE);
                     }
 
-                    findViewById(R.id.fragment_container).setVisibility(View.GONE);
+                    fragmentContainer.setVisibility(View.GONE);
                 } else {
                     // If no fragment in the back stack, just perform normal back press
                     getOnBackPressedDispatcher().onBackPressed();
@@ -101,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
 
         RegisterFragment registerFragment = new RegisterFragment();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container,registerFragment);
+        transaction.replace(fragmentContainer.getId(),registerFragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
