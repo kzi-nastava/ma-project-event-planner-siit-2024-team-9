@@ -7,16 +7,16 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Spinner;
 
-import com.example.eventify.databinding.ActivityServicesBinding;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link ServicesFormFragment#newInstance} factory method to
+ * Use the {@link SolutionFormFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ServicesFormFragment extends Fragment {
+public class SolutionFormFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -27,7 +27,7 @@ public class ServicesFormFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public ServicesFormFragment() {
+    public SolutionFormFragment() {
         // Required empty public constructor
     }
 
@@ -40,8 +40,8 @@ public class ServicesFormFragment extends Fragment {
      * @return A new instance of fragment ServicesFormFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ServicesFormFragment newInstance(String param1, String param2) {
-        ServicesFormFragment fragment = new ServicesFormFragment();
+    public static SolutionFormFragment newInstance(String param1, String param2) {
+        SolutionFormFragment fragment = new SolutionFormFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -60,10 +60,34 @@ public class ServicesFormFragment extends Fragment {
 
     }
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_services_form, container, false);
+        View view = inflater.inflate(R.layout.fragment_solution_form, container, false);
+
+        ArrayList<String> categories = new ArrayList<>();
+        categories.add("Service category 1");
+        categories.add("Service category 2");
+        categories.add("Service category 3");
+        categories.add("Service category 4");
+
+        Spinner categorySpinner = ComponentsSetup.spinnerSetup(view, R.id.categorySpinner ,categories, getContext());
+
+        ArrayList<String> types = new ArrayList<>();
+        types.add("Service type 1");
+        types.add("Service type 2");
+        types.add("Service type 3");
+        types.add("Service type 4");
+
+        Spinner typeSpinner = ComponentsSetup.spinnerSetup(view, R.id.typeSpinner , types, getContext());
+
+
+
+
+
+        return view;
     }
 }

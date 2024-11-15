@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         binding.serviceButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ServicesActivity.class);
+            Intent intent = new Intent(MainActivity.this, SolutionsActivity.class);
             startActivity(intent);
 
 
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
         binding.addService.setOnClickListener(v -> {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(binding.frame.getId(), ServicesFormFragment.newInstance("gas","gas"));
+            transaction.replace(binding.frame.getId(), SolutionFormFragment.newInstance("gas","gas"));
             transaction.addToBackStack(null);
             transaction.commit();
         });
