@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setDiscoverFragment(){
-        Toast.makeText(this, "Discover", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Discover", Toast.LENGTH_SHORT).show();
     }
 
     private void setServicesFragment(){

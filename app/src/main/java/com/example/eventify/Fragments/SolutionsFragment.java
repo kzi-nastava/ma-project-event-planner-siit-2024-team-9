@@ -70,9 +70,8 @@ public class SolutionsFragment extends Fragment {
 
     private void addBtnHandler() {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.replace(servicesBinding.frameSolutions.getId(), SolutionFormFragment.newInstance("gas","gas"));
+        transaction.replace(servicesBinding.fragmentContent.getId(), SolutionFormFragment.newInstance("gas","gas"));
         transaction.addToBackStack(null);
-        filterOn = true;
         transaction.commit();
     }
 

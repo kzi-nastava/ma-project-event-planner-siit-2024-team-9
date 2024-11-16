@@ -16,6 +16,7 @@
         tools:context=".YourActivity">
 
         <TextView
+            android:id="@+id/formHeading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="20dp"
@@ -115,17 +116,70 @@
         </LinearLayout>
 
 
-        <!-- Images Selection -->
-        <Button
-            android:id="@+id/btnSelectedImages"
+        <LinearLayout
+            android:id="@+id/profileImageLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Select Images"
-            android:layout_marginHorizontal="60dp"
-            android:backgroundTint="@color/black"
-            android:textColor="@android:color/white"
+            android:gravity="center_vertical"
             android:layout_marginBottom="20dp"
-            style="@style/Widget.Material3.Button" />
+            android:orientation="horizontal"
+            >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginEnd="25dp"
+                android:layout_height="wrap_content">
+
+                <ImageButton
+                    android:id="@+id/serviceImage"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:src="@drawable/add"
+                    android:background="@drawable/photos_holder"
+                    android:contentDescription="@string/profile_picture"
+                    android:scaleType="centerInside"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:orientation="vertical">
+
+                <!-- Visibility Switch -->
+                <Switch
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Visibility"
+                    android:layout_marginBottom="20dp"
+                    android:checked="true"
+                    android:textColor="@android:color/black"
+                    android:thumbTint="@color/black"
+                    android:trackTint="@color/black"
+                    tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+                <!-- Availability Switch -->
+                <Switch
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:thumbTint="@color/black"
+                    android:trackTint="@color/black"
+                    android:text="Availability"
+                    android:layout_marginBottom="20dp"
+                    android:checked="true"
+                    android:textColor="@android:color/black"
+                    tools:ignore="UseSwitchCompatOrMaterialXml"
+                    />
+
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
 
 
         <!-- Duration and Reservation Deadline (Side-by-Side Sliders) -->
@@ -244,7 +298,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="40dp"
             android:orientation="vertical">
 
             <TextView
@@ -266,40 +320,6 @@
                 app:trackColor="@color/medium_gray"
                 app:thumbColor="@color/red"
                 app:tickColor="@color/black" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="40dp"
-            android:orientation="horizontal">
-
-            <!-- Visibility Switch -->
-            <Switch
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Visibility"
-                android:checked="true"
-                android:textColor="@android:color/black"
-                android:thumbTint="@color/black"
-                android:trackTint="@color/black"
-                android:layout_marginEnd="30dp"
-                tools:ignore="UseSwitchCompatOrMaterialXml" />
-
-            <!-- Availability Switch -->
-            <Switch
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:thumbTint="@color/black"
-                android:trackTint="@color/black"
-                android:text="Availability"
-                android:checked="true"
-                android:textColor="@android:color/black"
-                tools:ignore="UseSwitchCompatOrMaterialXml"
-                />
-
-
-
         </LinearLayout>
 
         <LinearLayout
