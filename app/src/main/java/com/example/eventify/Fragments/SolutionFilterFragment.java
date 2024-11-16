@@ -71,7 +71,7 @@ public class SolutionFilterFragment extends Fragment {
         categories.add("Service category 1");
         categories.add("Service category 2");
         categories.add("Service category 3");
-        categories.add("Service category 4");
+        categories.add("Other");
 
         Spinner categorySpinner = ComponentsSetup.spinnerSetup(view, R.id.categorySpinner ,categories, getContext());
 

@@ -41,9 +41,21 @@
             android:id="@+id/categorySpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="25dp"
             android:layout_marginStart="5dp"
             android:backgroundTint="@android:color/white" />
+
+        <EditText
+            android:id="@+id/newCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="New category"
+            android:textColorHint="@color/black"
+            android:selectAllOnFocus="true"
+            android:textColor="@android:color/black"
+            android:backgroundTint="@android:color/black"
+            android:layout_marginBottom="20dp"
+            android:visibility="gone" />  <!-- Hidden initially -->
 
         <!-- Event Types (DropDown) -->
         <Spinner
@@ -193,7 +205,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Duration"
+                android:text="Duration (15-240 min)"
                 android:layout_marginBottom="10dp"
                 android:textColor="@android:color/black"/>
 
@@ -201,10 +213,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:stepSize="1"
-                android:value="0"
-                android:valueFrom="0"
-                android:valueTo="20"
+                android:stepSize="15"
+                android:value="15"
+                android:valueFrom="15"
+                android:valueTo="240"
                 app:trackColor="@color/medium_gray"
                 app:thumbColor="@color/red"
                 app:tickColor="@color/black" />
@@ -220,7 +232,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Min Engagement"
+                android:text="Minimum engagement (60-300 min)"
                 android:layout_marginBottom="10dp"
                 android:textColor="@android:color/black"
                 style="@style/TextAppearance.Material3.BodyMedium" />
@@ -229,10 +241,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:valueFrom="0"
-                android:valueTo="20"
-                android:stepSize="1"
-                android:value="0"
+                android:valueFrom="60"
+                android:valueTo="300"
+                android:stepSize="15"
+                android:value="60"
                 app:trackColor="@color/medium_gray"
                 app:thumbColor="@color/red"
                 app:tickColor="@color/black" />
@@ -248,7 +260,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Max Engagement"
+                android:text="Maximum engagement (60-300 min)"
                 android:layout_marginBottom="10dp"
                 android:textColor="@android:color/black"
                 style="@style/TextAppearance.Material3.BodyMedium" />
@@ -257,10 +269,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:valueFrom="0"
-                android:valueTo="20"
-                android:stepSize="1"
-                android:value="0"
+                android:valueFrom="60"
+                android:valueTo="300"
+                android:stepSize="15"
+                android:value="60"
                 app:trackColor="@color/medium_gray"
                 app:thumbColor="@color/red"
                 app:tickColor="@color/black" />
@@ -276,7 +288,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Reservation Deadline"
+                android:text="Booking deadline (days)"
                 android:layout_marginBottom="10dp"
                 android:textColor="@android:color/black"
                 style="@style/TextAppearance.Material3.BodyMedium" />
@@ -298,13 +310,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="40dp"
+            android:layout_marginBottom="20dp"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cancellation"
+                android:text="Cancellation deadline (days)"
                 android:layout_marginBottom="10dp"
                 android:textColor="@android:color/black"
                 style="@style/TextAppearance.Material3.BodyMedium" />
@@ -321,6 +333,45 @@
                 app:thumbColor="@color/red"
                 app:tickColor="@color/black" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/radioButtonLabelTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:textColor="@android:color/black"
+            style="@style/TextAppearance.Material3.BodyMedium"
+            android:text="Booking confirmation" />
+
+        <android.widget.RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40dp"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/radioButtonLabelTextView">
+
+            <android.widget.RadioButton
+                android:id="@+id/automatic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:textColor="@color/black"
+                android:buttonTint="@color/black"
+                android:outlineSpotShadowColor="@color/black"
+                android:text="Automatic" />
+
+            <android.widget.RadioButton
+                android:id="@+id/manual"
+                android:buttonTint="@color/black"
+                android:textColor="@color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="Manuaal" />
+        </android.widget.RadioGroup>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -341,7 +392,7 @@
 
             <!-- Cancel Button -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnCancel"
+                android:id="@+id/deleteBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Delete"
