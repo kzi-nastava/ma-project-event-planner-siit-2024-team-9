@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/discover"
-        android:icon="@drawable/location_pin"
+        android:icon="@drawable/explore"
         android:title="@string/home"
         app:labelVisibilityMode="labeled"
         />
@@ -11,6 +11,13 @@
         android:id="@+id/chats"
         android:icon="@drawable/baseline_chat_24"
         android:title="@string/chats"
+        app:labelVisibilityMode="labeled"
+        />
+
+    <item
+        android:id="@+id/services"
+        android:icon="@drawable/add"
+        android:title="@string/services"
         app:labelVisibilityMode="labeled"
         />
 
@@ -28,11 +35,6 @@
         app:labelVisibilityMode="labeled"
         />
 
-    <item
-        android:id="@+id/services"
-        android:icon="@drawable/baseline_service_24"
-        android:title="@string/services"
-        app:labelVisibilityMode="labeled"
-        />
+
 
 </menu>

@@ -29,6 +29,8 @@
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:paddingHorizontal="7dp"
+        android:paddingVertical="5dp"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/bottom_nav_menu_business_owner"
         app:itemRippleColor="@color/light_gray"
@@ -40,14 +42,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         tools:ignore="MissingConstraints">
-
-        <Button
-            android:id="@+id/service_button"
-            android:layout_width="match_parent"
-            android:layout_marginTop="80dp"
-            android:layout_marginHorizontal="80dp"
-            android:text="@string/services"
-            android:layout_height="wrap_content" />
 
 
     </LinearLayout>

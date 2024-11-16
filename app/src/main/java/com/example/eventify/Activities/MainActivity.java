@@ -36,16 +36,15 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.serviceButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, SolutionsActivity.class);
-            startActivity(intent);
-
-        });
-
-
 
         navigationActions.put(R.id.discover, this::setDiscoverFragment);
-        navigationActions.put(R.id.services, this::setServicesFragment);
+        navigationActions.put(R.id.services, new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(MainActivity.this, SolutionsActivity.class);
+                startActivity(intent); // Launch the SolutionsActivity
+            }
+        });
         navigationActions.put(R.id.events, this::setEventsFragment);
         navigationActions.put(R.id.calendar, this::setCalendarFragment);
         navigationActions.put(R.id.profile, this::setProfileFragment);
