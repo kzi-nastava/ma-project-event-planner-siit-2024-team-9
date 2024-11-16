@@ -79,9 +79,13 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
             holder.detailsBtn.setOnClickListener(v -> {
                 // Use the FragmentManager to perform the transaction
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.replace(R.id.fragment_content, SolutionFormFragment.newInstance("gas", "gas"));
+                SolutionFormFragment fragment = SolutionFormFragment.newInstance("gas", "gas");
+                transaction.replace(R.id.fragment_content, fragment);
+
                 transaction.addToBackStack(null);
                 transaction.commit();
+                fragmentManager.executePendingTransactions();
+                fragment.setEdit();
             });
 
             holder.itemView.setOnClickListener(v -> {

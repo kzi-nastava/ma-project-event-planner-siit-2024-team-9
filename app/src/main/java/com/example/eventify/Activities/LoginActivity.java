@@ -79,6 +79,7 @@ public class LoginActivity extends AppCompatActivity {
     private void continueAsGuest(){
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(intent);
+        //finish();
     }
 
     private void openLoginFragment(){
