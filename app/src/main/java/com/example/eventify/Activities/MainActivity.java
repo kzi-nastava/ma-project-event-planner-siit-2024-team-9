@@ -3,8 +3,10 @@ package com.example.eventify.Activities;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -12,6 +14,7 @@ import android.view.MenuItem;
 
 
 import com.example.eventify.Fragments.SolutionListFragment;
+import com.example.eventify.Fragments.SolutionsFragment;
 import com.example.eventify.R;
 import com.example.eventify.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -38,13 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         navigationActions.put(R.id.discover, this::setDiscoverFragment);
-        navigationActions.put(R.id.services, new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(MainActivity.this, SolutionsActivity.class);
-                startActivity(intent); // Launch the SolutionsActivity
-            }
-        });
+        navigationActions.put(R.id.services, this::setServicesFragment);
         navigationActions.put(R.id.events, this::setEventsFragment);
         navigationActions.put(R.id.calendar, this::setCalendarFragment);
         navigationActions.put(R.id.profile, this::setProfileFragment);
@@ -67,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
 
         bottomNavigationView.setOnItemSelectedListener(this::navigationLogic);
         bottomNavigationView.setSelectedItemId(R.id.discover);
+
+
     }
 
     private boolean navigationLogic(MenuItem item){
@@ -85,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setServicesFragment(){
-        loadFragment(new SolutionListFragment());
+        loadFragment(new SolutionsFragment());
     }
 
     private void setProfileFragment(){
