@@ -29,34 +29,21 @@
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:paddingHorizontal="7dp"
+        android:paddingVertical="5dp"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/bottom_nav_menu_business_owner"
         app:itemRippleColor="@color/light_gray"
         style="@style/CustomBottomNavBarStyle"
         />
 
-    <!--
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:ignore="MissingConstraints">
 
-        <Button
-            android:id="@+id/service_button"
-            android:layout_width="match_parent"
-            android:layout_marginTop="80dp"
-            android:layout_marginHorizontal="80dp"
-            android:text="@string/services"
-            android:layout_height="wrap_content" />
 
-        <Button
-            android:id="@+id/add_service"
-            android:layout_width="match_parent"
-            android:layout_marginTop="40dp"
-            android:layout_marginHorizontal="80dp"
-            android:text="New service"
-            android:layout_height="wrap_content" />
     </LinearLayout>
-    -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

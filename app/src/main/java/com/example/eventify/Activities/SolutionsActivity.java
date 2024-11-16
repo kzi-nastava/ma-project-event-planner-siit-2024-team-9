@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
 
+import com.example.eventify.Fragments.SolutionFormFragment;
 import com.example.eventify.Model.Service;
 import com.example.eventify.R;
 import com.example.eventify.Fragments.SolutionFilterFragment;
@@ -46,6 +47,17 @@ public class SolutionsActivity extends AppCompatActivity {
             }
 
         });
+
+        servicesBinding.addBtn.setOnClickListener(v -> {
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(servicesBinding.fragmentContent.getId(), SolutionFormFragment.newInstance("gas","gas"));
+                transaction.addToBackStack(null);
+                filterOn = true;
+                transaction.commit();
+
+        });
+
+
 
         prepareProductList(products);
         loadServicesListFragment();

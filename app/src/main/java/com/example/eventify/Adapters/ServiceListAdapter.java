@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.eventify.Fragments.SolutionDetailsFragment;
 import com.example.eventify.R;
 import com.example.eventify.Model.Service;
 import com.example.eventify.Fragments.SolutionFormFragment;
@@ -79,6 +80,14 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
                 // Use the FragmentManager to perform the transaction
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.replace(R.id.fragment_content, SolutionFormFragment.newInstance("gas", "gas"));
+                transaction.addToBackStack(null);
+                transaction.commit();
+            });
+
+            holder.itemView.setOnClickListener(v -> {
+                // Use the FragmentManager to perform the transaction
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.replace(R.id.fragment_content, SolutionDetailsFragment.newInstance("gas", "gas"));
                 transaction.addToBackStack(null);
                 transaction.commit();
             });
