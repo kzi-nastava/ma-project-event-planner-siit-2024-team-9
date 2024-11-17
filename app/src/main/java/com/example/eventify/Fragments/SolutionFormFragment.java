@@ -23,6 +23,8 @@ import android.widget.TextView;
 import com.example.eventify.Helpers.ComponentsSetup;
 import com.example.eventify.R;
 import com.example.eventify.databinding.FragmentSolutionFormBinding;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
 
@@ -116,14 +118,27 @@ public class SolutionFormFragment extends Fragment {
 
         Spinner categorySpinner = ComponentsSetup.spinnerOtherSetup(view, R.id.categorySpinner, categories, getContext(), newCategory);
 
-        // Setup service types for Spinner
-        ArrayList<String> types = new ArrayList<>();
-        types.add("Service type 1");
-        types.add("Service type 2");
-        types.add("Service type 3");
-        types.add("Service type 4");
+        ChipGroup chipGroup = view.findViewById(R.id.eventTypes);
 
-        Spinner typeSpinner = ComponentsSetup.spinnerSetup(view, R.id.typeSpinner, types, getContext());
+        String[] options = {"Event type 1", "Event type 2", "Event type 3", "Event type 4", "Event type 5"};
+
+        for (String option : options) {
+            Chip chip = new Chip(getContext());
+            chip.setText(option);
+            chip.setCheckable(true);
+            chip.setChecked(false);
+
+            chip.setCheckedIconResource(R.drawable.check);  // Use your check icon
+            chip.setCheckedIconVisible(true);  // Make the check icon visible when checked
+
+            // Optionally, remove the default close icon if it appears
+            chip.setCloseIconVisible(false);
+
+            chip.setChipBackgroundColorResource(R.color.white);  // Optional styling
+            chip.setTextColor(getResources().getColorStateList(R.color.black)); // Optional text color
+
+            chipGroup.addView(chip);
+        }
 
         // Set click listener for service image
         view.findViewById(R.id.serviceImage).setOnClickListener(v -> openImagePicker());
