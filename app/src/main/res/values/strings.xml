@@ -22,7 +22,7 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="login_title_text">Welcome back! Glad to see you, Again!</string>
-    <string name="forgot_password_login">Forogt password?</string>
+    <string name="forgot_password_login">Forgot password?</string>
     <string name="register_fragment_title">Hello! Register to get started</string>
     <string name="register_radio_button_lable">What’s your role?</string>
     <string name="event_organizer_radio_button_text">Event organizer</string>
@@ -42,4 +42,9 @@
     <string name="calendar">Calendar</string>
     <string name="profile">Profile</string>
     <string name="events">Events</string>
+    <string name="search_placeholder">Search events, products or services</string>
+    <string name="welcome_message">Welcome, User!</string>
+    <string name="top_5_events_heading">Top 5 Open Events in Novi Sad</string>
+    <string name="all_open_events_heading">All Open Events in Novi Sad</string>
+
 </resources>
