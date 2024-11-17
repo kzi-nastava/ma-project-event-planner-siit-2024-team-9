@@ -76,10 +76,10 @@ public class SolutionFilterFragment extends Fragment {
         Spinner categorySpinner = ComponentsSetup.spinnerSetup(view, R.id.categorySpinner ,categories, getContext());
 
         ArrayList<String> types = new ArrayList<>();
-        types.add("Service type 1");
-        types.add("Service type 2");
-        types.add("Service type 3");
-        types.add("Service type 4");
+        types.add("Event type 1");
+        types.add("Event type 2");
+        types.add("Event type 3");
+        types.add("Event type 4");
 
         Spinner typeSpinner = ComponentsSetup.spinnerSetup(view, R.id.typeSpinner , types, getContext());
 

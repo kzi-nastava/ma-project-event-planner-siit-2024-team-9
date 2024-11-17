@@ -52,6 +52,7 @@
             android:backgroundTint="@android:color/black"
             android:layout_marginBottom="20dp" />
 
+
         <!-- Availability Switch -->
         <Switch
             android:layout_width="wrap_content"

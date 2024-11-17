@@ -81,7 +81,6 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 SolutionFormFragment fragment = SolutionFormFragment.newInstance("gas", "gas");
                 transaction.replace(R.id.fragment_content, fragment);
-
                 transaction.addToBackStack(null);
                 transaction.commit();
                 fragmentManager.executePendingTransactions();

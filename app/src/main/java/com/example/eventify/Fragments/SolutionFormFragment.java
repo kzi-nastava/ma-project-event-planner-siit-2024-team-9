@@ -1,6 +1,9 @@
 package com.example.eventify.Fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -19,6 +23,8 @@ import android.widget.TextView;
 import com.example.eventify.Helpers.ComponentsSetup;
 import com.example.eventify.R;
 import com.example.eventify.databinding.FragmentSolutionFormBinding;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
 
@@ -39,7 +45,7 @@ public class SolutionFormFragment extends Fragment {
     private String mParam2;
     private ActivityResultLauncher<Intent> imagePickerLauncher;
 
-    private FragmentSolutionFormBinding formBinding;
+    private FragmentSolutionFormBinding binding;
 
     public SolutionFormFragment() {
         // Required empty public constructor
@@ -75,14 +81,15 @@ public class SolutionFormFragment extends Fragment {
     }
 
     public void setEdit () {
-        setFormHeading("Edit details");
+        setFormHeading();
         disableCategories();
     }
-    private void setFormHeading(String text) {
+
+    private void setFormHeading() {
         // Make sure the view is ready before accessing it
         if (getView() != null) {
             TextView heading = getView().findViewById(R.id.formHeading);
-            heading.setText(text);
+            heading.setText("Edit details");
         }
     }
 
@@ -105,18 +112,33 @@ public class SolutionFormFragment extends Fragment {
         categories.add("Service category 1");
         categories.add("Service category 2");
         categories.add("Service category 3");
-        categories.add("Service category 4");
+        categories.add("Other");
 
-        Spinner categorySpinner = ComponentsSetup.spinnerSetup(view, R.id.categorySpinner, categories, getContext());
+        TextView newCategory = view.findViewById(R.id.newCategory);
 
-        // Setup service types for Spinner
-        ArrayList<String> types = new ArrayList<>();
-        types.add("Service type 1");
-        types.add("Service type 2");
-        types.add("Service type 3");
-        types.add("Service type 4");
+        Spinner categorySpinner = ComponentsSetup.spinnerOtherSetup(view, R.id.categorySpinner, categories, getContext(), newCategory);
 
-        Spinner typeSpinner = ComponentsSetup.spinnerSetup(view, R.id.typeSpinner, types, getContext());
+        ChipGroup chipGroup = view.findViewById(R.id.eventTypes);
+
+        String[] options = {"Event type 1", "Event type 2", "Event type 3", "Event type 4", "Event type 5"};
+
+        for (String option : options) {
+            Chip chip = new Chip(getContext());
+            chip.setText(option);
+            chip.setCheckable(true);
+            chip.setChecked(false);
+
+            chip.setCheckedIconResource(R.drawable.check);  // Use your check icon
+            chip.setCheckedIconVisible(true);  // Make the check icon visible when checked
+
+            // Optionally, remove the default close icon if it appears
+            chip.setCloseIconVisible(false);
+
+            chip.setChipBackgroundColorResource(R.color.white);  // Optional styling
+            chip.setTextColor(getResources().getColorStateList(R.color.black)); // Optional text color
+
+            chipGroup.addView(chip);
+        }
 
         // Set click listener for service image
         view.findViewById(R.id.serviceImage).setOnClickListener(v -> openImagePicker());
@@ -135,16 +157,30 @@ public class SolutionFormFragment extends Fragment {
                                 ImageView serviceImage = view.findViewById(R.id.serviceImage);
                                 serviceImage.setImageURI(selectedImageUri); // Update image with selected URI
                                 // Optionally store the selected image URIs in a list
-                                }
-                            } else if (data.getData() != null) {
-                                // Single image selection (fallback case)
-                                Uri selectedImageUri = data.getData();
-                                ImageView serviceImage = view.findViewById(R.id.serviceImage);
-                                serviceImage.setImageURI(selectedImageUri); // Display the selected image
                             }
+                        } else if (data.getData() != null) {
+                            // Single image selection (fallback case)
+                            Uri selectedImageUri = data.getData();
+                            ImageView serviceImage = view.findViewById(R.id.serviceImage);
+                            serviceImage.setImageURI(selectedImageUri); // Display the selected image
+                        }
                     }
                 }
         );
+
+        Button deleteBtn = view.findViewById(R.id.deleteBtn);
+        deleteBtn.setOnClickListener(v -> {
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Delete Service")
+                    .setMessage("Are you sure you want to delete this service?")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        // Deletion logic here
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
+        });
+
 
         return view;
     }
