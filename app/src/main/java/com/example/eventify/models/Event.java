@@ -1,8 +1,7 @@
-package com.example.eventify.Model;
+package com.example.eventify.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
 
 import com.example.eventify.Enums.PrivacyType;
 

@@ -1,4 +1,4 @@
-package com.example.eventify.Model;
+package com.example.eventify.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -18,7 +18,7 @@ public class SolutionCategory implements Parcelable {
 
     public SolutionCategory() {}
 
-    protected SolutionCategory(Parcel in) {
+    public SolutionCategory(Parcel in) {
         name = in.readString();
         description = in.readString();
         status = Status.valueOf(in.readString());

@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 
 import com.example.eventify.Adapters.EventListAdapter;
 import com.example.eventify.Adapters.SolutionListAdapter;
-import com.example.eventify.Model.Event;
-import com.example.eventify.Model.Solution;
+import com.example.eventify.models.Event;
+import com.example.eventify.models.Solution;
 import com.example.eventify.R;
 
 import java.util.ArrayList;
@@ -63,8 +63,12 @@ public class ExploreFragment extends Fragment {
 
     private List<Solution> generateDummySolutions() {
         List<Solution> solutions = new ArrayList<>();
-        solutions.add(new Solution("1", null, "Solution 1", "Description", 100.0, 10.0, null, true, true, null));
-        solutions.add(new Solution("2", null, "Solution 2", "Description", 200.0, 15.0, null, true, true, null));
+        /*
+        ArrayList<EventType> types = new ArrayList<>();
+        EventType type = new EventType("type", "event", true);
+        types.add(type);
+        solutions.add(new Solution(UUID.randomUUID(), null, "Solution 1", "Description", 100.0, 10.0, null, true, true, null, types));
+        solutions.add(new Solution(UUID.randomUUID(), null, "Solution 2", "Description", 200.0, 15.0, null, true, true, null, types));*/
         return solutions;
     }
 }

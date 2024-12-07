@@ -1,146 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white">
+    xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="service"
+            type="com.example.eventify.models.Service" />
+    </data>
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp"
-        tools:context=".YourActivity">
-
-        <TextView
-            android:id="@+id/formHeading"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="20dp"
-            android:text="New service"
-            android:theme="@style/header_text" />
-
-
-        <!-- Name -->
-        <EditText
-            android:id="@+id/nameEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Name"
-            android:textColorHint="@color/black"
-            android:selectAllOnFocus="true"
-            android:textColor="@android:color/black"
-            android:backgroundTint="@android:color/black"
-            android:layout_marginBottom="20dp" />
-
-        <!-- Category (DropDown) -->
-        <Spinner
-            android:id="@+id/categorySpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="25dp"
-            android:layout_marginStart="5dp"
-            android:backgroundTint="@android:color/white" />
-
-        <EditText
-            android:id="@+id/newCategory"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="New category"
-            android:textColorHint="@color/black"
-            android:selectAllOnFocus="true"
-            android:textColor="@android:color/black"
-            android:backgroundTint="@android:color/black"
-            android:layout_marginBottom="20dp"
-            android:visibility="gone" />  <!-- Hidden initially -->
-
-        <!-- Event Types (DropDown) -->
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/eventTypes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:singleSelection="false"
-            app:chipSpacing="10dp" />
-
-
-        <!-- Description -->
-        <EditText
-            android:id="@+id/descriptionEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Description"
-            android:textColorHint="@color/black"
-            android:inputType="textMultiLine"
-            android:minLines="1"
-            android:textColor="@android:color/black"
-            android:backgroundTint="@android:color/black"
-            android:layout_marginBottom="20dp" />
-
-        <!-- Specifities -->
-        <EditText
-            android:id="@+id/specifitiesEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColorHint="@color/black"
-            android:hint="Specificities"
-            android:inputType="textMultiLine"
-            android:minLines="1"
-            android:textColor="@android:color/black"
-            android:backgroundTint="@android:color/black"
-            android:layout_marginBottom="20dp" />
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:orientation="horizontal"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp"
+            tools:context=".YourActivity">
 
-            <!-- Price -->
-            <EditText
-                android:id="@+id/priceEditText"
-                android:layout_weight="1"
+            <!-- Heading -->
+            <TextView
+                android:id="@+id/formHeading"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Price"
+                android:layout_marginVertical="20dp"
+                android:text="New service"
+                android:theme="@style/header_text" />
+
+            <!-- Name -->
+            <EditText
+                android:id="@+id/nameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@={service.name}"
                 android:textColorHint="@color/black"
-                android:inputType="numberDecimal"
+                android:selectAllOnFocus="true"
                 android:textColor="@android:color/black"
                 android:backgroundTint="@android:color/black"
                 android:layout_marginBottom="20dp" />
 
-            <!-- Discount -->
-            <EditText
-                android:layout_weight="1"
-                android:id="@+id/discountEditText"
+            <!-- Category (DropDown) -->
+            <Spinner
+                android:id="@+id/categorySpinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Discount"
+                android:layout_marginBottom="25dp"
+                android:layout_marginStart="5dp"
+                android:backgroundTint="@android:color/white" />
+
+            <!-- New Category EditText (Initially hidden) -->
+            <EditText
+                android:id="@+id/newCategory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="New category"
                 android:textColorHint="@color/black"
-                android:inputType="numberDecimal"
+                android:selectAllOnFocus="true"
+                android:textColor="@android:color/black"
+                android:backgroundTint="@android:color/black"
+                android:layout_marginBottom="20dp"
+                android:visibility="gone" />
+
+            <!-- Event Types (Chips) -->
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/eventTypes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:singleSelection="false"
+                app:chipSpacing="10dp" />
+
+            <!-- Description -->
+            <EditText
+                android:id="@+id/descriptionEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Description"
+                android:textColorHint="@color/black"
+                android:inputType="textMultiLine"
+                android:minLines="1"
                 android:textColor="@android:color/black"
                 android:backgroundTint="@android:color/black"
                 android:layout_marginBottom="20dp" />
 
+            <!-- Specificities -->
+            <EditText
+                android:id="@+id/specifitiesEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Specificities"
+                android:textColorHint="@color/black"
+                android:inputType="textMultiLine"
+                android:minLines="1"
+                android:textColor="@android:color/black"
+                android:backgroundTint="@android:color/black"
+                android:layout_marginBottom="20dp" />
 
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:id="@+id/profileImageLinearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="20dp"
-            android:orientation="horizontal"
-            >
-
+            <!-- Price and Discount -->
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginEnd="25dp"
-                android:layout_height="wrap_content">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/priceEditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Price"
+                    android:textColorHint="@color/black"
+                    android:inputType="numberDecimal"
+                    android:textColor="@android:color/black"
+                    android:backgroundTint="@android:color/black"
+                    android:layout_marginBottom="20dp" />
+
+                <EditText
+                    android:id="@+id/discountEditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Discount"
+                    android:textColorHint="@color/black"
+                    android:inputType="numberDecimal"
+                    android:textColor="@android:color/black"
+                    android:backgroundTint="@android:color/black"
+                    android:layout_marginBottom="20dp" />
+            </LinearLayout>
+
+            <!-- Profile Image Section -->
+            <LinearLayout
+                android:id="@+id/profileImageLinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:layout_marginBottom="20dp">
 
                 <ImageButton
                     android:id="@+id/serviceImage"
@@ -149,260 +145,197 @@
                     android:src="@drawable/add"
                     android:background="@drawable/photos_holder"
                     android:contentDescription="@string/profile_picture"
-                    android:scaleType="centerInside"
-                    />
+                    android:scaleType="centerInside" />
 
+                <!-- Switches for Visibility and Availability -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="20dp"
+                    android:orientation="vertical">
+
+                    <Switch
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Visibility"
+                        android:checked="true"
+                        android:textColor="@android:color/black"
+                        android:thumbTint="@color/black"
+                        android:trackTint="@color/black"
+                        android:layout_marginBottom="20dp" />
+
+                    <Switch
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Availability"
+                        android:checked="true"
+                        android:textColor="@android:color/black"
+                        android:thumbTint="@color/black"
+                        android:trackTint="@color/black"
+                        android:layout_marginBottom="20dp" />
+                </LinearLayout>
             </LinearLayout>
 
+            <!-- Duration and Sliders Section -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="20dp"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- Visibility Switch -->
-                <Switch
+                <!-- Duration Slider -->
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Visibility"
-                    android:layout_marginBottom="20dp"
-                    android:checked="true"
-                    android:textColor="@android:color/black"
-                    android:thumbTint="@color/black"
-                    android:trackTint="@color/black"
-                    tools:ignore="UseSwitchCompatOrMaterialXml" />
+                    android:text="Duration (15-240 min)"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="@android:color/black" />
 
-                <!-- Availability Switch -->
-                <Switch
-                    android:layout_width="wrap_content"
+                <com.google.android.material.slider.Slider
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:thumbTint="@color/black"
-                    android:trackTint="@color/black"
-                    android:text="Availability"
-                    android:layout_marginBottom="20dp"
-                    android:checked="true"
-                    android:textColor="@android:color/black"
-                    tools:ignore="UseSwitchCompatOrMaterialXml"
-                    />
-
-
-
+                    android:valueFrom="15"
+                    android:valueTo="240"
+                    android:stepSize="15"
+                    android:value="15"
+                    app:trackColor="@color/light_gray"
+                    app:thumbColor="@color/red"
+                    app:tickColor="@color/black" />
             </LinearLayout>
 
+            <!-- Min Engagement Slider -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Minimum engagement (60-300 min)"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="@android:color/black" />
 
+                <com.google.android.material.slider.Slider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:valueFrom="60"
+                    android:valueTo="300"
+                    android:stepSize="15"
+                    android:value="60"
+                    app:trackColor="@color/light_gray"
+                    app:thumbColor="@color/red"
+                    app:tickColor="@color/black" />
+            </LinearLayout>
 
-        <!-- Duration and Reservation Deadline (Side-by-Side Sliders) -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:orientation="vertical">
+            <!-- Max Engagement Slider -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-            <!-- Duration Slider -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Maximum engagement (60-300 min)"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="@android:color/black" />
+
+                <com.google.android.material.slider.Slider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:valueFrom="60"
+                    android:valueTo="300"
+                    android:stepSize="15"
+                    android:value="60"
+                    app:trackColor="@color/light_gray"
+                    app:thumbColor="@color/red"
+                    app:tickColor="@color/black" />
+            </LinearLayout>
+
+            <!-- Reservation Deadline and Cancellation Slider -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Booking deadline (days)"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="@android:color/black" />
+
+                <com.google.android.material.slider.Slider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:valueFrom="0"
+                    android:valueTo="20"
+                    android:stepSize="1"
+                    android:value="0"
+                    app:trackColor="@color/light_gray"
+                    app:thumbColor="@color/red"
+                    app:tickColor="@color/black" />
+            </LinearLayout>
+
+            <!-- Confirmation Options -->
             <TextView
+                android:id="@+id/radioButtonLabelTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Duration (15-240 min)"
                 android:layout_marginBottom="10dp"
-                android:textColor="@android:color/black"/>
+                android:text="Booking confirmation"
+                android:textColor="@android:color/black" />
 
-            <com.google.android.material.slider.Slider
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:stepSize="15"
-                android:value="15"
-                android:valueFrom="15"
-                android:valueTo="240"
-                app:trackColor="@color/light_gray"
-                app:thumbColor="@color/red"
-                app:tickColor="@color/black" />
-        </LinearLayout>
-
-        <!-- Min Engagement Slider -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:orientation="vertical">
-
-            <TextView
+            <android.widget.RadioGroup
+                android:id="@+id/radioGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Minimum engagement (60-300 min)"
-                android:layout_marginBottom="10dp"
-                android:textColor="@android:color/black"
-                style="@style/TextAppearance.Material3.BodyMedium" />
+                android:orientation="horizontal"
+                android:layout_marginBottom="40dp">
 
-            <com.google.android.material.slider.Slider
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:valueFrom="60"
-                android:valueTo="300"
-                android:stepSize="15"
-                android:value="60"
-                app:trackColor="@color/light_gray"
-                app:thumbColor="@color/red"
-                app:tickColor="@color/black" />
-        </LinearLayout>
+                <android.widget.RadioButton
+                    android:id="@+id/automatic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Automatic"
+                    android:textColor="@android:color/black" />
 
-        <!-- Max Engagement Slider -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:orientation="vertical">
+                <android.widget.RadioButton
+                    android:id="@+id/manual"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:text="Manual"
+                    android:textColor="@android:color/black" />
+            </android.widget.RadioGroup>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Maximum engagement (60-300 min)"
-                android:layout_marginBottom="10dp"
-                android:textColor="@android:color/black"
-                style="@style/TextAppearance.Material3.BodyMedium" />
-
-            <com.google.android.material.slider.Slider
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:valueFrom="60"
-                android:valueTo="300"
-                android:stepSize="15"
-                android:value="60"
-                app:trackColor="@color/light_gray"
-                app:thumbColor="@color/red"
-                app:tickColor="@color/black" />
-        </LinearLayout>
-
-        <!-- Reservation Deadline Slider -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Booking deadline (days)"
-                android:layout_marginBottom="10dp"
-                android:textColor="@android:color/black"
-                style="@style/TextAppearance.Material3.BodyMedium" />
-
-            <com.google.android.material.slider.Slider
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:valueFrom="0"
-                android:valueTo="20"
-                android:stepSize="1"
-                android:value="0"
-                app:trackColor="@color/light_gray"
-                app:thumbColor="@color/red"
-                app:tickColor="@color/black" />
-        </LinearLayout>
-
-        <!-- Cancellation Slider -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cancellation deadline (days)"
-                android:layout_marginBottom="10dp"
-                android:textColor="@android:color/black"
-                style="@style/TextAppearance.Material3.BodyMedium" />
-
-            <com.google.android.material.slider.Slider
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:valueFrom="0"
-                android:valueTo="20"
-                android:stepSize="1"
-                android:value="0"
-                app:trackColor="@color/light_gray"
-                app:thumbColor="@color/red"
-                app:tickColor="@color/black" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/radioButtonLabelTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:textColor="@android:color/black"
-            style="@style/TextAppearance.Material3.BodyMedium"
-            android:text="Booking confirmation" />
-
-        <android.widget.RadioGroup
-            android:id="@+id/radioGroup"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="40dp"
-            android:orientation="horizontal"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/radioButtonLabelTextView">
-
-            <android.widget.RadioButton
-                android:id="@+id/automatic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:textColor="@color/black"
-                android:buttonTint="@color/black"
-                android:outlineSpotShadowColor="@color/black"
-                android:text="Automatic" />
-
-            <android.widget.RadioButton
-                android:id="@+id/manual"
-                android:buttonTint="@color/black"
-                android:textColor="@color/black"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:text="Manual" />
-        </android.widget.RadioGroup>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:paddingHorizontal="60dp"
-            android:layout_height="wrap_content">
-
-            <!-- Submit Button -->
-            <Button
-                android:id="@+id/btnSubmit"
+            <!-- Submit and Delete Buttons -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Submit"
-                android:backgroundTint="@color/black"
-                android:textColor="@android:color/white"
-                android:layout_marginBottom="10dp"
-                style="@style/Widget.Material3.Button" />
+                android:orientation="vertical"
+                android:paddingHorizontal="60dp">
 
-            <!-- Cancel Button -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/deleteBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Delete"
-                android:backgroundTint="@color/white"
-                android:textColor="@color/red"
-                android:layout_marginBottom="20dp"
-                style="@style/Widget.Material3.Button.OutlinedButton" />
+                <Button
+                    android:id="@+id/btnSubmit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Submit"
+                    android:backgroundTint="@color/black"
+                    android:textColor="@android:color/white"
+                    android:layout_marginBottom="10dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/deleteBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Delete"
+                    android:backgroundTint="@color/white"
+                    android:textColor="@color/red"
+                    android:layout_marginBottom="20dp" />
+            </LinearLayout>
 
         </LinearLayout>
-
-
-
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
+</layout>

@@ -29,6 +29,7 @@ android {
     }
     buildFeatures {
         viewBinding true
+        dataBinding true
     }
 }
 
@@ -50,5 +51,6 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation "androidx.navigation:navigation-fragment-ktx:2.7.0"
     implementation "androidx.navigation:navigation-ui-ktx:2.7.0"
+    implementation "androidx.databinding:databinding-runtime:7.0.0"
 
 }
