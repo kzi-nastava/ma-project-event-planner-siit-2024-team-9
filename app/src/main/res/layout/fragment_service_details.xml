@@ -1,26 +1,234 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white">
-
-
-    <LinearLayout
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="service"
+            type="com.example.eventify.models.Service" />
+    </data>
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp"
-        tools:context=".YourActivity">
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="20dp"
-            android:text="Service details"
-            android:theme="@style/header_text" />
+            android:orientation="vertical">
 
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+
+            <!-- Product Details Section -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="25dp">
+
+                <!-- Product Image -->
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:src="@drawable/s23"
+                    android:scaleType="centerCrop"/>
+
+                <!-- Favorite Button -->
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/favorite"
+                    android:layout_margin="20dp"
+                    android:layout_gravity="end" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:paddingVertical="20dp"
+                android:paddingHorizontal="25dp"
+                android:background="@drawable/details"
+                android:layout_height="wrap_content">
+
+
+                <!-- Product Info -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@={service.name}"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:layout_marginVertical="10dp"
+                        android:hint="Samsung Galaxy S23 Ultra"
+                        android:textStyle="bold"
+                        android:textColorHint="@color/black"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:hint="1000$"
+                        android:textColorHint="@color/black"
+                        android:text='@{String.format("%.2f", service.price)+"$"}'
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:layout_marginTop="5dp" />
+
+
+                    <!-- Action Buttons -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:orientation="horizontal"
+                        android:layout_marginVertical="35dp">
+
+                        <FrameLayout
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/left_button"
+                            android:layout_width="0dp">
+
+                            <!-- Invisible Button behind the TextView -->
+                            <Button
+                                android:id="@+id/left"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:text="Chat with us"
+                                android:backgroundTint="@color/black"
+                                android:textColor="@color/white" />
+                        </FrameLayout>
+
+                        <FrameLayout
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/right_button"
+                            android:layout_width="0dp">
+
+                            <!-- Invisible Button behind the TextView -->
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/right"
+                                android:layout_width="120dp"
+                                android:layout_gravity="center"
+                                android:layout_height="match_parent"
+                                android:text="About us"
+                                android:backgroundTint="@color/white"
+                                android:textColor="@color/black" />
+                        </FrameLayout>
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <FrameLayout
+                    android:id="@+id/details"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                </FrameLayout>
+
+                <!-- Add Review Section -->
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@={service.name}"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="20dp"
+                    android:hint="Add review"
+                    android:textStyle="bold"
+                    android:textColorHint="@color/black"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/star1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/favorite">
+                    </ImageButton>
+
+                    <ImageButton
+                        android:id="@+id/star2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/favorite">
+                    </ImageButton>
+
+                    <ImageButton
+                        android:id="@+id/star3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/favorite">
+                    </ImageButton>
+
+                    <ImageButton
+                        android:id="@+id/star4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/favorite">
+                    </ImageButton>
+
+                    <ImageButton
+                        android:id="@+id/star5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/favorite">
+                    </ImageButton>
+
+
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/descriptionEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Leave a comment"
+                    android:textColorHint="@color/black"
+                    android:text="@={service.description}"
+                    android:inputType="textMultiLine"
+                    android:minLines="1"
+                    android:textColor="@android:color/black"
+                    android:backgroundTint="@android:color/black"
+                    android:layout_marginBottom="20dp" />
+
+                <!-- Submit and Delete Buttons -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="70dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/submitReview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Submit"
+                        android:backgroundTint="@color/black"
+                        android:textColor="@android:color/white"
+                        android:layout_marginBottom="20dp" />
+                </LinearLayout>
+
+
+
+            </LinearLayout>
+
+
+            </LinearLayout>
+
+    </ScrollView>
+
+</layout>

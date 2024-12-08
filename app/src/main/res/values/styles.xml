@@ -42,6 +42,14 @@
         <item name="tickColorInactive">@color/black</item>
     </style>
 
+    <style name="Button.White" parent="ThemeOverlay.AppCompat">
+        <item name="colorAccent">@android:color/white</item>
+    </style>
+
+    <style name="Button.Black" parent="ThemeOverlay.AppCompat">
+        <item name="colorAccent">@android:color/black</item>
+    </style>
+
 
 
 
