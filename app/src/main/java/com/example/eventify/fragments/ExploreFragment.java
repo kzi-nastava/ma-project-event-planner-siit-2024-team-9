@@ -1,4 +1,4 @@
-package com.example.eventify.Fragments;
+package com.example.eventify.fragments;
 
 import android.os.Bundle;
 
@@ -10,8 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.eventify.Adapters.EventListAdapter;
-import com.example.eventify.Adapters.SolutionListAdapter;
+import com.example.eventify.adapters.EventListAdapter;
+import com.example.eventify.adapters.SolutionListAdapter;
 import com.example.eventify.models.Event;
 import com.example.eventify.models.Solution;
 import com.example.eventify.R;

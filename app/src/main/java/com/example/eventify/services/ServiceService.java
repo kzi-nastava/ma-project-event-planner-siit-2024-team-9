@@ -1,7 +1,7 @@
 package com.example.eventify.services;
 
-import com.example.eventify.Enums.ReservationMethod;
-import com.example.eventify.Enums.Status;
+import com.example.eventify.models.enums.ReservationMethod;
+import com.example.eventify.models.enums.Status;
 import com.example.eventify.models.EventType;
 import com.example.eventify.models.Service;
 import com.example.eventify.models.SolutionCategory;

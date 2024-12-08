@@ -1,4 +1,4 @@
-package com.example.eventify.Activities;
+package com.example.eventify.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -28,7 +28,7 @@ public class SplashActivity extends AppCompatActivity {
         /*
          * Ovom opcijom je sakriven toolbar unutar ove aktivnosti
          * */
-        int SPLASH_TIME_OUT = 5000;
+        int SPLASH_TIME_OUT = 2000;
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {

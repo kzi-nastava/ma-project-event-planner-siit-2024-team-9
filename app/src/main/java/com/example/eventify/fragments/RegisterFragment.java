@@ -1,4 +1,4 @@
-package com.example.eventify.Fragments;
+package com.example.eventify.fragments;
 
 import android.app.Activity;
 import android.content.Intent;

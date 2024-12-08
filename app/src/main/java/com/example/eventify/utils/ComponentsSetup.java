@@ -1,4 +1,4 @@
-package com.example.eventify.Helpers;
+package com.example.eventify.utils;
 
 import android.content.Context;
 import android.view.View;

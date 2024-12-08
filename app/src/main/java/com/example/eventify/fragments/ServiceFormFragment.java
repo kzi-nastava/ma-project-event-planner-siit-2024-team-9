@@ -1,4 +1,4 @@
-package com.example.eventify.Fragments;
+package com.example.eventify.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -11,10 +11,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,34 +21,33 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.eventify.Helpers.ComponentsSetup;
+import com.example.eventify.databinding.FragmentServiceFormBinding;
+import com.example.eventify.utils.ComponentsSetup;
 import com.example.eventify.models.Service;
 import com.example.eventify.R;
-import com.example.eventify.databinding.FragmentSolutionFormBinding;
 import com.example.eventify.services.ServiceService;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
 
-public class SolutionFormFragment extends Fragment {
+public class ServiceFormFragment extends Fragment {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
     private ActivityResultLauncher<Intent> imagePickerLauncher;
-    private FragmentSolutionFormBinding binding;
+    private FragmentServiceFormBinding binding;
 
-    public SolutionFormFragment() {
+    public ServiceFormFragment() {
         // Required empty public constructor
     }
 
     ServiceService service = ServiceService.getInstance();
 
-    public static SolutionFormFragment newInstance(Service service) {
-        SolutionFormFragment fragment = new SolutionFormFragment();
+    public static ServiceFormFragment newInstance(Service service) {
+        ServiceFormFragment fragment = new ServiceFormFragment();
         Bundle args = new Bundle();
         args.putParcelable("service", service);
         fragment.setArguments(args);
@@ -85,7 +81,7 @@ public class SolutionFormFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentSolutionFormBinding.inflate(inflater, container, false);  // Use the generated binding class directly
+        binding = FragmentServiceFormBinding.inflate(inflater, container, false);  // Use the generated binding class directly
         View view = binding.getRoot();
 
         setupCategories(view);
@@ -167,8 +163,7 @@ public class SolutionFormFragment extends Fragment {
                     .setPositiveButton("Yes", (dialog, which) -> {
                         Service deleted = binding.getService();
                         service.delete(deleted.getId());
-                        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-                        fragmentManager.popBackStack();
+                        goBack();
                     })
                     .setNegativeButton("No", null)
                     .show();
@@ -184,10 +179,14 @@ public class SolutionFormFragment extends Fragment {
             if (!isUpdate) {
                 service.create(updated);
             }
-            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-            fragmentManager.popBackStack();
+            goBack();
         });
 
+    }
+
+    private void goBack() {
+        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+        fragmentManager.popBackStack();
     }
 
     public void hideKeyboard(EditText editText) {

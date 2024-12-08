@@ -1,4 +1,4 @@
-package com.example.eventify.Adapters;
+package com.example.eventify.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;

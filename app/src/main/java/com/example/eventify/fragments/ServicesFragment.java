@@ -1,4 +1,4 @@
-package com.example.eventify.Fragments;
+package com.example.eventify.fragments;
 
 import android.os.Bundle;
 
@@ -7,43 +7,35 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.example.eventify.Adapters.ServiceListAdapter;
-import com.example.eventify.Enums.ReservationMethod;
-import com.example.eventify.Enums.Status;
-import com.example.eventify.models.EventType;
+import com.example.eventify.adapters.ServiceListAdapter;
+import com.example.eventify.databinding.FragmentServicesBinding;
 import com.example.eventify.models.Service;
-import com.example.eventify.models.SolutionCategory;
 import com.example.eventify.databinding.FragmentCardBinding;
-import com.example.eventify.databinding.FragmentSolutionsBinding;
 import com.example.eventify.services.ServiceService;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
-public class SolutionsFragment extends Fragment {
+public class ServicesFragment extends Fragment {
 
     private static final String ARG_PARAM = "param";
 
     private ArrayList<Service> mProducts;
 
     public static ArrayList<Service> products = new ArrayList<>();
-    private FragmentSolutionsBinding servicesBinding;
+    private FragmentServicesBinding servicesBinding;
     private FragmentCardBinding cardBinding;
 
     private ServiceListAdapter adapter;
 
     private boolean filterOn = false;
 
-    public SolutionsFragment() {
+    public ServicesFragment() {
         // Required empty public constructor
     }
 
@@ -52,7 +44,7 @@ public class SolutionsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        servicesBinding = FragmentSolutionsBinding.inflate(inflater, container, false);
+        servicesBinding = FragmentServicesBinding.inflate(inflater, container, false);
 
         // Set up button click listeners
         servicesBinding.filterBtn.setOnClickListener(v -> filterBtnHandler());
@@ -77,7 +69,6 @@ public class SolutionsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("resumee", "resume22");
         ServiceService service = ServiceService.getInstance();
     }
 
@@ -119,7 +110,7 @@ public class SolutionsFragment extends Fragment {
 
     private void addBtnHandler() {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.replace(servicesBinding.fragmentContent.getId(), SolutionFormFragment.newInstance(new Service()));
+        transaction.replace(servicesBinding.fragmentContent.getId(), ServiceFormFragment.newInstance(new Service()));
         transaction.addToBackStack("services");
         transaction.commit();
     }

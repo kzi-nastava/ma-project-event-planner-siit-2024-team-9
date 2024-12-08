@@ -1,4 +1,4 @@
-package com.example.eventify.Activities;
+package com.example.eventify.activities;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,7 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.eventify.Fragments.RegisterFragment;
+import com.example.eventify.fragments.RegisterFragment;
 import com.example.eventify.R;
 import com.example.eventify.databinding.ActivityLoginBinding;
 

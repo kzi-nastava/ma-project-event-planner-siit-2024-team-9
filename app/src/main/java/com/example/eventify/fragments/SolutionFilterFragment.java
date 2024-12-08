@@ -1,4 +1,4 @@
-package com.example.eventify.Fragments;
+package com.example.eventify.fragments;
 
 import android.os.Bundle;
 
@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Spinner;
 
-import com.example.eventify.Helpers.ComponentsSetup;
+import com.example.eventify.utils.ComponentsSetup;
 import com.example.eventify.R;
 
 import java.util.ArrayList;
@@ -65,7 +65,7 @@ public class SolutionFilterFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_solution_filter, container, false);
+        View view = inflater.inflate(R.layout.fragment_service_filter, container, false);
 
         ArrayList<String> categories = new ArrayList<>();
         categories.add("Service category 1");

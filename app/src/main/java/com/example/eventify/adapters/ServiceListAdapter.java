@@ -1,4 +1,4 @@
-package com.example.eventify.Adapters;
+package com.example.eventify.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -14,28 +14,28 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.eventify.Fragments.SolutionDetailsFragment;
+import com.example.eventify.databinding.FragmentServiceFormBinding;
+import com.example.eventify.fragments.ServiceDetailsFragment;
 import com.example.eventify.R;
 import com.example.eventify.models.Service;
-import com.example.eventify.Fragments.SolutionFormFragment;
+import com.example.eventify.fragments.ServiceFormFragment;
 import com.example.eventify.databinding.FragmentCardBinding;
-import com.example.eventify.databinding.FragmentSolutionFormBinding;
 
 import java.util.ArrayList;
 
 public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.ViewHolder> {
-    private final ArrayList<Service> aProducts;
+    private final ArrayList<Service> services;
     private final Context context;
     private final FragmentManager fragmentManager; // Add FragmentManager
 
     // Bindings are not needed here since we are not using them in the adapter
     private FragmentCardBinding cardBinding;
-    private FragmentSolutionFormBinding formBinding;
+    private FragmentServiceFormBinding formBinding;
 
     // Modify constructor to accept FragmentManager
-    public ServiceListAdapter(Context context, ArrayList<Service> products, FragmentManager fragmentManager) {
+    public ServiceListAdapter(Context context, ArrayList<Service> services, FragmentManager fragmentManager) {
         this.context = context;
-        this.aProducts = products;
+        this.services = services;
         this.fragmentManager = fragmentManager; // Assign the FragmentManager
     }
 
@@ -68,7 +68,7 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
     // Bind data to the view components for each item in the RecyclerView
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Service service = aProducts.get(position);
+        Service service = services.get(position);
 
         if (service != null) {
             holder.imageView.setImageResource(R.drawable.s23);
@@ -79,7 +79,7 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
             holder.detailsBtn.setOnClickListener(v -> {
                 // Use the FragmentManager to perform the transaction
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                SolutionFormFragment fragment = SolutionFormFragment.newInstance(service);
+                ServiceFormFragment fragment = ServiceFormFragment.newInstance(service);
                 transaction.replace(R.id.home_container, fragment);
                 transaction.addToBackStack("list");
                 transaction.commit();
@@ -90,7 +90,7 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
             holder.itemView.setOnClickListener(v -> {
                 // Use the FragmentManager to perform the transaction
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.replace(R.id.fragment_content, SolutionDetailsFragment.newInstance("gas", "gas"));
+                transaction.replace(R.id.fragment_content, ServiceDetailsFragment.newInstance("gas", "gas"));
                 transaction.addToBackStack("list");
                 transaction.commit();
             });
@@ -100,7 +100,7 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
     // Return the total count of items
     @Override
     public int getItemCount() {
-        return aProducts.size();
+        return services.size();
     }
 }
 

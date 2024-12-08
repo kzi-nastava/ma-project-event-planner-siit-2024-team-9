@@ -1,4 +1,4 @@
-package com.example.eventify.Enums;
+package com.example.eventify.models.enums;
 
 public enum Status {
     PENDING,

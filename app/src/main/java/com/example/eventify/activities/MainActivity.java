@@ -1,4 +1,4 @@
-package com.example.eventify.Activities;
+package com.example.eventify.activities;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -17,12 +17,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.MenuItem;
 
 
-import com.example.eventify.Adapters.EventListAdapter;
-import com.example.eventify.Adapters.SolutionListAdapter;
-import com.example.eventify.Enums.PrivacyType;
-import com.example.eventify.Fragments.SolutionDetailsFragment;
-import com.example.eventify.Fragments.SolutionsFragment;
-import com.example.eventify.Fragments.WelcomeSearchFragment;
+import com.example.eventify.adapters.EventListAdapter;
+import com.example.eventify.adapters.SolutionListAdapter;
+import com.example.eventify.models.enums.PrivacyType;
+import com.example.eventify.fragments.ServicesFragment;
+import com.example.eventify.fragments.WelcomeSearchFragment;
 import com.example.eventify.models.Event;
 import com.example.eventify.models.Location;
 import com.example.eventify.models.Solution;
@@ -160,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setServicesFragment(){
-        loadFragment(new SolutionsFragment());
+        loadFragment(new ServicesFragment());
     }
 
     private void setProfileFragment(){
@@ -183,10 +182,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadFragment(Fragment fragment) {
         //binding.servicesContainer.setVisibility(View.VISIBLE);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.home_container, fragment);
-        transaction.addToBackStack("home");
-        transaction.commit();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment existingFragment = fragmentManager.findFragmentByTag("home");
+
+        if (existingFragment == null || !existingFragment.isVisible()) {
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.replace(R.id.home_container, fragment, "home");
+            transaction.addToBackStack("home");
+            transaction.commit();
+        }
     }
 
     private String getUser(){
