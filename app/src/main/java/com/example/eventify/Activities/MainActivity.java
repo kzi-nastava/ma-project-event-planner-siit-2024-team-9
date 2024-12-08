@@ -1,10 +1,7 @@
 package com.example.eventify.Activities;
 
-import static android.view.View.VISIBLE;
-
-import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -12,6 +9,8 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,17 +20,15 @@ import android.view.MenuItem;
 import com.example.eventify.Adapters.EventListAdapter;
 import com.example.eventify.Adapters.SolutionListAdapter;
 import com.example.eventify.Enums.PrivacyType;
-import com.example.eventify.Enums.Status;
-import com.example.eventify.Fragments.SolutionListFragment;
+import com.example.eventify.Fragments.SolutionDetailsFragment;
 import com.example.eventify.Fragments.SolutionsFragment;
 import com.example.eventify.Fragments.WelcomeSearchFragment;
-import com.example.eventify.Model.Event;
-import com.example.eventify.Model.Location;
-import com.example.eventify.Model.Solution;
+import com.example.eventify.models.Event;
+import com.example.eventify.models.Location;
+import com.example.eventify.models.Solution;
 import com.example.eventify.R;
 import com.example.eventify.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -55,8 +52,35 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // Get the parent FragmentManager
+                FragmentManager fragmentManager = getSupportFragmentManager();
 
-        navigationActions.put(R.id.discover, this::setDiscoverFragment);
+                // Get the currently active fragment in the main container
+                Fragment currentFragment = fragmentManager.findFragmentById(R.id.home_container);
+
+                if (currentFragment != null && currentFragment.getChildFragmentManager().getBackStackEntryCount() > 0) {
+                    // If the active fragment has a back stack, pop it
+                    currentFragment.getChildFragmentManager().popBackStack();
+                    Log.i("Navigation1", "Child FragmentManager Back Stack Count: "
+                            + currentFragment.getChildFragmentManager().getBackStackEntryCount());
+                } else if (fragmentManager.getBackStackEntryCount() > 0) {
+                    // If no child fragments are in the back stack, pop the parent fragment manager's stack
+                    fragmentManager.popBackStack();
+                    Log.i("Navigation1", "Parent FragmentManager Back Stack Count: "
+                            + fragmentManager.getBackStackEntryCount());
+                } else {
+                    // If no fragments are in any back stack, finish the activity
+                    Log.i("Navigation1", "No more fragments in back stack. Finishing activity.");
+                    finish();
+                }
+            }
+        });
+
+
+        navigationActions.put(R.id.discover, null);
         navigationActions.put(R.id.services, this::setServicesFragment);
         navigationActions.put(R.id.events, this::setEventsFragment);
         navigationActions.put(R.id.calendar, this::setCalendarFragment);
@@ -81,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(this::navigationLogic);
         bottomNavigationView.setSelectedItemId(R.id.discover);
 
-
     }
 
     private boolean navigationLogic(MenuItem item){
@@ -97,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setDiscoverFragment(){
         //Toast.makeText(this, "Discover", Toast.LENGTH_SHORT).show();
-        binding.fragmentContainer.setVisibility(View.GONE);
+        binding.homeContainer.setVisibility(View.GONE);
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.welcome_search_container, new WelcomeSearchFragment())
@@ -159,11 +182,11 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void loadFragment(Fragment fragment) {
-        binding.fragmentContainer.setVisibility(View.VISIBLE);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container, fragment) // Replace with your container ID
-                .commit();
+        //binding.servicesContainer.setVisibility(View.VISIBLE);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.home_container, fragment);
+        transaction.addToBackStack("home");
+        transaction.commit();
     }
 
     private String getUser(){
@@ -229,16 +252,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
     private List<Solution> generateDummySolutions() {
         List<Solution> solutions = new ArrayList<>();
-        solutions.add(new Solution("1", Status.ACCEPTED, "Solution 1", "Description 1", 100.0, 10.0, new ArrayList<>(), true, true, null));
-        solutions.add(new Solution("2", Status.PENDING, "Solution 2", "Description 2", 200.0, 15.0, new ArrayList<>(), true, true, null));
-        solutions.add(new Solution("3", Status.ACCEPTED, "Solution 3", "Description 3", 300.0, 20.0, new ArrayList<>(), true, true, null));
-        solutions.add(new Solution("4", Status.ACCEPTED, "Solution 4", "Description 4", 400.0, 25.0, new ArrayList<>(), true, true, null));
-        solutions.add(new Solution("5", Status.DENIED, "Solution 5", "Description 5", 500.0, 30.0, new ArrayList<>(), true, true, null));
-        solutions.add(new Solution("6", Status.ACCEPTED, "Solution 6", "Description 6", 600.0, 35.0, new ArrayList<>(), true, true, null));
+        /*
+        ArrayList<EventType> types = new ArrayList<>();
+        EventType type = new EventType("type", "event", true);
+        types.add(type);
+        solutions.add(new Solution(UUID.randomUUID(), Status.ACCEPTED, "Solution 1", "Description 1", 100.0, 10.0, new ArrayList<>(), true, true, null, types));
+        solutions.add(new Solution(UUID.randomUUID(), Status.PENDING, "Solution 2", "Description 2", 200.0, 15.0, new ArrayList<>(), true, true, null, types));
+        solutions.add(new Solution(UUID.randomUUID(), Status.ACCEPTED, "Solution 3", "Description 3", 300.0, 20.0, new ArrayList<>(), true, true, null, types));
+        solutions.add(new Solution(UUID.randomUUID(), Status.ACCEPTED, "Solution 4", "Description 4", 400.0, 25.0, new ArrayList<>(), true, true, null, types));
+        solutions.add(new Solution(UUID.randomUUID(), Status.DENIED, "Solution 5", "Description 5", 500.0, 30.0, new ArrayList<>(), true, true, null, types));
+        solutions.add(new Solution(UUID.randomUUID(), Status.ACCEPTED, "Solution 6", "Description 6", 600.0, 35.0, new ArrayList<>(), true, true, null, types));*/
         return solutions;
     }
 

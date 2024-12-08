@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventify.Fragments.SolutionDetailsFragment;
 import com.example.eventify.R;
-import com.example.eventify.Model.Service;
+import com.example.eventify.models.Service;
 import com.example.eventify.Fragments.SolutionFormFragment;
 import com.example.eventify.databinding.FragmentCardBinding;
 import com.example.eventify.databinding.FragmentSolutionFormBinding;
@@ -68,20 +68,20 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
     // Bind data to the view components for each item in the RecyclerView
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Service product = aProducts.get(position);
+        Service service = aProducts.get(position);
 
-        if (product != null) {
-            holder.imageView.setImageResource(product.getImage());
-            holder.productTitle.setText(product.getTitle());
-            holder.productDescription.setText(product.getDescription());
+        if (service != null) {
+            holder.imageView.setImageResource(R.drawable.s23);
+            holder.productTitle.setText(service.getName());
+            holder.productDescription.setText(service.getSpecifity());
 
             // Set up the button click listener for each item
             holder.detailsBtn.setOnClickListener(v -> {
                 // Use the FragmentManager to perform the transaction
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                SolutionFormFragment fragment = SolutionFormFragment.newInstance("gas", "gas");
-                transaction.replace(R.id.fragment_content, fragment);
-                transaction.addToBackStack(null);
+                SolutionFormFragment fragment = SolutionFormFragment.newInstance(service);
+                transaction.replace(R.id.home_container, fragment);
+                transaction.addToBackStack("list");
                 transaction.commit();
                 fragmentManager.executePendingTransactions();
                 fragment.setEdit();
@@ -91,7 +91,7 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
                 // Use the FragmentManager to perform the transaction
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.replace(R.id.fragment_content, SolutionDetailsFragment.newInstance("gas", "gas"));
-                transaction.addToBackStack(null);
+                transaction.addToBackStack("list");
                 transaction.commit();
             });
         }

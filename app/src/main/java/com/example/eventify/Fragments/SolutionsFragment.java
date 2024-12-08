@@ -2,28 +2,44 @@ package com.example.eventify.Fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.FrameLayout;
 
-import com.example.eventify.Model.Service;
-import com.example.eventify.R;
+import com.example.eventify.Adapters.ServiceListAdapter;
+import com.example.eventify.Enums.ReservationMethod;
+import com.example.eventify.Enums.Status;
+import com.example.eventify.models.EventType;
+import com.example.eventify.models.Service;
+import com.example.eventify.models.SolutionCategory;
 import com.example.eventify.databinding.FragmentCardBinding;
-import com.example.eventify.databinding.FragmentRegisterBinding;
 import com.example.eventify.databinding.FragmentSolutionsBinding;
+import com.example.eventify.services.ServiceService;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class SolutionsFragment extends Fragment {
 
+    private static final String ARG_PARAM = "param";
+
+    private ArrayList<Service> mProducts;
 
     public static ArrayList<Service> products = new ArrayList<>();
     private FragmentSolutionsBinding servicesBinding;
     private FragmentCardBinding cardBinding;
+
+    private ServiceListAdapter adapter;
 
     private boolean filterOn = false;
 
@@ -31,60 +47,83 @@ public class SolutionsFragment extends Fragment {
         // Required empty public constructor
     }
 
+    ServiceService service = ServiceService.getInstance();
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
         servicesBinding = FragmentSolutionsBinding.inflate(inflater, container, false);
-        cardBinding = FragmentCardBinding.inflate(inflater, container, false);
 
+        // Set up button click listeners
         servicesBinding.filterBtn.setOnClickListener(v -> filterBtnHandler());
         servicesBinding.addBtn.setOnClickListener(v -> addBtnHandler());
 
-        prepareProductList(products);
-        loadServicesListFragment();
+        // Initialize the product list (Ensure mProducts is not null)
+        mProducts = service.getAll();
+
+        // Initialize the adapter and bind it to the RecyclerView
+        adapter = new ServiceListAdapter(requireContext(), mProducts, getParentFragmentManager());
+        servicesBinding.recyclerView.setAdapter(adapter);
 
         return servicesBinding.getRoot();
     }
 
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("resumee", "resume22");
+        ServiceService service = ServiceService.getInstance();
+    }
+
     private void filterBtnHandler() {
+        // Access the filter layout
+        FrameLayout filterLayout = servicesBinding.filter;
+
+        // Dynamically set the height to 400dp
+        ViewGroup.LayoutParams params = filterLayout.getLayoutParams();
+
+        // Check if the filter fragment is already shown
         if (!filterOn) {
+            // Begin a fragment transaction to add the filter fragment
+            params.height = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    280, // Desired height in dp
+                    getResources().getDisplayMetrics()
+            );
+            filterLayout.setLayoutParams(params);
             FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-            transaction.replace(servicesBinding.frameSolutions.getId(), SolutionFilterFragment.newInstance("gas","gas"));
-            transaction.addToBackStack(null);
+            transaction.add(servicesBinding.filter.getId(), SolutionFilterFragment.newInstance("gas", "gas"));
+            transaction.addToBackStack("services");
             filterOn = true;
             transaction.commit();
-
         } else {
+            params.height = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    0, // Desired height in dp
+                    getResources().getDisplayMetrics()
+            );
+            filterLayout.setLayoutParams(params);
+            // If the filter fragment is already shown, pop it from the back stack
             filterOn = false;
             getChildFragmentManager().popBackStack();
         }
     }
 
-    private void loadServicesListFragment() {
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.replace(servicesBinding.frameSolutions.getId(), SolutionListFragment.newInstance(products));
-        transaction.commit();
 
-    }
 
     private void addBtnHandler() {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.replace(servicesBinding.fragmentContent.getId(), SolutionFormFragment.newInstance("gas","gas"));
-        transaction.addToBackStack(null);
+        transaction.replace(servicesBinding.fragmentContent.getId(), SolutionFormFragment.newInstance(new Service()));
+        transaction.addToBackStack("services");
         transaction.commit();
     }
 
-    private void prepareProductList(ArrayList<Service> products) {
-        products.clear();
-        products.add(new Service(1L, "Samsung S23 Ultra White", "Description 1", R.drawable.s23));
-        products.add(new Service(2L, "Samsung S23 Ultra Gray", "Description 2", R.drawable.s23));
-        products.add(new Service(3L, "Samsung S23 Ultra White", "Description 1", R.drawable.s23));
-        products.add(new Service(4L, "Samsung S23 Ultra Gray", "Description 2", R.drawable.s23));
-        products.add(new Service(5L, "Samsung S23 Ultra White", "Description 1", R.drawable.s23));
-        products.add(new Service(6L, "Samsung S23 Ultra Gray", "Description 2", R.drawable.s23));
-        products.add(new Service(7L, "Samsung S23 Ultra White", "Description 1", R.drawable.s23));
-        products.add(new Service(8L, "Samsung S23 Ultra Gray", "Description 2", R.drawable.s23));
-    }
+
 
 }

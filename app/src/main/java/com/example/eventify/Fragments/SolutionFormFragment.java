@@ -1,9 +1,8 @@
 package com.example.eventify.Fragments;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,60 +10,50 @@ import android.os.Bundle;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.eventify.Helpers.ComponentsSetup;
+import com.example.eventify.models.Service;
 import com.example.eventify.R;
 import com.example.eventify.databinding.FragmentSolutionFormBinding;
+import com.example.eventify.services.ServiceService;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SolutionFormFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class SolutionFormFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     private ActivityResultLauncher<Intent> imagePickerLauncher;
-
     private FragmentSolutionFormBinding binding;
 
     public SolutionFormFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ServicesFormFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SolutionFormFragment newInstance(String param1, String param2) {
+    ServiceService service = ServiceService.getInstance();
+
+    public static SolutionFormFragment newInstance(Service service) {
         SolutionFormFragment fragment = new SolutionFormFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putParcelable("service", service);
         fragment.setArguments(args);
         return fragment;
     }
@@ -72,21 +61,14 @@ public class SolutionFormFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
-
     }
 
-    public void setEdit () {
+    public void setEdit() {
         setFormHeading();
         disableCategories();
     }
 
     private void setFormHeading() {
-        // Make sure the view is ready before accessing it
         if (getView() != null) {
             TextView heading = getView().findViewById(R.id.formHeading);
             heading.setText("Edit details");
@@ -95,19 +77,33 @@ public class SolutionFormFragment extends Fragment {
 
     private void disableCategories() {
         if (getView() != null) {
-            Spinner categories= getView().findViewById(R.id.categorySpinner);
+            Spinner categories = getView().findViewById(R.id.categorySpinner);
             categories.setVisibility(View.GONE);
         }
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_solution_form, container, false);
+        binding = FragmentSolutionFormBinding.inflate(inflater, container, false);  // Use the generated binding class directly
+        View view = binding.getRoot();
 
-        // Setup categories for Spinner
+        setupCategories(view);
+        setupChips(view);
+        setupImagePicker(view);
+        setupDeleteButton(view);
+        setupSubmitButton(view);
+
+        if (getArguments() != null) {
+            Service service = getArguments().getParcelable("service");
+            binding.setService(service);
+            binding.setLifecycleOwner(this);
+        }
+
+        return binding.getRoot();
+    }
+
+    private void setupCategories(View view) {
         ArrayList<String> categories = new ArrayList<>();
         categories.add("Service category 1");
         categories.add("Service category 2");
@@ -116,8 +112,11 @@ public class SolutionFormFragment extends Fragment {
 
         TextView newCategory = view.findViewById(R.id.newCategory);
 
+        // Setup category spinner with an external method
         Spinner categorySpinner = ComponentsSetup.spinnerOtherSetup(view, R.id.categorySpinner, categories, getContext(), newCategory);
+    }
 
+    private void setupChips(View view) {
         ChipGroup chipGroup = view.findViewById(R.id.eventTypes);
 
         String[] options = {"Event type 1", "Event type 2", "Event type 3", "Event type 4", "Event type 5"};
@@ -127,19 +126,17 @@ public class SolutionFormFragment extends Fragment {
             chip.setText(option);
             chip.setCheckable(true);
             chip.setChecked(false);
-
             chip.setCheckedIconResource(R.drawable.check);  // Use your check icon
-            chip.setCheckedIconVisible(true);  // Make the check icon visible when checked
-
-            // Optionally, remove the default close icon if it appears
+            chip.setCheckedIconVisible(true);
             chip.setCloseIconVisible(false);
-
-            chip.setChipBackgroundColorResource(R.color.white);  // Optional styling
-            chip.setTextColor(getResources().getColorStateList(R.color.black)); // Optional text color
+            chip.setChipBackgroundColorResource(R.color.white);
+            chip.setTextColor(getResources().getColorStateList(R.color.black));
 
             chipGroup.addView(chip);
         }
+    }
 
+    private void setupImagePicker(View view) {
         // Set click listener for service image
         view.findViewById(R.id.serviceImage).setOnClickListener(v -> openImagePicker());
 
@@ -150,47 +147,61 @@ public class SolutionFormFragment extends Fragment {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
                         if (data != null) {
-                            // If multiple images are selected
-                            if (data.getClipData() != null) {
-                                int count = data.getClipData().getItemCount();
-                                Uri selectedImageUri = data.getClipData().getItemAt(0).getUri();
-                                ImageView serviceImage = view.findViewById(R.id.serviceImage);
-                                serviceImage.setImageURI(selectedImageUri); // Update image with selected URI
-                                // Optionally store the selected image URIs in a list
-                            }
-                        } else if (data.getData() != null) {
-                            // Single image selection (fallback case)
-                            Uri selectedImageUri = data.getData();
+                            Uri selectedImageUri = data.getClipData() != null ?
+                                    data.getClipData().getItemAt(0).getUri() : data.getData();
                             ImageView serviceImage = view.findViewById(R.id.serviceImage);
-                            serviceImage.setImageURI(selectedImageUri); // Display the selected image
+                            serviceImage.setImageURI(selectedImageUri);
                         }
                     }
                 }
         );
+    }
 
+    private void setupDeleteButton(View view) {
         Button deleteBtn = view.findViewById(R.id.deleteBtn);
         deleteBtn.setOnClickListener(v -> {
-            new AlertDialog.Builder(getContext())
+            new AlertDialog.Builder(requireContext())
                     .setTitle("Delete Service")
                     .setMessage("Are you sure you want to delete this service?")
                     .setCancelable(false)
                     .setPositiveButton("Yes", (dialog, which) -> {
-                        // Deletion logic here
+                        Service deleted = binding.getService();
+                        service.delete(deleted.getId());
+                        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                        fragmentManager.popBackStack();
                     })
                     .setNegativeButton("No", null)
                     .show();
         });
-
-
-        return view;
     }
 
-    // Method to open the image picker
+    private void setupSubmitButton(View view) {
+        Button submitBtn = view.findViewById(R.id.btnSubmit);
+        submitBtn.setOnClickListener(v -> {
+            hideKeyboard(binding.nameEditText);
+            Service updated = binding.getService();
+            boolean isUpdate=service.update(updated.getId(), updated);
+            if (!isUpdate) {
+                service.create(updated);
+            }
+            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+            fragmentManager.popBackStack();
+        });
+
+    }
+
+    public void hideKeyboard(EditText editText) {
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null && editText != null) {
+            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+        }
+    }
+
     private void openImagePicker() {
         Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*"); // Set MIME type for images
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true); // Allow multiple image selection
-        imagePickerLauncher.launch(intent); // Launch the image picker
+        intent.setType("image/*");
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        imagePickerLauncher.launch(intent);
     }
-
 }
+
