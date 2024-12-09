@@ -3,7 +3,7 @@ package com.example.eventify.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.eventify.Enums.PrivacyType;
+import com.example.eventify.models.enums.PrivacyType;
 
 import java.util.Date;
 

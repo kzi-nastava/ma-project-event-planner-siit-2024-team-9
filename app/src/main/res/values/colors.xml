@@ -6,4 +6,6 @@
     <color name="medium_gray">#FF808080</color>
     <color name="light_gray">#D3D3D3</color>
     <color name="black_overlay">#66000000</color>
+    <color name="light_red">#E60000</color>
+    <color name="orange">#FF9A00</color>
 </resources>

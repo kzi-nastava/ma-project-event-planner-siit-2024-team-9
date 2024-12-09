@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/background_gradient"
     android:theme="@style/ThemeOverlay.Eventify.FullscreenContainer"
-    tools:context=".Activities.LoginActivity">
+    tools:context=".activities.LoginActivity">
 
     <TextView
         android:id="@+id/titleTextView"

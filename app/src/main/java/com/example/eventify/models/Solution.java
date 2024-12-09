@@ -7,12 +7,11 @@ import androidx.databinding.Bindable;
 import androidx.databinding.Observable;
 
 import com.example.eventify.BR;
-import com.example.eventify.Enums.Status;
+import com.example.eventify.models.enums.Status;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 public class Solution implements Parcelable, Observable {
     @Bindable
@@ -134,6 +133,7 @@ public class Solution implements Parcelable, Observable {
         notifyPropertyChanged(BR.name);
     }
 
+    @Bindable
     public String getDescription() {
         return description;
     }
@@ -143,6 +143,7 @@ public class Solution implements Parcelable, Observable {
         notifyPropertyChanged(BR.description);
     }
 
+    @Bindable
     public double getPrice() {
         return price;
     }
@@ -152,6 +153,7 @@ public class Solution implements Parcelable, Observable {
         notifyPropertyChanged(BR.price);
     }
 
+    @Bindable
     public double getDiscount() {
         return discount;
     }
@@ -161,6 +163,7 @@ public class Solution implements Parcelable, Observable {
         notifyPropertyChanged(BR.discount);
     }
 
+    @Bindable
     public boolean isVisibility() {
         return visibility;
     }
@@ -170,6 +173,7 @@ public class Solution implements Parcelable, Observable {
         notifyPropertyChanged(BR.visibility);
     }
 
+    @Bindable
     public boolean isAvailability() {
         return availability;
     }

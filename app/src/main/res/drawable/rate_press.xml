@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Selected state (e.g., red heart) -->
+    <item android:drawable="@drawable/orange_favorite" android:state_selected="true" />
+    <!-- Default state (e.g., white heart) -->
+    <item android:drawable="@drawable/white_favorite" />
+</selector>

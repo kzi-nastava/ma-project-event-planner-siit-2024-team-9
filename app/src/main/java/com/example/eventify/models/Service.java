@@ -8,8 +8,8 @@ import androidx.databinding.Bindable;
 import androidx.databinding.Observable;
 
 import com.example.eventify.BR;
-import com.example.eventify.Enums.ReservationMethod;
-import com.example.eventify.Enums.Status;
+import com.example.eventify.models.enums.ReservationMethod;
+import com.example.eventify.models.enums.Status;
 
 import java.util.Set;
 
@@ -184,6 +184,14 @@ public class Service extends Solution implements Parcelable, Observable {
                 ", cancellationDeadline=" + cancellationDeadline +
                 ", reservationMethod=" + reservationMethod +
                 "} " + super.toString();
+    }
+
+    public boolean isAutomaticReservation() {
+        return ReservationMethod.AUTOMATIC.equals(reservationMethod);
+    }
+
+    public boolean isManualReservation() {
+        return ReservationMethod.MANUAL.equals(reservationMethod);
     }
 
 

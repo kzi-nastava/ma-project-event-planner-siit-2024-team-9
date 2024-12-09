@@ -3,7 +3,7 @@ package com.example.eventify.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.eventify.Enums.Status;
+import com.example.eventify.models.enums.Status;
 
 public class SolutionCategory implements Parcelable {
     private String name;
