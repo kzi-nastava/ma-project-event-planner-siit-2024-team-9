@@ -13,6 +13,8 @@ import android.widget.FrameLayout;
 
 import com.example.eventify.R;
 import com.example.eventify.databinding.FragmentServiceDetailsBinding;
+import com.example.eventify.databinding.FragmentServiceDetailsFormBinding;
+import com.example.eventify.models.Service;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,33 +23,25 @@ import com.example.eventify.databinding.FragmentServiceDetailsBinding;
  */
 public class ServiceDetailsForm extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     public ServiceDetailsForm() {
         // Required empty public constructor
     }
 
+    FragmentServiceDetailsFormBinding binding;
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment ServiceDetailsForm.
      */
     // TODO: Rename and change types and number of parameters
-    public static ServiceDetailsForm newInstance(String param1, String param2) {
+    public static ServiceDetailsForm newInstance(Service service) {
         ServiceDetailsForm fragment = new ServiceDetailsForm();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putParcelable("service", service);
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,17 +49,19 @@ public class ServiceDetailsForm extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        binding = FragmentServiceDetailsFormBinding.inflate(inflater, container, false);
 
+        if (getArguments() != null) {
+            Service service = getArguments().getParcelable("service");
+            binding.setService(service);
+            binding.setLifecycleOwner(this);
+        }
 
         return inflater.inflate(R.layout.fragment_service_details_form, container, false);
     }

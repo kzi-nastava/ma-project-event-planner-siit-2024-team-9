@@ -81,7 +81,7 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 ServiceFormFragment fragment = ServiceFormFragment.newInstance(service);
                 transaction.replace(R.id.home_container, fragment);
-                transaction.addToBackStack("list");
+                transaction.addToBackStack("details");
                 transaction.commit();
                 fragmentManager.executePendingTransactions();
                 fragment.setEdit();
@@ -90,7 +90,7 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
             holder.itemView.setOnClickListener(v -> {
                 // Use the FragmentManager to perform the transaction
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.replace(R.id.fragment_content, ServiceDetailsFragment.newInstance("gas", "gas"));
+                transaction.replace(R.id.fragment_content, ServiceDetailsFragment.newInstance(service));
                 transaction.addToBackStack("list");
                 transaction.commit();
             });
