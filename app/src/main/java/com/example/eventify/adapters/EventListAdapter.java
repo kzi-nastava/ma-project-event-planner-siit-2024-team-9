@@ -37,7 +37,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
         Event event = events.get(position);
 
         holder.eventTitle.setText(event.getName());
-        holder.eventRating.setText("4.5");
+//        holder.eventRating.setText("4.5");
         holder.eventLocation.setText(event.getLocation().getName());
         holder.eventPrice.setText("Price: $" + event.getMaxAttendees());
         holder.eventImage.setImageResource(R.drawable.dummy_event_image);
@@ -49,14 +49,14 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
     }
 
     static class EventViewHolder extends RecyclerView.ViewHolder {
-        TextView eventTitle, eventRating, eventLocation, eventPrice;
+        TextView eventTitle, eventLocation, eventPrice;
         ImageView eventImage;
 
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
 
             eventTitle = itemView.findViewById(R.id.event_title);
-            eventRating = itemView.findViewById(R.id.event_rating);
+//            eventRating = itemView.findViewById(R.id.event_rating);
             eventLocation = itemView.findViewById(R.id.event_location);
             eventPrice = itemView.findViewById(R.id.event_price);
             eventImage = itemView.findViewById(R.id.event_image);

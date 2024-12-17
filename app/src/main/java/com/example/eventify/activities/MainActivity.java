@@ -19,6 +19,7 @@ import android.view.MenuItem;
 
 import com.example.eventify.adapters.EventListAdapter;
 import com.example.eventify.adapters.SolutionListAdapter;
+import com.example.eventify.fragments.DiscoverFragment;
 import com.example.eventify.models.enums.PrivacyType;
 import com.example.eventify.fragments.ServicesFragment;
 import com.example.eventify.fragments.WelcomeSearchFragment;
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        navigationActions.put(R.id.discover, null);
+        navigationActions.put(R.id.discover, this::setDiscoverFragment);
         navigationActions.put(R.id.services, this::setServicesFragment);
         navigationActions.put(R.id.events, this::setEventsFragment);
         navigationActions.put(R.id.calendar, this::setCalendarFragment);
@@ -117,47 +118,8 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    private void setDiscoverFragment(){
-        //Toast.makeText(this, "Discover", Toast.LENGTH_SHORT).show();
-        binding.homeContainer.setVisibility(View.GONE);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.welcome_search_container, new WelcomeSearchFragment())
-                .commit();
 
-        //top 5 eventi
-        RecyclerView topRecyclerView = findViewById(R.id.event_recycler_view);
-        topRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        List<Event> allEvents = generateDummyEvents();
-        List<Event> top5Events = getTop5OpenEvents(allEvents);
-        EventListAdapter topAdapter = new EventListAdapter(this, top5Events);
-        topRecyclerView.setAdapter(topAdapter);
-        //svi
-        RecyclerView allRecyclerView = findViewById(R.id.all_event_recycler_view);
-        allRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        List<Event> openEvents = getAllOpenEvents(allEvents);
-        EventListAdapter allAdapter = new EventListAdapter(this, openEvents);
-        allRecyclerView.setAdapter(allAdapter);
-
-
-        // Top 5 Solutions
-        RecyclerView topSolutionsRecyclerView = findViewById(R.id.top_solutions_recycler_view);
-        topSolutionsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        List<Solution> allSolutions = generateDummySolutions();
-        List<Solution> top5Solutions = getTop5Solutions(allSolutions);
-        SolutionListAdapter topSolutionsAdapter = new SolutionListAdapter(this, top5Solutions);
-        topSolutionsRecyclerView.setAdapter(topSolutionsAdapter);
-
-        // All Solutions
-        RecyclerView allSolutionsRecyclerView = findViewById(R.id.all_solutions_recycler_view);
-        allSolutionsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        SolutionListAdapter allSolutionsAdapter = new SolutionListAdapter(this, allSolutions);
-        allSolutionsRecyclerView.setAdapter(allSolutionsAdapter);
-
-
-
-    }
-
+    private void setDiscoverFragment() { loadFragment(new DiscoverFragment());}
     private void setServicesFragment(){
         loadFragment(new ServicesFragment());
     }
