@@ -6,28 +6,37 @@ import android.os.Parcelable;
 import com.example.eventify.models.enums.PrivacyType;
 
 import java.util.Date;
+import java.util.Set;
 
 public class Event implements Parcelable {
     private String id;
     private String name;
     private String description;
+    private String image;
     private int maxAttendees;
     private PrivacyType privacyType;
     private Date eventStart;
     private Date eventEnd;
     private int attendance;
+    private EventType eventType;
     private Location location;
+    private Double price;
+    private Set<Invitation> invitations;
 
-    public Event(String id, String name, String description, int maxAttendees, PrivacyType privacyType, Date eventStart, Date eventEnd, int attendance, Location location) {
+    public Event(String id, String name, String description, String image, int maxAttendees, PrivacyType privacyType, Date eventStart, Date eventEnd, int attendance, EventType eventType, Location location, Double price, Set<Invitation> invitations) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.image = image;
         this.maxAttendees = maxAttendees;
         this.privacyType = privacyType;
         this.eventStart = eventStart;
         this.eventEnd = eventEnd;
         this.attendance = attendance;
+        this.eventType = eventType;
         this.location = location;
+        this.price = price;
+        this.invitations = invitations;
     }
 
     public Event() {}
@@ -36,12 +45,16 @@ public class Event implements Parcelable {
         id = in.readString();
         name = in.readString();
         description = in.readString();
+        image = in.readString();
         maxAttendees = in.readInt();
         privacyType = PrivacyType.valueOf(in.readString()); // Enum se serijalizuje kao String
         eventStart = new Date(in.readLong());
         eventEnd = new Date(in.readLong());
         attendance = in.readInt();
+        eventType = in.readParcelable(EventType.class.getClassLoader());
         location = in.readParcelable(Location.class.getClassLoader());
+        price = in.readDouble();
+        invitations = (Set<Invitation>) in.readSerializable();
     }
 
     public String getId() {
@@ -66,6 +79,14 @@ public class Event implements Parcelable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public int getMaxAttendees() {
@@ -100,6 +121,14 @@ public class Event implements Parcelable {
         this.eventEnd = eventEnd;
     }
 
+    public EventType getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(EventType eventType) {
+        this.eventType = eventType;
+    }
+
     public int getAttendance() {
         return attendance;
     }
@@ -114,6 +143,22 @@ public class Event implements Parcelable {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public Set<Invitation> getInvitations() {
+        return invitations;
+    }
+
+    public void setInvitations(Set<Invitation> invitations) {
+        this.invitations = invitations;
     }
 
     @Override

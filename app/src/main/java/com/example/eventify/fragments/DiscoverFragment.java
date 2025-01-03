@@ -16,6 +16,7 @@ import com.example.eventify.adapters.EventListAdapter;
 import com.example.eventify.adapters.SolutionListAdapter;
 import com.example.eventify.R;
 import com.example.eventify.models.Event;
+import com.example.eventify.models.EventType;
 import com.example.eventify.models.Location;
 import com.example.eventify.models.Solution;
 import com.example.eventify.models.enums.PrivacyType;
@@ -24,6 +25,7 @@ import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class DiscoverFragment extends Fragment {
 
@@ -41,10 +43,10 @@ public class DiscoverFragment extends Fragment {
 
         initRecyclerViews(view);
         setupDummyData();
-        setupPaginators(view);
+//        setupPaginators(view);
 
-        setTopEvents();
-        setAllEvents();
+//        setTopEvents();
+//        setAllEvents();
         setTopSolutions();
         setAllSolutions();
 
@@ -52,11 +54,15 @@ public class DiscoverFragment extends Fragment {
     }
 
     private void initRecyclerViews(View view) {
-        topEventsRecyclerView = view.findViewById(R.id.event_recycler_view);
-        topEventsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        // Top 5 Events Fragment
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.top_events_container, EventListFragment.newInstance(true))
+                .commit();
 
-        allEventsRecyclerView = view.findViewById(R.id.all_event_recycler_view);
-        allEventsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        // All Events Fragment
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.all_events_container, EventListFragment.newInstance(false))
+                .commit();
 
         topSolutionsRecyclerView = view.findViewById(R.id.top_solutions_recycler_view);
         topSolutionsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -67,48 +73,48 @@ public class DiscoverFragment extends Fragment {
 
     private void setupDummyData() {
         for (int i = 1; i <= 50; i++) {
-            allEvents.add(new Event("e" + i, "Event " + i, "Description " + i, 20, PrivacyType.PUBLIC, null, null, 10, new Location("City " + i, "Street " + i, 0.0, 0.0)));
+            allEvents.add(new Event("e" + i, "Event " + i, "Description " + i, "dummy_image.png", 20, PrivacyType.PUBLIC, null, null, 10, new EventType("Type " + i, "Description " + i, true), new Location("City " + i, "Street " + i, 0.0, 0.0), 20.0*i, Set.of()));
             allSolutions.add(new Solution("Solution " + i, null, null, Status.ACCEPTED, "Description " + i, i * 10, i, null, true, true));
         }
     }
 
-    private void setupPaginators(View view) {
-        MaterialButton eventsPrev = view.findViewById(R.id.events_prev_page);
-        MaterialButton eventsNext = view.findViewById(R.id.events_next_page);
-        TextView eventsPageNumber = view.findViewById(R.id.events_page_number);
+//    private void setupPaginators(View view) {
+//        MaterialButton eventsPrev = view.findViewById(R.id.events_prev_page);
+//        MaterialButton eventsNext = view.findViewById(R.id.events_next_page);
+//        TextView eventsPageNumber = view.findViewById(R.id.events_page_number);
+//
+//        eventsPrev.setEnabled(eventsPage > 1);
+//        eventsPrev.setOnClickListener(v -> {
+//            if (eventsPage > 1) {
+//                eventsPage--;
+//                eventsPageNumber.setText(String.valueOf(eventsPage));
+//                setAllEvents();
+//                eventsPrev.setEnabled(eventsPage > 1);
+//            }
+//        });
+//
+//        eventsNext.setOnClickListener(v -> {
+//            if ((eventsPage - 1) * pageSize + pageSize < allEvents.size()) {
+//                eventsPage++;
+//                eventsPageNumber.setText(String.valueOf(eventsPage));
+//                setAllEvents();
+//                eventsPrev.setEnabled(eventsPage > 1);
+//            }
+//        });
+//    }
 
-        eventsPrev.setEnabled(eventsPage > 1);
-        eventsPrev.setOnClickListener(v -> {
-            if (eventsPage > 1) {
-                eventsPage--;
-                eventsPageNumber.setText(String.valueOf(eventsPage));
-                setAllEvents();
-                eventsPrev.setEnabled(eventsPage > 1);
-            }
-        });
 
-        eventsNext.setOnClickListener(v -> {
-            if ((eventsPage - 1) * pageSize + pageSize < allEvents.size()) {
-                eventsPage++;
-                eventsPageNumber.setText(String.valueOf(eventsPage));
-                setAllEvents();
-                eventsPrev.setEnabled(eventsPage > 1);
-            }
-        });
-    }
-
-
-    private void setTopEvents() {
-        List<Event> topEvents = allEvents.subList(0, Math.min(5, allEvents.size()));
-        topEventsRecyclerView.setAdapter(new EventListAdapter(getContext(), topEvents));
-    }
-
-    private void setAllEvents() {
-        int start = (eventsPage - 1) * pageSize;
-        int end = Math.min(start + pageSize, allEvents.size());
-        List<Event> paginatedEvents = allEvents.subList(start, end);
-        allEventsRecyclerView.setAdapter(new EventListAdapter(getContext(), paginatedEvents));
-    }
+//    private void setTopEvents() {
+//        List<Event> topEvents = allEvents.subList(0, Math.min(5, allEvents.size()));
+//        topEventsRecyclerView.setAdapter(new EventListAdapter(getContext(), topEvents));
+//    }
+//
+//    private void setAllEvents() {
+//        int start = (eventsPage - 1) * pageSize;
+//        int end = Math.min(start + pageSize, allEvents.size());
+//        List<Event> paginatedEvents = allEvents.subList(start, end);
+//        allEventsRecyclerView.setAdapter(new EventListAdapter(getContext(), paginatedEvents));
+//    }
 
     private void setTopSolutions() {
         List<Solution> topSolutions = allSolutions.subList(0, Math.min(5, allSolutions.size()));

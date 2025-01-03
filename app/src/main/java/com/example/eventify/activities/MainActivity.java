@@ -161,30 +161,30 @@ public class MainActivity extends AppCompatActivity {
         // return "eventOrganizer";
     }
 
-    private List<Event> generateDummyEvents() {
-        List<Event> events = new ArrayList<>();
-        events.add(new Event("a", "Concert", "Live music concert with popular bands", 100, PrivacyType.PUBLIC, new Date(), new Date(), 50,
-                new Location("Novi Sad", "Main Square", 19.85, 45.25)));
-        events.add(new Event("b", "Tech Meetup", "Networking and tech talks", 50, PrivacyType.PRIVATE, new Date(), new Date(), 30,
-                new Location("Novi Sad", "Tech Park", 19.83, 45.27)));
-        events.add(new Event("b", "Art Exhibition", "Showcasing local artists and their work", 75, PrivacyType.PUBLIC, new Date(), new Date(), 40,
-                new Location("Novi Sad", "Gallery Center", 19.82, 45.29)));
-        events.add(new Event("c", "Cooking Class", "Learn to cook gourmet dishes", 20, PrivacyType.PUBLIC, new Date(), new Date(), 10,
-                new Location("Novi Sad", "Culinary School", 19.80, 45.26)));
-        events.add(new Event("d", "Startup Pitch Night", "Watch startups pitch their ideas", 200, PrivacyType.PUBLIC, new Date(), new Date(), 80,
-                new Location("Novi Sad", "Startup Incubator", 19.84, 45.28)));
-        events.add(new Event("e", "Yoga Workshop", "Relax and unwind with expert yoga trainers", 15, PrivacyType.PRIVATE, new Date(), new Date(), 12,
-                new Location("Novi Sad", "Wellness Center", 19.81, 45.22)));
-        events.add(new Event("f", "Science Fair", "Discover innovative projects from students", 500, PrivacyType.PUBLIC, new Date(), new Date(), 300,
-                new Location("Novi Sad", "University Hall", 19.89, 45.30)));
-        events.add(new Event("g", "Photography Walk", "Learn photography on a scenic walk", 25, PrivacyType.PRIVATE, new Date(), new Date(), 15,
-                new Location("Novi Sad", "City Park", 19.88, 45.32)));
-        events.add(new Event("h", "Movie Screening", "Watch classic movies under the stars", 100, PrivacyType.PUBLIC, new Date(), new Date(), 70,
-                new Location("Novi Sad", "Open Air Theater", 19.86, 45.24)));
-        events.add(new Event("i", "Gaming Tournament", "Compete in the latest video games", 150, PrivacyType.PUBLIC, new Date(), new Date(), 100,
-                new Location("Novi Sad", "Gaming Arena", 19.87, 45.23)));
-        return events;
-    }
+//    private List<Event> generateDummyEvents() {
+//        List<Event> events = new ArrayList<>();
+//        events.add(new Event("a", "Concert", "Live music concert with popular bands", 100, PrivacyType.PUBLIC, new Date(), new Date(), 50,
+//                new Location("Novi Sad", "Main Square", 19.85, 45.25)));
+//        events.add(new Event("b", "Tech Meetup", "Networking and tech talks", 50, PrivacyType.PRIVATE, new Date(), new Date(), 30,
+//                new Location("Novi Sad", "Tech Park", 19.83, 45.27)));
+//        events.add(new Event("b", "Art Exhibition", "Showcasing local artists and their work", 75, PrivacyType.PUBLIC, new Date(), new Date(), 40,
+//                new Location("Novi Sad", "Gallery Center", 19.82, 45.29)));
+//        events.add(new Event("c", "Cooking Class", "Learn to cook gourmet dishes", 20, PrivacyType.PUBLIC, new Date(), new Date(), 10,
+//                new Location("Novi Sad", "Culinary School", 19.80, 45.26)));
+//        events.add(new Event("d", "Startup Pitch Night", "Watch startups pitch their ideas", 200, PrivacyType.PUBLIC, new Date(), new Date(), 80,
+//                new Location("Novi Sad", "Startup Incubator", 19.84, 45.28)));
+//        events.add(new Event("e", "Yoga Workshop", "Relax and unwind with expert yoga trainers", 15, PrivacyType.PRIVATE, new Date(), new Date(), 12,
+//                new Location("Novi Sad", "Wellness Center", 19.81, 45.22)));
+//        events.add(new Event("f", "Science Fair", "Discover innovative projects from students", 500, PrivacyType.PUBLIC, new Date(), new Date(), 300,
+//                new Location("Novi Sad", "University Hall", 19.89, 45.30)));
+//        events.add(new Event("g", "Photography Walk", "Learn photography on a scenic walk", 25, PrivacyType.PRIVATE, new Date(), new Date(), 15,
+//                new Location("Novi Sad", "City Park", 19.88, 45.32)));
+//        events.add(new Event("h", "Movie Screening", "Watch classic movies under the stars", 100, PrivacyType.PUBLIC, new Date(), new Date(), 70,
+//                new Location("Novi Sad", "Open Air Theater", 19.86, 45.24)));
+//        events.add(new Event("i", "Gaming Tournament", "Compete in the latest video games", 150, PrivacyType.PUBLIC, new Date(), new Date(), 100,
+//                new Location("Novi Sad", "Gaming Arena", 19.87, 45.23)));
+//        return events;
+//    }
 
 
     private List<Event> filterPublicEvents(List<Event> events) {
