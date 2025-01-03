@@ -1,4 +1,4 @@
-package com.example.eventify.models;
+package com.example.eventify.models.others;
 
 public class ImageItem {
     private final int imageResId; // Resource ID for the image

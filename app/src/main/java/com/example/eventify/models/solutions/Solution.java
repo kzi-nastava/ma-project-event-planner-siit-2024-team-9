@@ -1,4 +1,4 @@
-package com.example.eventify.models;
+package com.example.eventify.models.solutions;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -7,7 +7,9 @@ import androidx.databinding.Bindable;
 import androidx.databinding.Observable;
 
 import com.example.eventify.BR;
+import com.example.eventify.models.enums.SolutionType;
 import com.example.eventify.models.enums.Status;
+import com.example.eventify.models.events.EventType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +17,13 @@ import java.util.Set;
 
 public class Solution implements Parcelable, Observable {
     @Bindable
-    private int id;
+    private String id;
     @Bindable
     private String name;
     @Bindable
     private SolutionCategory category;
     @Bindable
-    private Set<EventType> type;
+    private Set<EventType> eventTypes;
     @Bindable
     private Status status;
     @Bindable
@@ -36,13 +38,15 @@ public class Solution implements Parcelable, Observable {
     private boolean visibility;
     @Bindable
     private boolean availability;
+    @Bindable
+    private SolutionType solutionType;
 
     private transient List<OnPropertyChangedCallback> propertyChangedCallbacks = new ArrayList<>();
 
     public Solution(
             String name,
             SolutionCategory category,
-            Set<EventType> type,
+            Set<EventType> eventTypes,
             Status status,
             String description,
             double price,
@@ -53,7 +57,7 @@ public class Solution implements Parcelable, Observable {
     ) {
         this.name = name;
         this.category = category;
-        this.type = type;
+        this.eventTypes = eventTypes;
         this.status = status;
         this.description = description;
         this.price = price;
@@ -66,7 +70,7 @@ public class Solution implements Parcelable, Observable {
     public Solution() {}
 
     protected Solution(Parcel in) {
-        id = in.readInt();
+        id = in.readString();
         status = Status.valueOf(in.readString());
         name = in.readString();
         description = in.readString();
@@ -76,13 +80,14 @@ public class Solution implements Parcelable, Observable {
         visibility = in.readByte() != 0;
         availability = in.readByte() != 0;
         category = in.readParcelable(SolutionCategory.class.getClassLoader());
+        eventTypes = new java.util.HashSet<>(in.createTypedArrayList(EventType.CREATOR));
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
         notifyPropertyChanged(BR.id);
     }
@@ -100,8 +105,8 @@ public class Solution implements Parcelable, Observable {
         notifyPropertyChanged(BR.category);
     }
 
-    public Set<EventType> getType() {
-        return type;
+    public Set<EventType> getEventTypes() {
+        return eventTypes;
     }
 
     public Set<String> getImages() {
@@ -113,9 +118,9 @@ public class Solution implements Parcelable, Observable {
         notifyPropertyChanged(BR.images);
     }
 
-    public void setType(Set<EventType> type) {
-        this.type = type;
-        notifyPropertyChanged(BR.type);
+    public void setEventTypes(Set<EventType> type) {
+        this.eventTypes = type;
+        notifyPropertyChanged(BR.eventTypes);
     }
 
     public void setStatus(Status status) {
@@ -183,6 +188,25 @@ public class Solution implements Parcelable, Observable {
         notifyPropertyChanged(BR.availability);
     }
 
+    @Bindable
+    public SolutionType getSolutionType() {
+        return solutionType;
+    }
+
+    public void setSolutionType(SolutionType solutionType) {
+        this.solutionType = solutionType;
+        notifyPropertyChanged(BR.solutionType);
+    }
+
+    // Funkcije isService i isProduct
+    public boolean isService() {
+        return SolutionType.SERVICE.equals(solutionType);
+    }
+
+    public boolean isProduct() {
+        return SolutionType.PRODUCT.equals(solutionType);
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -190,7 +214,7 @@ public class Solution implements Parcelable, Observable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
+        dest.writeString(id);
         dest.writeString(status.name());
         dest.writeString(name);
         dest.writeString(description);
@@ -200,6 +224,7 @@ public class Solution implements Parcelable, Observable {
         dest.writeByte((byte) (visibility ? 1 : 0));
         dest.writeByte((byte) (availability ? 1 : 0));
         dest.writeParcelable(category, flags);
+        dest.writeTypedList(new ArrayList<>(eventTypes));
     }
 
     public static final Creator<Solution> CREATOR = new Creator<Solution>() {

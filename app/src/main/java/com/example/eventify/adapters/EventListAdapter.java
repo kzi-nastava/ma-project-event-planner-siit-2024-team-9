@@ -10,19 +10,25 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.eventify.models.Event;
+import com.bumptech.glide.Glide;
+import com.example.eventify.models.events.Event;
 import com.example.eventify.R;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.EventViewHolder> {
 
     private final Context context;
     private final List<Event> events;
+    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+    private final SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
     public EventListAdapter(Context context, List<Event> events) {
         this.context = context;
         this.events = events;
+
     }
 
     @NonNull
@@ -37,10 +43,22 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
         Event event = events.get(position);
 
         holder.eventTitle.setText(event.getName());
-//        holder.eventRating.setText("4.5");
+        String eventTime = dateFormatter.format(event.getEventStart()) + " | " +
+                timeFormatter.format(event.getEventStart()) + " - " +
+                timeFormatter.format(event.getEventEnd());
+        holder.eventDateTime.setText(eventTime);
+        holder.eventDescription.setText(event.getDescription());
         holder.eventLocation.setText(event.getLocation().getName());
-        holder.eventPrice.setText("Price: $" + event.getMaxAttendees());
-        holder.eventImage.setImageResource(R.drawable.dummy_event_image);
+        if (event.getPrice() == 0) {
+            holder.eventPrice.setText(R.string.free);
+        } else {
+            holder.eventPrice.setText(context.getString(R.string.dollar_sign) + event.getPrice());
+        }
+        Glide.with(context)
+                .load(event.getImage())
+                .placeholder(R.drawable.dummy_event_image)
+                .error(R.drawable.dummy_event_image)
+                .into(holder.eventImage);
     }
 
     @Override
@@ -49,14 +67,15 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
     }
 
     static class EventViewHolder extends RecyclerView.ViewHolder {
-        TextView eventTitle, eventLocation, eventPrice;
+        TextView eventTitle, eventDateTime, eventLocation, eventPrice, eventDescription;
         ImageView eventImage;
 
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
 
             eventTitle = itemView.findViewById(R.id.event_title);
-//            eventRating = itemView.findViewById(R.id.event_rating);
+            eventDateTime = itemView.findViewById(R.id.event_date_time);
+            eventDescription = itemView.findViewById(R.id.event_description);
             eventLocation = itemView.findViewById(R.id.event_location);
             eventPrice = itemView.findViewById(R.id.event_price);
             eventImage = itemView.findViewById(R.id.event_image);

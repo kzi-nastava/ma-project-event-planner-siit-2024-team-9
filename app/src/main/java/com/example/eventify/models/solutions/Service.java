@@ -1,4 +1,4 @@
-package com.example.eventify.models;
+package com.example.eventify.models.solutions;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -10,6 +10,7 @@ import androidx.databinding.Observable;
 import com.example.eventify.BR;
 import com.example.eventify.models.enums.ReservationMethod;
 import com.example.eventify.models.enums.Status;
+import com.example.eventify.models.events.EventType;
 
 import java.util.Set;
 

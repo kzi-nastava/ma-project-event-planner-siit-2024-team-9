@@ -46,5 +46,7 @@
     <string name="welcome_message">Welcome, User!</string>
     <string name="top_5_events_heading">Top 5 Open Events in Novi Sad</string>
     <string name="all_open_events_heading">All Open Events in Novi Sad</string>
+    <string name="free">Free</string>
+    <string name="dollar_sign">$</string>
 
 </resources>

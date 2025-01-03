@@ -15,7 +15,7 @@ import android.widget.FrameLayout;
 
 import com.example.eventify.adapters.ServiceListAdapter;
 import com.example.eventify.databinding.FragmentServicesBinding;
-import com.example.eventify.models.Service;
+import com.example.eventify.models.solutions.Service;
 import com.example.eventify.databinding.FragmentCardBinding;
 import com.example.eventify.services.ServiceService;
 
