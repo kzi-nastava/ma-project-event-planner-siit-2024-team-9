@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventify.R;
 import com.example.eventify.adapters.EventListAdapter;
-import com.example.eventify.models.Event;
+import com.example.eventify.models.events.Event;
 import com.example.eventify.services.EventService;
 import com.example.eventify.utils.RetrofitClient;
 
@@ -55,7 +55,7 @@ public class EventListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_event_list, container, false);
 
         eventRecyclerView = view.findViewById(R.id.event_recycler_view);
-        loadingIndicator = view.findViewById(R.id.loading_indicator);
+        loadingIndicator = view.findViewById(R.id.event_loading_indicator);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         eventRecyclerView.setLayoutManager(layoutManager);

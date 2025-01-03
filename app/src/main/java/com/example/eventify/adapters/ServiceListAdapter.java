@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.eventify.databinding.FragmentServiceFormBinding;
 import com.example.eventify.fragments.ServiceDetailsFragment;
 import com.example.eventify.R;
-import com.example.eventify.models.Service;
+import com.example.eventify.models.solutions.Service;
 import com.example.eventify.fragments.ServiceFormFragment;
 import com.example.eventify.databinding.FragmentCardBinding;
 

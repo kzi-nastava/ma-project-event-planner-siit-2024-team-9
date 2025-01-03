@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.eventify.models.Event;
+import com.example.eventify.models.events.Event;
 import com.example.eventify.R;
 
 import java.text.SimpleDateFormat;

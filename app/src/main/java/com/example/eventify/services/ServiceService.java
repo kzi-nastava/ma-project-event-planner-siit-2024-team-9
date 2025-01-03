@@ -2,9 +2,9 @@ package com.example.eventify.services;
 
 import com.example.eventify.models.enums.ReservationMethod;
 import com.example.eventify.models.enums.Status;
-import com.example.eventify.models.EventType;
-import com.example.eventify.models.Service;
-import com.example.eventify.models.SolutionCategory;
+import com.example.eventify.models.events.EventType;
+import com.example.eventify.models.solutions.Service;
+import com.example.eventify.models.solutions.SolutionCategory;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,7 +15,7 @@ public class ServiceService {
     private static ServiceService instance;
 
     private List<Service> services = new ArrayList<>();
-    private int idCounter = 3;
+    private Integer idCounter = 3;
 
     // Private constructor to prevent instantiation
     private ServiceService() {
@@ -60,7 +60,7 @@ public class ServiceService {
                 6,
                 ReservationMethod.AUTOMATIC
         );
-        service1.setId(1);
+        service1.setId("1");
 
         Service service2 = new Service(
                 "OnePlus 13",
@@ -87,7 +87,7 @@ public class ServiceService {
                 7,
                 ReservationMethod.AUTOMATIC
         );
-        service2.setId(2);
+        service2.setId("2");
 
         Service service3 = new Service(
                 "Oppo Find X8 Pro",
@@ -114,7 +114,7 @@ public class ServiceService {
                 8,
                 ReservationMethod.AUTOMATIC
         );
-        service3.setId(3);
+        service3.setId("3");
 
         services.add(service1);
         services.add(service2);
@@ -123,12 +123,12 @@ public class ServiceService {
 
     public Service create(Service service) {
         idCounter++;
-        service.setId(idCounter);
+        service.setId(idCounter.toString());
         services.add(service);
         return service;
     }
 
-    public Service get(int id) {
+    public Service get(String id) {
         return services.stream()
                 .filter(service -> service.getId() == id)
                 .findFirst()
@@ -139,12 +139,12 @@ public class ServiceService {
         return new ArrayList<>(services);
     }
 
-    public boolean update(int id, Service updatedService) {
+    public boolean update(String id, Service updatedService) {
         Service service = get(id);
         if (service != null) {
             service.setName(updatedService.getName());
             service.setCategory(updatedService.getCategory());
-            service.setType(updatedService.getType());
+            service.setEventTypes(updatedService.getEventTypes());
             service.setStatus(updatedService.getStatus());
             service.setDescription(updatedService.getDescription());
             service.setPrice(updatedService.getPrice());
@@ -163,7 +163,7 @@ public class ServiceService {
         return false;
     }
 
-    public boolean delete(int id) {
+    public boolean delete(String id) {
         return services.removeIf(service -> service.getId() == id);
     }
 

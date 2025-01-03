@@ -5,7 +5,7 @@
     <data>
         <variable
             name="service"
-            type="com.example.eventify.models.Service" />
+            type="com.example.eventify.models.solutions.Service" />
     </data>
     <ScrollView
         android:layout_width="match_parent"

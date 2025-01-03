@@ -2,7 +2,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="200dp"
-    android:layout_height="wrap_content"
+    android:layout_height="360dp"
     android:layout_margin="8dp"
     app:cardBackgroundColor="@android:color/white"
     app:cardCornerRadius="16dp"
@@ -10,18 +10,54 @@
     app:cardElevation="8dp">
 
     <LinearLayout
-        android:layout_width="200dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/solution_image"
+        <!-- Image and Badges -->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/dummy_event_image"
-            android:clipToOutline="true" />
+            android:layout_height="150dp">
 
+            <!-- Solution Image -->
+            <ImageView
+                android:id="@+id/solution_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/dummy_event_image" />
+
+            <!-- Type Badge -->
+            <TextView
+                android:id="@+id/solution_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_margin="8dp"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:text="Service"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:fontFamily="@font/roboto" />
+
+            <!-- Discount Badge -->
+            <TextView
+                android:id="@+id/solution_discount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="8dp"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:background="@drawable/discount_badge_background"
+                android:text="10% OFF"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:fontFamily="@font/roboto" />
+        </RelativeLayout>
+
+        <!-- Solution Details -->
         <TextView
             android:id="@+id/solution_name"
             android:layout_width="match_parent"
@@ -29,25 +65,59 @@
             android:layout_margin="8dp"
             android:text="Solution Name"
             android:textColor="@android:color/black"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/montserrat_bold" />
 
         <TextView
-            android:id="@+id/solution_price"
+            android:id="@+id/solution_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
-            android:text="Price: $100"
-            android:textColor="@android:color/black"
-            android:textSize="14sp" />
+            android:layout_marginBottom="4dp"
+            android:text="Solution Description"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="14sp"
+            android:fontFamily="@font/roboto" />
 
-        <TextView
-            android:id="@+id/solution_discount"
+        <!-- Event Type Tags -->
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/solution_event_types"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginBottom="8dp"
+            app:flexWrap="wrap"
+            app:justifyContent="flex_start">
+        </com.google.android.flexbox.FlexboxLayout>
+
+
+
+        <!-- Price and Discount -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:text="Discount: 10%"
-            android:textColor="@android:color/holo_red_dark"
-            android:textSize="16sp" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/solution_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$900.00"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/roboto" />
+
+            <TextView
+                android:id="@+id/solution_original_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="$1000.00"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="14sp" />
+        </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

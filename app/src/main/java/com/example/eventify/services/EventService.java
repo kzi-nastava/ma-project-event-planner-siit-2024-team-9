@@ -1,6 +1,6 @@
 package com.example.eventify.services;
 
-import com.example.eventify.models.Event;
+import com.example.eventify.models.events.Event;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public interface EventService {
 
     String BASE_URL = "http://192.168.0.26:8080/api/";
 
-    @POST("")
+    @POST("events")
     Call<Event> create(@Body Event event);
 
     @GET("/{id}")

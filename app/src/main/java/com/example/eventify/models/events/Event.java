@@ -1,8 +1,9 @@
-package com.example.eventify.models;
+package com.example.eventify.models.events;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.eventify.models.others.Location;
 import com.example.eventify.models.enums.PrivacyType;
 
 import java.util.Date;

@@ -6,7 +6,7 @@
     <data>
         <variable
             name="service"
-            type="com.example.eventify.models.Service" />
+            type="com.example.eventify.models.solutions.Service" />
     </data>
 
     <androidx.core.widget.NestedScrollView

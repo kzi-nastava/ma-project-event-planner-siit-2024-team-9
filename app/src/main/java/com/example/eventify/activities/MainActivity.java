@@ -2,7 +2,6 @@ package com.example.eventify.activities;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -11,27 +10,20 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.MenuItem;
 
 
-import com.example.eventify.adapters.EventListAdapter;
-import com.example.eventify.adapters.SolutionListAdapter;
 import com.example.eventify.fragments.DiscoverFragment;
 import com.example.eventify.models.enums.PrivacyType;
 import com.example.eventify.fragments.ServicesFragment;
-import com.example.eventify.fragments.WelcomeSearchFragment;
-import com.example.eventify.models.Event;
-import com.example.eventify.models.Location;
-import com.example.eventify.models.Solution;
+import com.example.eventify.models.events.Event;
+import com.example.eventify.models.solutions.Solution;
 import com.example.eventify.R;
 import com.example.eventify.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 

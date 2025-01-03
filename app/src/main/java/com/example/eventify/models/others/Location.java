@@ -1,4 +1,4 @@
-package com.example.eventify.models;
+package com.example.eventify.models.others;
 
 import android.os.Parcel;
 import android.os.Parcelable;

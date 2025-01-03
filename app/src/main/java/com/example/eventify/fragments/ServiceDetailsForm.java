@@ -3,18 +3,14 @@ package com.example.eventify.fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
 import com.example.eventify.R;
-import com.example.eventify.databinding.FragmentServiceDetailsBinding;
 import com.example.eventify.databinding.FragmentServiceDetailsFormBinding;
-import com.example.eventify.models.Service;
+import com.example.eventify.models.solutions.Service;
 
 /**
  * A simple {@link Fragment} subclass.

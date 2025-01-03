@@ -4,34 +4,20 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.eventify.adapters.EventListAdapter;
-import com.example.eventify.adapters.SolutionListAdapter;
 import com.example.eventify.R;
-import com.example.eventify.models.Event;
-import com.example.eventify.models.EventType;
-import com.example.eventify.models.Location;
-import com.example.eventify.models.Solution;
-import com.example.eventify.models.enums.PrivacyType;
-import com.example.eventify.models.enums.Status;
-import com.google.android.material.button.MaterialButton;
+import com.example.eventify.models.events.Event;
+import com.example.eventify.models.solutions.Solution;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class DiscoverFragment extends Fragment {
 
-    private RecyclerView topEventsRecyclerView, allEventsRecyclerView, topSolutionsRecyclerView, allSolutionsRecyclerView;
-    private int eventsPage = 1, solutionsPage = 1;
-    private final int pageSize = 10;
 
     private List<Event> allEvents = new ArrayList<>();
     private List<Solution> allSolutions = new ArrayList<>();
@@ -42,13 +28,13 @@ public class DiscoverFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_discover, container, false);
 
         initRecyclerViews(view);
-        setupDummyData();
+//        setupDummyData();
 //        setupPaginators(view);
 
 //        setTopEvents();
 //        setAllEvents();
-        setTopSolutions();
-        setAllSolutions();
+//        setTopSolutions();
+//        setAllSolutions();
 
         return view;
     }
@@ -64,19 +50,32 @@ public class DiscoverFragment extends Fragment {
                 .replace(R.id.all_events_container, EventListFragment.newInstance(false))
                 .commit();
 
-        topSolutionsRecyclerView = view.findViewById(R.id.top_solutions_recycler_view);
-        topSolutionsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
-        allSolutionsRecyclerView = view.findViewById(R.id.all_solutions_recycler_view);
-        allSolutionsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        // Top 5 Solutions Fragment
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.top_solutions_container, SolutionListFragment.newInstance(true))
+                .commit();
+
+        // All Solutions Fragment
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.all_solutions_container, SolutionListFragment.newInstance(false))
+                .commit();
+
+
+//        topSolutionsRecyclerView = view.findViewById(R.id.top_solutions_recycler_view);
+//        topSolutionsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+//
+//        allSolutionsRecyclerView = view.findViewById(R.id.all_solutions_recycler_view);
+//        allSolutionsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
     }
 
-    private void setupDummyData() {
-        for (int i = 1; i <= 50; i++) {
-            allEvents.add(new Event("e" + i, "Event " + i, "Description " + i, "dummy_image.png", 20, PrivacyType.PUBLIC, null, null, 10, new EventType("Type " + i, "Description " + i, true), new Location("City " + i, "Street " + i, 0.0, 0.0), 20.0*i, Set.of()));
-            allSolutions.add(new Solution("Solution " + i, null, null, Status.ACCEPTED, "Description " + i, i * 10, i, null, true, true));
-        }
-    }
+//    private void setupDummyData() {
+//        for (int i = 1; i <= 50; i++) {
+//            allEvents.add(new Event("e" + i, "Event " + i, "Description " + i, "dummy_image.png", 20, PrivacyType.PUBLIC, null, null, 10, new EventType("Type " + i, "Description " + i, true), new Location("City " + i, "Street " + i, 0.0, 0.0), 20.0*i, Set.of()));
+//            allSolutions.add(new Solution("Solution " + i, null, null, Status.ACCEPTED, "Description " + i, i * 10, i, null, true, true));
+//        }
+//    }
 
 //    private void setupPaginators(View view) {
 //        MaterialButton eventsPrev = view.findViewById(R.id.events_prev_page);
@@ -116,15 +115,15 @@ public class DiscoverFragment extends Fragment {
 //        allEventsRecyclerView.setAdapter(new EventListAdapter(getContext(), paginatedEvents));
 //    }
 
-    private void setTopSolutions() {
-        List<Solution> topSolutions = allSolutions.subList(0, Math.min(5, allSolutions.size()));
-        topSolutionsRecyclerView.setAdapter(new SolutionListAdapter(getContext(), topSolutions));
-    }
-
-    private void setAllSolutions() {
-        int start = (solutionsPage - 1) * pageSize;
-        int end = Math.min(start + pageSize, allSolutions.size());
-        List<Solution> paginatedSolutions = allSolutions.subList(start, end);
-        allSolutionsRecyclerView.setAdapter(new SolutionListAdapter(getContext(), paginatedSolutions));
-    }
+//    private void setTopSolutions() {
+//        List<Solution> topSolutions = allSolutions.subList(0, Math.min(5, allSolutions.size()));
+//        topSolutionsRecyclerView.setAdapter(new SolutionListAdapter(getContext(), topSolutions));
+//    }
+//
+//    private void setAllSolutions() {
+//        int start = (solutionsPage - 1) * pageSize;
+//        int end = Math.min(start + pageSize, allSolutions.size());
+//        List<Solution> paginatedSolutions = allSolutions.subList(start, end);
+//        allSolutionsRecyclerView.setAdapter(new SolutionListAdapter(getContext(), paginatedSolutions));
+//    }
 }
