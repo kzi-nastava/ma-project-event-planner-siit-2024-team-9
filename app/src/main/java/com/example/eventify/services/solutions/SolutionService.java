@@ -1,4 +1,4 @@
-package com.example.eventify.services;
+package com.example.eventify.services.solutions;
 
 import com.example.eventify.models.solutions.Solution;
 import com.google.gson.annotations.SerializedName;
@@ -35,7 +35,7 @@ public interface SolutionService {
     @PUT("solutions/update/{id}")
     Call<Boolean> update(@Path("id") String id, @Body Solution updatedSolution);
 
-    @DELETE("solutions/{id}")
+    @DELETE("/solutions/{id}")
     Call<Boolean> delete(@Path("id") String id);
 
     @GET("solutions/filter")

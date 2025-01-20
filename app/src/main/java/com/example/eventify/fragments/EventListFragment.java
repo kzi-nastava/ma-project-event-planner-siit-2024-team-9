@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.eventify.R;
 import com.example.eventify.adapters.EventListAdapter;
 import com.example.eventify.models.events.Event;
-import com.example.eventify.services.EventService;
+import com.example.eventify.services.events.EventService;
 import com.example.eventify.utils.RetrofitClient;
 
 import java.util.ArrayList;

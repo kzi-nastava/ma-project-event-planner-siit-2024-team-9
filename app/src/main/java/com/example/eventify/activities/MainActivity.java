@@ -44,33 +44,6 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                // Get the parent FragmentManager
-                FragmentManager fragmentManager = getSupportFragmentManager();
-
-                // Get the currently active fragment in the main container
-                Fragment currentFragment = fragmentManager.findFragmentById(R.id.home_container);
-
-                if (currentFragment != null && currentFragment.getChildFragmentManager().getBackStackEntryCount() > 0) {
-                    // If the active fragment has a back stack, pop it
-                    currentFragment.getChildFragmentManager().popBackStack();
-                    Log.i("Navigation1", "Child FragmentManager Back Stack Count: "
-                            + currentFragment.getChildFragmentManager().getBackStackEntryCount());
-                } else if (fragmentManager.getBackStackEntryCount() > 0) {
-                    // If no child fragments are in the back stack, pop the parent fragment manager's stack
-                    fragmentManager.popBackStack();
-                    Log.i("Navigation1", "Parent FragmentManager Back Stack Count: "
-                            + fragmentManager.getBackStackEntryCount());
-                } else {
-                    // If no fragments are in any back stack, finish the activity
-                    Log.i("Navigation1", "No more fragments in back stack. Finishing activity.");
-                    finish();
-                }
-            }
-        });
-
 
         navigationActions.put(R.id.discover, this::setDiscoverFragment);
         navigationActions.put(R.id.services, this::setServicesFragment);
@@ -133,18 +106,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     private void loadFragment(Fragment fragment) {
-        //binding.servicesContainer.setVisibility(View.VISIBLE);
         FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment existingFragment = fragmentManager.findFragmentByTag("home");
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        if (existingFragment == null || !existingFragment.isVisible()) {
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.replace(R.id.home_container, fragment, "home");
-            transaction.addToBackStack("home");
-            transaction.commit();
-        }
+        transaction.replace(R.id.home_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     private String getUser(){

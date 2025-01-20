@@ -1,4 +1,4 @@
-package com.example.eventify.models.events;
+package com.example.eventify.models.others;
 
 import com.example.eventify.models.enums.Status;
 

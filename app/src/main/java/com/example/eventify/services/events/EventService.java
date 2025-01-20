@@ -1,4 +1,4 @@
-package com.example.eventify.services;
+package com.example.eventify.services.events;
 
 import com.example.eventify.models.events.Event;
 import com.google.gson.annotations.SerializedName;
@@ -18,7 +18,6 @@ import retrofit2.http.QueryMap;
 
 public interface EventService {
 
-    String BASE_URL = "http://192.168.0.26:8080/api/";
 
     @POST("events")
     Call<Event> create(@Body Event event);

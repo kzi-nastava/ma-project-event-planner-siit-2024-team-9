@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.eventify.R;
 import com.example.eventify.adapters.SolutionListAdapter;
 import com.example.eventify.models.solutions.Solution;
-import com.example.eventify.services.SolutionService;
+import com.example.eventify.services.solutions.SolutionService;
 import com.example.eventify.utils.RetrofitClient;
 
 import java.util.ArrayList;

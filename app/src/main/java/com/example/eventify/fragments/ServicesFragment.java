@@ -17,9 +17,15 @@ import com.example.eventify.adapters.ServiceListAdapter;
 import com.example.eventify.databinding.FragmentServicesBinding;
 import com.example.eventify.models.solutions.Service;
 import com.example.eventify.databinding.FragmentCardBinding;
-import com.example.eventify.services.ServiceService;
+import com.example.eventify.services.ServiceFactory;
+import com.example.eventify.services.solutions.ServiceService;
 
 import java.util.ArrayList;
+import java.util.Collection;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ServicesFragment extends Fragment {
 
@@ -39,7 +45,7 @@ public class ServicesFragment extends Fragment {
         // Required empty public constructor
     }
 
-    ServiceService service = ServiceService.getInstance();
+    ServiceService service = ServiceFactory.getInstance(ServiceService.class);
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -50,8 +56,18 @@ public class ServicesFragment extends Fragment {
         servicesBinding.filterBtn.setOnClickListener(v -> filterBtnHandler());
         servicesBinding.addBtn.setOnClickListener(v -> addBtnHandler());
 
-        // Initialize the product list (Ensure mProducts is not null)
-        mProducts = service.getAll();
+        Call<Collection<Service>> call = service.getAll();
+        call.enqueue(new Callback<Collection<Service>>() {
+            @Override
+            public void onResponse(Call<Collection<Service>> call, Response<Collection<Service>> response) {
+                mProducts = (ArrayList<Service>) response.body();
+            }
+
+            @Override
+            public void onFailure(Call<Collection<Service>> call, Throwable t) {
+
+            }
+        });
 
         // Initialize the adapter and bind it to the RecyclerView
         adapter = new ServiceListAdapter(requireContext(), mProducts, getParentFragmentManager());
@@ -69,7 +85,7 @@ public class ServicesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ServiceService service = ServiceService.getInstance();
+        ServiceService service = ServiceFactory.getInstance(ServiceService.class);
     }
 
     private void filterBtnHandler() {
