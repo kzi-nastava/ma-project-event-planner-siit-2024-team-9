@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.eventify.R;
 import com.example.eventify.adapters.SolutionListAdapter;
 import com.example.eventify.models.solutions.Solution;
-import com.example.eventify.services.SolutionService;
+import com.example.eventify.services.solutions.SolutionService;
 import com.example.eventify.utils.RetrofitClient;
 
 import java.util.ArrayList;
@@ -62,7 +62,7 @@ public class SolutionListFragment extends Fragment {
         solutionListAdapter = new SolutionListAdapter(getContext(), solutions);
         solutionRecyclerView.setAdapter(solutionListAdapter);
 
-        solutionService = RetrofitClient.getClient(SolutionService.BASE_URL).create(SolutionService.class);
+        solutionService = RetrofitClient.getClient().create(SolutionService.class);
 
         if (getArguments() != null) {
             showTop = getArguments().getBoolean("showTop");

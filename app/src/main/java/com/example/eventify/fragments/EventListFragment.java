@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.eventify.R;
 import com.example.eventify.adapters.EventListAdapter;
 import com.example.eventify.models.events.Event;
-import com.example.eventify.services.EventService;
+import com.example.eventify.services.events.EventService;
 import com.example.eventify.utils.RetrofitClient;
 
 import java.util.ArrayList;
@@ -62,7 +62,7 @@ public class EventListFragment extends Fragment {
         eventListAdapter = new EventListAdapter(getContext(), events);
         eventRecyclerView.setAdapter(eventListAdapter);
 
-        eventService = RetrofitClient.getClient(EventService.BASE_URL).create(EventService.class);
+        eventService = RetrofitClient.getClient().create(EventService.class);
 
         if (getArguments() != null) {
             showTop = getArguments().getBoolean("showTop");

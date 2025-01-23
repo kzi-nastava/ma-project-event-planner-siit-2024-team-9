@@ -1,4 +1,4 @@
-package com.example.eventify.services;
+package com.example.eventify.services.events;
 
 import com.example.eventify.models.events.Event;
 import com.google.gson.annotations.SerializedName;
@@ -18,12 +18,10 @@ import retrofit2.http.QueryMap;
 
 public interface EventService {
 
-    String BASE_URL = "http://192.168.0.26:8080/api/";
-
     @POST("events")
     Call<Event> create(@Body Event event);
 
-    @GET("/{id}")
+    @GET("events/{id}")
     Call<Event> get(@Path("id") String id);
 
     @GET("events")
@@ -32,13 +30,13 @@ public interface EventService {
     @GET("events/top")
     Call<List<Event>> getTop();
 
-    @PUT("/update/{id}")
+    @PUT("events/update/{id}")
     Call<Boolean> update(@Path("id") String id, @Body Event updatedEvent);
 
-    @DELETE("/{id}")
+    @DELETE("events/{id}")
     Call<Boolean> delete(@Path("id") String id);
 
-    @GET("/filter")
+    @GET("events/filter")
     Call<EventAllResponse> filter(
             @QueryMap Map<String, String> filters,
             @Query("page") int page,
@@ -47,7 +45,7 @@ public interface EventService {
             @Query("ascending") boolean ascending
     );
 
-    @GET("/stats")
+    @GET("events/stats")
     Call<Map<String, Double>> getStats();
 
     class EventAllResponse {

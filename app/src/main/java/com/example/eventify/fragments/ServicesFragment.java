@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,15 +18,21 @@ import com.example.eventify.adapters.ServiceListAdapter;
 import com.example.eventify.databinding.FragmentServicesBinding;
 import com.example.eventify.models.solutions.Service;
 import com.example.eventify.databinding.FragmentCardBinding;
-import com.example.eventify.services.ServiceService;
+import com.example.eventify.services.solutions.ServiceService;
+import com.example.eventify.utils.RetrofitClient;
 
 import java.util.ArrayList;
+import java.util.Collection;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ServicesFragment extends Fragment {
 
     private static final String ARG_PARAM = "param";
 
-    private ArrayList<Service> mProducts;
+    private ArrayList<Service> mProducts = new ArrayList<>();
 
     public static ArrayList<Service> products = new ArrayList<>();
     private FragmentServicesBinding servicesBinding;
@@ -39,23 +46,33 @@ public class ServicesFragment extends Fragment {
         // Required empty public constructor
     }
 
-    ServiceService service = ServiceService.getInstance();
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         servicesBinding = FragmentServicesBinding.inflate(inflater, container, false);
 
+        ServiceService service = RetrofitClient.getClient().create(ServiceService.class);
+
         // Set up button click listeners
         servicesBinding.filterBtn.setOnClickListener(v -> filterBtnHandler());
         servicesBinding.addBtn.setOnClickListener(v -> addBtnHandler());
 
-        // Initialize the product list (Ensure mProducts is not null)
-        mProducts = service.getAll();
+        service.getAll().enqueue(new Callback<Collection<Service>>() {
+            @Override
+            public void onResponse(Call<Collection<Service>> call, Response<Collection<Service>> response) {
+                mProducts.clear();
+                mProducts.addAll(response.body());
+                adapter = new ServiceListAdapter(requireContext(), mProducts, getParentFragmentManager());
+                servicesBinding.recyclerView.setAdapter(adapter);
+            }
 
-        // Initialize the adapter and bind it to the RecyclerView
-        adapter = new ServiceListAdapter(requireContext(), mProducts, getParentFragmentManager());
-        servicesBinding.recyclerView.setAdapter(adapter);
+            @Override
+            public void onFailure(Call<Collection<Service>> call, Throwable t) {
+                Log.e("RetrofitError", "Error: " + t.getMessage());
+                t.printStackTrace();
+            }
+        });
+
 
         return servicesBinding.getRoot();
     }
@@ -69,7 +86,7 @@ public class ServicesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ServiceService service = ServiceService.getInstance();
+        ServiceService service = RetrofitClient.getClient().create(ServiceService.class);
     }
 
     private void filterBtnHandler() {

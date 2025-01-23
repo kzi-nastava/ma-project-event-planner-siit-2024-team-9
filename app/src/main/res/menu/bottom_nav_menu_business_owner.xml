@@ -22,9 +22,9 @@
         />
 
     <item
-        android:id="@+id/calendar"
-        android:icon="@drawable/baseline_calendar_today_24"
-        android:title="@string/calendar"
+        android:id="@+id/categories"
+        android:icon="@drawable/categories"
+        android:title="@string/categories"
         app:labelVisibilityMode="labeled"
         />
 

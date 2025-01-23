@@ -10,14 +10,17 @@ import com.example.eventify.BR;
 import com.example.eventify.models.enums.SolutionType;
 import com.example.eventify.models.enums.Status;
 import com.example.eventify.models.events.EventType;
+import com.example.eventify.models.users.BusinessOwner;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public class Solution implements Parcelable, Observable {
     @Bindable
-    private String id;
+    private UUID id;
     @Bindable
     private String name;
     @Bindable
@@ -33,12 +36,18 @@ public class Solution implements Parcelable, Observable {
     @Bindable
     private double discount;
     @Bindable
-    private Set<String> images;
+    private ArrayList<String> images;
     @Bindable
     private boolean visibility;
     @Bindable
     private boolean availability;
     @Bindable
+    private boolean isDeleted;
+    @Bindable
+    private BusinessOwner owner;
+
+    private Set<Review> reviews;
+
     private SolutionType solutionType;
 
     private transient List<OnPropertyChangedCallback> propertyChangedCallbacks = new ArrayList<>();
@@ -46,18 +55,18 @@ public class Solution implements Parcelable, Observable {
     public Solution(
             String name,
             SolutionCategory category,
-            Set<EventType> eventTypes,
+            Set<EventType> type,
             Status status,
             String description,
             double price,
             double discount,
-            Set<String> images,
+            ArrayList<String> images,
             boolean visibility,
             boolean availability
     ) {
         this.name = name;
         this.category = category;
-        this.eventTypes = eventTypes;
+        this.eventTypes = type;
         this.status = status;
         this.description = description;
         this.price = price;
@@ -67,33 +76,42 @@ public class Solution implements Parcelable, Observable {
         this.availability = availability;
     }
 
-    public Solution() {}
+    public Solution() {
+    }
 
     protected Solution(Parcel in) {
-        id = in.readString();
-        status = Status.valueOf(in.readString());
+        id = UUID.fromString(in.readString());
         name = in.readString();
+        status = Status.valueOf(in.readString());
         description = in.readString();
         price = in.readDouble();
         discount = in.readDouble();
-        images = new java.util.HashSet<>(in.createStringArrayList());
         visibility = in.readByte() != 0;
         availability = in.readByte() != 0;
+        isDeleted = in.readByte() != 0;
         category = in.readParcelable(SolutionCategory.class.getClassLoader());
-        eventTypes = new java.util.HashSet<>(in.createTypedArrayList(EventType.CREATOR));
+        eventTypes = new HashSet<>(in.createTypedArrayList(EventType.CREATOR));
+        images = new ArrayList<>(in.createStringArrayList());
+        owner = in.readParcelable(BusinessOwner.class.getClassLoader());
     }
 
-    public String getId() {
+    // Getters and Setters
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
         notifyPropertyChanged(BR.id);
     }
 
-    public Status getStatus() {
-        return status;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+        notifyPropertyChanged(BR.name);
     }
 
     public SolutionCategory getCategory() {
@@ -109,18 +127,21 @@ public class Solution implements Parcelable, Observable {
         return eventTypes;
     }
 
-    public Set<String> getImages() {
-        return images;
-    }
-
-    public void setImages(Set<String> images) {
-        this.images = images;
-        notifyPropertyChanged(BR.images);
-    }
-
-    public void setEventTypes(Set<EventType> type) {
-        this.eventTypes = type;
+    public void setEventTypes(Set<EventType> eventTypes) {
+        this.eventTypes = eventTypes;
         notifyPropertyChanged(BR.eventTypes);
+    }
+
+    public Set<Review> getReviews() {
+        return this.reviews;
+    }
+
+    public void setReviews(Set<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    public Status getStatus() {
+        return status;
     }
 
     public void setStatus(Status status) {
@@ -128,17 +149,6 @@ public class Solution implements Parcelable, Observable {
         notifyPropertyChanged(BR.status);
     }
 
-    @Bindable
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-        notifyPropertyChanged(BR.name);
-    }
-
-    @Bindable
     public String getDescription() {
         return description;
     }
@@ -148,7 +158,6 @@ public class Solution implements Parcelable, Observable {
         notifyPropertyChanged(BR.description);
     }
 
-    @Bindable
     public double getPrice() {
         return price;
     }
@@ -158,7 +167,6 @@ public class Solution implements Parcelable, Observable {
         notifyPropertyChanged(BR.price);
     }
 
-    @Bindable
     public double getDiscount() {
         return discount;
     }
@@ -168,7 +176,15 @@ public class Solution implements Parcelable, Observable {
         notifyPropertyChanged(BR.discount);
     }
 
-    @Bindable
+    public ArrayList<String> getImages() {
+        return images;
+    }
+
+    public void setImages(ArrayList<String> images) {
+        this.images = images;
+        notifyPropertyChanged(BR.images);
+    }
+
     public boolean isVisibility() {
         return visibility;
     }
@@ -178,7 +194,6 @@ public class Solution implements Parcelable, Observable {
         notifyPropertyChanged(BR.visibility);
     }
 
-    @Bindable
     public boolean isAvailability() {
         return availability;
     }
@@ -188,23 +203,22 @@ public class Solution implements Parcelable, Observable {
         notifyPropertyChanged(BR.availability);
     }
 
-    @Bindable
-    public SolutionType getSolutionType() {
-        return solutionType;
+    public boolean isDeleted() {
+        return isDeleted;
     }
 
-    public void setSolutionType(SolutionType solutionType) {
-        this.solutionType = solutionType;
-        notifyPropertyChanged(BR.solutionType);
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+        notifyPropertyChanged(BR.isDeleted);
     }
 
-    // Funkcije isService i isProduct
-    public boolean isService() {
-        return SolutionType.SERVICE.equals(solutionType);
+    public BusinessOwner getOwner() {
+        return owner;
     }
 
-    public boolean isProduct() {
-        return SolutionType.PRODUCT.equals(solutionType);
+    public void setOwner(BusinessOwner owner) {
+        this.owner = owner;
+        notifyPropertyChanged(BR.owner);
     }
 
     @Override
@@ -214,17 +228,19 @@ public class Solution implements Parcelable, Observable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
-        dest.writeString(status.name());
+        dest.writeString(String.valueOf(id));
         dest.writeString(name);
+        dest.writeString(status.name());
         dest.writeString(description);
         dest.writeDouble(price);
         dest.writeDouble(discount);
-        dest.writeStringList(new ArrayList<>(images));
         dest.writeByte((byte) (visibility ? 1 : 0));
         dest.writeByte((byte) (availability ? 1 : 0));
+        dest.writeByte((byte) (isDeleted ? 1 : 0));
         dest.writeParcelable(category, flags);
         dest.writeTypedList(new ArrayList<>(eventTypes));
+        dest.writeStringList(new ArrayList<>(images));
+        dest.writeParcelable(owner, flags);
     }
 
     public static final Creator<Solution> CREATOR = new Creator<Solution>() {
@@ -255,5 +271,13 @@ public class Solution implements Parcelable, Observable {
         for (OnPropertyChangedCallback callback : propertyChangedCallbacks) {
             callback.onPropertyChanged(this, fieldId);
         }
+    }
+
+    public boolean isService() {
+        return SolutionType.SERVICE.equals(solutionType);
+    }
+
+    public boolean isProduct() {
+        return SolutionType.PRODUCT.equals(solutionType);
     }
 }

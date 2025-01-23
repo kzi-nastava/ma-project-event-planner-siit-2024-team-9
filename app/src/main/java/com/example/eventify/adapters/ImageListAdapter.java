@@ -1,6 +1,7 @@
 package com.example.eventify.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,17 +11,18 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.eventify.R;
 import com.example.eventify.models.others.ImageItem;
 
 import java.util.ArrayList;
 
 public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.ViewHolder> {
-    private final ArrayList<ImageItem> images;
+    private final ArrayList<String> images;
     private final Context context;
     private final FragmentManager fragmentManager;
 
-    public ImageListAdapter(Context context, ArrayList<ImageItem> images, FragmentManager fragmentManager) {
+    public ImageListAdapter(Context context, ArrayList<String> images, FragmentManager fragmentManager) {
         this.context = context;
         this.images = images;
         this.fragmentManager = fragmentManager;
@@ -44,11 +46,8 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        ImageItem imageItem = images.get(position);
-
-        if (imageItem != null) {
-            holder.imageView.setImageResource(imageItem.getImageResId());
-        }
+        String imageItem = images.get(position);
+        Glide.with(context).load(imageItem).into(holder.imageView);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.example.eventify.models.events;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.eventify.models.others.Invitation;
 import com.example.eventify.models.others.Location;
 import com.example.eventify.models.enums.PrivacyType;
 

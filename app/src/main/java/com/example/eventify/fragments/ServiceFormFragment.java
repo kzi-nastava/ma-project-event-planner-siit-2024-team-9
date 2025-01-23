@@ -26,11 +26,16 @@ import com.example.eventify.databinding.FragmentServiceFormBinding;
 import com.example.eventify.utils.ComponentsSetup;
 import com.example.eventify.models.solutions.Service;
 import com.example.eventify.R;
-import com.example.eventify.services.ServiceService;
+import com.example.eventify.services.solutions.ServiceService;
+import com.example.eventify.utils.RetrofitClient;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ServiceFormFragment extends Fragment {
 
@@ -44,7 +49,7 @@ public class ServiceFormFragment extends Fragment {
         // Required empty public constructor
     }
 
-    ServiceService service = ServiceService.getInstance();
+    ServiceService service = RetrofitClient.getClient().create(ServiceService.class);
 
     public static ServiceFormFragment newInstance(Service service) {
         ServiceFormFragment fragment = new ServiceFormFragment();
@@ -175,10 +180,19 @@ public class ServiceFormFragment extends Fragment {
         submitBtn.setOnClickListener(v -> {
             hideKeyboard(binding.nameEditText);
             Service updated = binding.getService();
-            boolean isUpdate=service.update(updated.getId(), updated);
-            if (!isUpdate) {
-                service.create(updated);
-            }
+            Call<Service> call =service.update(updated.getId(), updated);
+            call.enqueue(new Callback<Service>() {
+                @Override
+                public void onResponse(Call<Service> call, Response<Service> response) {
+                    if (!response.isSuccessful())
+                        service.add(updated);
+                }
+
+                @Override
+                public void onFailure(Call<Service> call, Throwable t) {
+                    t.printStackTrace();
+                }
+            });
             goBack();
         });
 

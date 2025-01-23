@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.example.eventify.models.enums.Status;
 import com.example.eventify.models.events.EventType;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 public class Product extends Solution implements Parcelable {
@@ -18,7 +19,7 @@ public class Product extends Solution implements Parcelable {
             String description,
             double price,
             double discount,
-            Set<String> images,
+            ArrayList<String> images,
             boolean visibility,
             boolean availability
     ) {

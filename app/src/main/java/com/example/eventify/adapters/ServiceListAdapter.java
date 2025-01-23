@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.eventify.databinding.FragmentServiceFormBinding;
 import com.example.eventify.fragments.ServiceDetailsFragment;
 import com.example.eventify.R;
@@ -71,7 +72,7 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
         Service service = services.get(position);
 
         if (service != null) {
-            holder.imageView.setImageResource(R.drawable.s23);
+            Glide.with(context).load(service.getImages().toArray()[0]).into(holder.imageView);
             holder.productTitle.setText(service.getName());
             holder.productDescription.setText(service.getSpecifity());
 
