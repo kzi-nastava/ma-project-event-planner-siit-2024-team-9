@@ -26,20 +26,9 @@ import java.util.ArrayList;
  */
 public class ServiceDetailsFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     private ImageListAdapter adapter;
 
     private boolean isFavorite = true;
-
-    private ArrayList<ImageItem> images;
     private FragmentServiceDetailsBinding binding;
 
     private Service showedService;
@@ -50,13 +39,6 @@ public class ServiceDetailsFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment SolutionDetailsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static ServiceDetailsFragment newInstance(Service service) {
         ServiceDetailsFragment fragment = new ServiceDetailsFragment();
         Bundle args = new Bundle();
@@ -81,17 +63,9 @@ public class ServiceDetailsFragment extends Fragment {
 
         binding.right.setOnClickListener(v -> detailsBtnHandler());
 
-        images=new ArrayList<>();
-        images.add(new ImageItem(R.drawable.s23));
-        images.add(new ImageItem(R.drawable.s23));
-
-        adapter = new ImageListAdapter(requireContext(), images, getParentFragmentManager());
-
-        binding.recyclerView.setAdapter(adapter);
-
         if (getArguments() != null) {
-            Service service = getArguments().getParcelable("service");
-            binding.setService(service);
+            showedService = getArguments().getParcelable("service");
+            binding.setService(showedService);
             binding.setLifecycleOwner(this);
         }
 
@@ -100,6 +74,8 @@ public class ServiceDetailsFragment extends Fragment {
             binding.favorite.setSelected(isFavorite);
         });
 
+        adapter = new ImageListAdapter(requireContext(), showedService.getImages(), getParentFragmentManager());
+        binding.recyclerView.setAdapter(adapter);
 
         binding.star1.setOnClickListener( v -> rate1());
         binding.star2.setOnClickListener( v -> rate2());

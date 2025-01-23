@@ -12,6 +12,7 @@ import com.example.eventify.models.enums.ReservationMethod;
 import com.example.eventify.models.enums.Status;
 import com.example.eventify.models.events.EventType;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 public class Service extends Solution implements Parcelable, Observable {
@@ -39,7 +40,7 @@ public class Service extends Solution implements Parcelable, Observable {
             String description,
             double price,
             double discount,
-            Set<String> images,
+            ArrayList<String> images,
             boolean visibility,
             boolean availability,
             String specifity,

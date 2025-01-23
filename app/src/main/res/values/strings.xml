@@ -40,6 +40,7 @@
     <string name="home">Discover</string>
     <string name="chats">Chats</string>
     <string name="calendar">Calendar</string>
+    <string name="categories">Categories</string>
     <string name="profile">Profile</string>
     <string name="events">Events</string>
     <string name="search_placeholder">Search events, products or services</string>

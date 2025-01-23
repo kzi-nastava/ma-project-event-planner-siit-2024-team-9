@@ -6,23 +6,17 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
+
+    public static final String BASE_URL = "http://192.168.1.3:8080/api/";
     private static Retrofit retrofit;
 
-    public static Retrofit getClient(String baseUrl) {
+    public static Retrofit getClient() {
         if (retrofit == null) {
-            // Interceptor za logovanje
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-            // OkHttpClient sa logovanjem
-            OkHttpClient client = new OkHttpClient.Builder()
-                    .addInterceptor(logging)
-                    .build();
-
-            // Kreiranje Retrofit instance
             retrofit = new Retrofit.Builder()
-                    .baseUrl(baseUrl)
-                    .client(client) // Dodavanje klijenta sa logovanjem
+                    .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }

@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.MenuItem;
 
 
+import com.example.eventify.fragments.CategoriesFragment;
 import com.example.eventify.fragments.DiscoverFragment;
 import com.example.eventify.models.enums.PrivacyType;
 import com.example.eventify.fragments.ServicesFragment;
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         navigationActions.put(R.id.discover, this::setDiscoverFragment);
         navigationActions.put(R.id.services, this::setServicesFragment);
         navigationActions.put(R.id.events, this::setEventsFragment);
-        navigationActions.put(R.id.calendar, this::setCalendarFragment);
+        navigationActions.put(R.id.categories, this::setCategoriesFragment);
         navigationActions.put(R.id.profile, this::setProfileFragment);
         navigationActions.put(R.id.chats, this::setChatsFragment);
 
@@ -101,8 +102,8 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, "Chats", Toast.LENGTH_SHORT).show();
     }
 
-    private void setCalendarFragment(){
-        Toast.makeText(this, "Calendar", Toast.LENGTH_SHORT).show();
+    private void setCategoriesFragment(){
+        loadFragment(new CategoriesFragment());
     }
 
 

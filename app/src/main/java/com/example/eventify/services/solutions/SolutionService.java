@@ -18,7 +18,6 @@ import retrofit2.http.QueryMap;
 
 public interface SolutionService {
 
-    String BASE_URL = "http://192.168.0.26:8080/api/";
 
     @POST("solutions")
     Call<Solution> create(@Body Solution solution);

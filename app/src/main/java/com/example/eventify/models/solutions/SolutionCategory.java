@@ -6,30 +6,46 @@ import android.os.Parcelable;
 import com.example.eventify.models.enums.Status;
 
 public class SolutionCategory implements Parcelable {
-    private String name;
+    private String id;
+    private String categoryName;
     private String description;
-    private Status status;
 
-    public SolutionCategory(String name, String description, Status status) {
-        this.name = name;
-        this.description = description;
-        this.status = status;
+    public boolean isActive() {
+        return isActive;
     }
 
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    private boolean isActive;
+
+    // Default constructor
     public SolutionCategory() {}
 
-    public SolutionCategory(Parcel in) {
-        name = in.readString();
-        description = in.readString();
-        status = Status.valueOf(in.readString());
+    // Parameterized constructor
+    public SolutionCategory(String id, String categoryName, String description, boolean isActive) {
+        this.id = id;
+        this.categoryName = categoryName;
+        this.description = description;
+        this.isActive = isActive;
+    }
+
+    // Getters and Setters
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
-        return name;
+        return categoryName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public String getDescription() {
@@ -40,12 +56,14 @@ public class SolutionCategory implements Parcelable {
         this.description = description;
     }
 
-    public Status getStatus() {
-        return status;
-    }
 
-    public void setStatus(Status status) {
-        this.status = status;
+
+    // Parcelable methods
+    protected SolutionCategory(Parcel in) {
+        id = in.readString();
+        categoryName = in.readString();
+        description = in.readString();
+        isActive = Boolean.parseBoolean(in.readString()); // Assuming Status is an enum
     }
 
     @Override
@@ -55,9 +73,9 @@ public class SolutionCategory implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(name);
+        dest.writeString(categoryName);
         dest.writeString(description);
-        dest.writeString(status.name());
+        dest.writeString(String.valueOf(isActive));
     }
 
     public static final Creator<SolutionCategory> CREATOR = new Creator<SolutionCategory>() {

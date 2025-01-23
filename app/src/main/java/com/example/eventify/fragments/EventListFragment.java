@@ -62,7 +62,7 @@ public class EventListFragment extends Fragment {
         eventListAdapter = new EventListAdapter(getContext(), events);
         eventRecyclerView.setAdapter(eventListAdapter);
 
-        eventService = RetrofitClient.getClient(EventService.BASE_URL).create(EventService.class);
+        eventService = RetrofitClient.getClient().create(EventService.class);
 
         if (getArguments() != null) {
             showTop = getArguments().getBoolean("showTop");

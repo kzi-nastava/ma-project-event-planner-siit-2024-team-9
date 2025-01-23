@@ -62,7 +62,7 @@ public class SolutionListFragment extends Fragment {
         solutionListAdapter = new SolutionListAdapter(getContext(), solutions);
         solutionRecyclerView.setAdapter(solutionListAdapter);
 
-        solutionService = RetrofitClient.getClient(SolutionService.BASE_URL).create(SolutionService.class);
+        solutionService = RetrofitClient.getClient().create(SolutionService.class);
 
         if (getArguments() != null) {
             showTop = getArguments().getBoolean("showTop");

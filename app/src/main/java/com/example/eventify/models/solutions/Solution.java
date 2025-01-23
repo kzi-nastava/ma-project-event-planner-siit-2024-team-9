@@ -36,7 +36,7 @@ public class Solution implements Parcelable, Observable {
     @Bindable
     private double discount;
     @Bindable
-    private Set<String> images;
+    private ArrayList<String> images;
     @Bindable
     private boolean visibility;
     @Bindable
@@ -48,7 +48,7 @@ public class Solution implements Parcelable, Observable {
 
     private Set<Review> reviews;
 
-    private SolutionType type;
+    private SolutionType solutionType;
 
     private transient List<OnPropertyChangedCallback> propertyChangedCallbacks = new ArrayList<>();
 
@@ -60,12 +60,11 @@ public class Solution implements Parcelable, Observable {
             String description,
             double price,
             double discount,
-            Set<String> images,
+            ArrayList<String> images,
             boolean visibility,
             boolean availability
     ) {
         this.name = name;
-        this.owner = owner;
         this.category = category;
         this.eventTypes = type;
         this.status = status;
@@ -92,7 +91,7 @@ public class Solution implements Parcelable, Observable {
         isDeleted = in.readByte() != 0;
         category = in.readParcelable(SolutionCategory.class.getClassLoader());
         eventTypes = new HashSet<>(in.createTypedArrayList(EventType.CREATOR));
-        images = new HashSet<>(in.createStringArrayList());
+        images = new ArrayList<>(in.createStringArrayList());
         owner = in.readParcelable(BusinessOwner.class.getClassLoader());
     }
 
@@ -177,11 +176,11 @@ public class Solution implements Parcelable, Observable {
         notifyPropertyChanged(BR.discount);
     }
 
-    public Set<String> getImages() {
+    public ArrayList<String> getImages() {
         return images;
     }
 
-    public void setImages(Set<String> images) {
+    public void setImages(ArrayList<String> images) {
         this.images = images;
         notifyPropertyChanged(BR.images);
     }
@@ -275,10 +274,10 @@ public class Solution implements Parcelable, Observable {
     }
 
     public boolean isService() {
-        return SolutionType.SERVICE.equals(type);
+        return SolutionType.SERVICE.equals(solutionType);
     }
 
     public boolean isProduct() {
-        return SolutionType.PRODUCT.equals(type);
+        return SolutionType.PRODUCT.equals(solutionType);
     }
 }

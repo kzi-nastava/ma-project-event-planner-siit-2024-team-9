@@ -23,11 +23,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.eventify.databinding.FragmentServiceFormBinding;
-import com.example.eventify.services.ServiceFactory;
 import com.example.eventify.utils.ComponentsSetup;
 import com.example.eventify.models.solutions.Service;
 import com.example.eventify.R;
 import com.example.eventify.services.solutions.ServiceService;
+import com.example.eventify.utils.RetrofitClient;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
@@ -49,7 +49,7 @@ public class ServiceFormFragment extends Fragment {
         // Required empty public constructor
     }
 
-    ServiceService service = ServiceFactory.getInstance(ServiceService.class);
+    ServiceService service = RetrofitClient.getClient().create(ServiceService.class);
 
     public static ServiceFormFragment newInstance(Service service) {
         ServiceFormFragment fragment = new ServiceFormFragment();
