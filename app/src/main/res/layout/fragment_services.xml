@@ -61,11 +61,11 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="5dp"
                 android:orientation="horizontal">
 
                 <EditText
-                    android:id="@+id/nameEditText"
+                    android:id="@+id/search"
                     android:layout_width="240dp"
                     android:layout_height="wrap_content"
                     android:hint="Search services"
@@ -88,12 +88,22 @@
                 </ImageButton>
 
                 <ImageButton
+                    android:id="@+id/cancelSearch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/cancel">
+                </ImageButton>
+
+                <ImageButton
                     android:id="@+id/filterBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:background="@drawable/filer_list">
                 </ImageButton>
+
 
 
             </LinearLayout>

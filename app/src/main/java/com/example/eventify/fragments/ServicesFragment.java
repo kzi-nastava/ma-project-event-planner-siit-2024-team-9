@@ -28,7 +28,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ServicesFragment extends Fragment {
+public class ServicesFragment extends Fragment implements SolutionFilterFragment.OnFilterAppliedListener {
 
     private static final String ARG_PARAM = "param";
 
@@ -40,43 +40,13 @@ public class ServicesFragment extends Fragment {
 
     private ServiceListAdapter adapter;
 
-    private boolean filterOn = false;
+    private boolean searchOn = false;
 
     public ServicesFragment() {
         // Required empty public constructor
     }
 
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        servicesBinding = FragmentServicesBinding.inflate(inflater, container, false);
-
-        ServiceService service = RetrofitClient.getClient().create(ServiceService.class);
-
-        // Set up button click listeners
-        servicesBinding.filterBtn.setOnClickListener(v -> filterBtnHandler());
-        servicesBinding.addBtn.setOnClickListener(v -> addBtnHandler());
-
-        service.getAll().enqueue(new Callback<Collection<Service>>() {
-            @Override
-            public void onResponse(Call<Collection<Service>> call, Response<Collection<Service>> response) {
-                mProducts.clear();
-                mProducts.addAll(response.body());
-                adapter = new ServiceListAdapter(requireContext(), mProducts, getParentFragmentManager());
-                servicesBinding.recyclerView.setAdapter(adapter);
-            }
-
-            @Override
-            public void onFailure(Call<Collection<Service>> call, Throwable t) {
-                Log.e("RetrofitError", "Error: " + t.getMessage());
-                t.printStackTrace();
-            }
-        });
-
-
-        return servicesBinding.getRoot();
-    }
-
+    ServiceService service = RetrofitClient.getClient().create(ServiceService.class);
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,41 +56,113 @@ public class ServicesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ServiceService service = RetrofitClient.getClient().create(ServiceService.class);
+        getServices();
     }
 
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        servicesBinding = FragmentServicesBinding.inflate(inflater, container, false);
+
+        servicesBinding.filterBtn.setOnClickListener(v -> filterBtnHandler());
+        servicesBinding.addBtn.setOnClickListener(v -> addBtnHandler());
+        servicesBinding.searchBtn.setOnClickListener(v -> search(servicesBinding.search.getText().toString()));
+        servicesBinding.cancelSearch.setOnClickListener(v -> cancelBtnHandler());
+
+        changeButtons();
+        getServices();
+
+        return servicesBinding.getRoot();
+    }
+
+    private void setServices(Response<Collection<Service>> response) {
+        mProducts.clear();
+        mProducts.addAll(response.body());
+        adapter = new ServiceListAdapter(requireContext(), mProducts, getParentFragmentManager());
+        servicesBinding.recyclerView.setAdapter(adapter);
+    }
+
+    private void changeButtons() {
+        servicesBinding.cancelSearch.setVisibility(searchOn ? View.VISIBLE:View.GONE);
+        servicesBinding.searchBtn.setVisibility(searchOn ? View.GONE:View.VISIBLE);
+        servicesBinding.filterBtn.setVisibility(searchOn ? View.GONE:View.VISIBLE);
+    }
+
+    private void getServices() {
+        service.getAll().enqueue(new Callback<Collection<Service>>() {
+            @Override
+            public void onResponse(Call<Collection<Service>> call, Response<Collection<Service>> response) {
+                setServices(response);
+            }
+
+            @Override
+            public void onFailure(Call<Collection<Service>> call, Throwable t) {
+                Log.e("RetrofitError", "Error: " + t.getMessage());
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private void search(String searchItem) {
+        searchOn = true;
+        changeButtons();
+        service.search(searchItem).enqueue(new Callback<Collection<Service>>() {
+            @Override
+            public void onResponse(Call<Collection<Service>> call, Response<Collection<Service>> response) {
+                setServices(response);
+            }
+
+            @Override
+            public void onFailure(Call<Collection<Service>> call, Throwable t) {
+
+            }
+        });
+    }
+
+
     private void filterBtnHandler() {
-        // Access the filter layout
-        FrameLayout filterLayout = servicesBinding.filter;
+            FrameLayout filterLayout = servicesBinding.filter;
+            ViewGroup.LayoutParams params = filterLayout.getLayoutParams();
 
-        // Dynamically set the height to 400dp
-        ViewGroup.LayoutParams params = filterLayout.getLayoutParams();
 
-        // Check if the filter fragment is already shown
-        if (!filterOn) {
-            // Begin a fragment transaction to add the filter fragment
             params.height = (int) TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP,
-                    280, // Desired height in dp
+                    320,
+                    getResources().getDisplayMetrics()
+            );
+
+            filterLayout.setLayoutParams(params);
+
+            if (getChildFragmentManager().findFragmentById(servicesBinding.filter.getId()) == null) {
+                FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+                String search = servicesBinding.search.getText().toString();
+                transaction.add(servicesBinding.filter.getId(), SolutionFilterFragment.newInstance(search));
+                transaction.addToBackStack("services");
+                transaction.commit();
+            }
+            searchOn = true;
+            changeButtons();
+
+    }
+
+    private void cancelBtnHandler() {
+            FrameLayout filterLayout = servicesBinding.filter;
+            ViewGroup.LayoutParams params = filterLayout.getLayoutParams();
+
+
+            params.height = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    280,
                     getResources().getDisplayMetrics()
             );
             filterLayout.setLayoutParams(params);
-            FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-            transaction.add(servicesBinding.filter.getId(), SolutionFilterFragment.newInstance("gas", "gas"));
-            transaction.addToBackStack("services");
-            filterOn = true;
-            transaction.commit();
-        } else {
-            params.height = (int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP,
-                    0, // Desired height in dp
-                    getResources().getDisplayMetrics()
-            );
+            params.height = 0;
             filterLayout.setLayoutParams(params);
-            // If the filter fragment is already shown, pop it from the back stack
-            filterOn = false;
+            searchOn = false;
             getChildFragmentManager().popBackStack();
-        }
+            changeButtons();
+            getServices();
     }
 
 
@@ -133,5 +175,13 @@ public class ServicesFragment extends Fragment {
     }
 
 
-
+    @Override
+    public void onFilterApplied(Collection<Service> filteredCollection) {
+        mProducts.clear();
+        mProducts.addAll(filteredCollection);
+        adapter = new ServiceListAdapter(requireContext(), mProducts, getParentFragmentManager());
+        servicesBinding.recyclerView.setAdapter(adapter);
+        searchOn = true;
+        changeButtons();
+    }
 }

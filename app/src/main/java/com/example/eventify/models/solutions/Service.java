@@ -9,10 +9,13 @@ import androidx.databinding.Observable;
 
 import com.example.eventify.BR;
 import com.example.eventify.models.enums.ReservationMethod;
+import com.example.eventify.models.enums.SolutionType;
 import com.example.eventify.models.enums.Status;
 import com.example.eventify.models.events.EventType;
+import com.example.eventify.models.users.BusinessOwner;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 public class Service extends Solution implements Parcelable, Observable {
@@ -61,7 +64,29 @@ public class Service extends Solution implements Parcelable, Observable {
         this.reservationMethod = reservationMethod;
     }
 
-    public Service() {}
+    public Service() {
+            this.setId(null);
+            this.setName("");
+            this.setCategory(new SolutionCategory());
+            this.setEventTypes(new HashSet<>());
+            this.setStatus(Status.DENIED);
+            this.setDescription("");
+            this.setPrice(0.0);
+            this.setDiscount(0.0);
+            this.setImages(new ArrayList<>());
+            this.setVisibility(true);
+            this.setAvailability(true);
+            this.setDeleted(false);
+            this.setOwner(null);
+            this.setReviews(new HashSet<>());
+            this.setSpecifity("");
+            this.setDuration(0);
+            this.setMinEngagement(0);
+            this.setMaxEngagement(0);
+            this.setReservationDeadline(0);
+            this.setCancellationDeadline(0);
+            this.setReservationMethod(ReservationMethod.AUTOMATIC);
+    }
 
     // Parcelable constructor
     protected Service(Parcel in) {

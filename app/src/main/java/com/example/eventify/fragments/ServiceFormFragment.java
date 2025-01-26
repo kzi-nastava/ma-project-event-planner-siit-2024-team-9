@@ -13,9 +13,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -23,6 +26,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.eventify.databinding.FragmentServiceFormBinding;
+import com.example.eventify.models.enums.Status;
+import com.example.eventify.models.events.EventType;
+import com.example.eventify.models.solutions.SolutionCategory;
+import com.example.eventify.models.users.BusinessOwner;
+import com.example.eventify.services.events.EventTypeService;
+import com.example.eventify.services.solutions.SolutionCategoryService;
 import com.example.eventify.utils.ComponentsSetup;
 import com.example.eventify.models.solutions.Service;
 import com.example.eventify.R;
@@ -32,15 +41,15 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ServiceFormFragment extends Fragment {
-
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
     private ActivityResultLauncher<Intent> imagePickerLauncher;
     private FragmentServiceFormBinding binding;
@@ -49,7 +58,16 @@ public class ServiceFormFragment extends Fragment {
         // Required empty public constructor
     }
 
+    Service selectedService;
     ServiceService service = RetrofitClient.getClient().create(ServiceService.class);
+    Collection<SolutionCategory> categories = new ArrayList<>();
+    Collection<EventType> types = new ArrayList<>();
+    ArrayList<String> categoryNames = new ArrayList<>();
+    ArrayList<String> typeNames = new ArrayList<>();
+    private ArrayList<String> selectedList = new ArrayList<>();
+    SolutionCategoryService categoryService = RetrofitClient.getClient().create(SolutionCategoryService.class);
+    BusinessOwner owner;
+
 
     public static ServiceFormFragment newInstance(Service service) {
         ServiceFormFragment fragment = new ServiceFormFragment();
@@ -70,17 +88,13 @@ public class ServiceFormFragment extends Fragment {
     }
 
     private void setFormHeading() {
-        if (getView() != null) {
-            TextView heading = getView().findViewById(R.id.formHeading);
-            heading.setText("Edit details");
-        }
+        TextView heading = binding.formHeading;
+        heading.setText("Edit details");
     }
 
     private void disableCategories() {
-        if (getView() != null) {
-            Spinner categories = getView().findViewById(R.id.categorySpinner);
-            categories.setVisibility(View.GONE);
-        }
+        Spinner categories = binding.categorySpinner1;
+        categories.setVisibility(View.GONE);
     }
 
     @Override
@@ -89,52 +103,20 @@ public class ServiceFormFragment extends Fragment {
         binding = FragmentServiceFormBinding.inflate(inflater, container, false);  // Use the generated binding class directly
         View view = binding.getRoot();
 
-        setupCategories(view);
-        setupChips(view);
+        getCategories();
+        getTypes();
         setupImagePicker(view);
         setupDeleteButton(view);
-        setupSubmitButton(view);
+        binding.btnSubmit.setOnClickListener(v -> updateService());
 
         if (getArguments() != null) {
-            Service service = getArguments().getParcelable("service");
-            binding.setService(service);
-            binding.setLifecycleOwner(this);
+            selectedService = getArguments().getParcelable("service");
+            binding.setService(selectedService);
+            if (selectedService.getId() != null)
+                setEdit();
         }
 
         return binding.getRoot();
-    }
-
-    private void setupCategories(View view) {
-        ArrayList<String> categories = new ArrayList<>();
-        categories.add("Service category 1");
-        categories.add("Service category 2");
-        categories.add("Service category 3");
-        categories.add("Other");
-
-        TextView newCategory = view.findViewById(R.id.newCategory);
-
-        // Setup category spinner with an external method
-        Spinner categorySpinner = ComponentsSetup.spinnerOtherSetup(view, R.id.categorySpinner, categories, getContext(), newCategory);
-    }
-
-    private void setupChips(View view) {
-        ChipGroup chipGroup = view.findViewById(R.id.eventTypes);
-
-        String[] options = {"Event type 1", "Event type 2", "Event type 3", "Event type 4", "Event type 5"};
-
-        for (String option : options) {
-            Chip chip = new Chip(getContext());
-            chip.setText(option);
-            chip.setCheckable(true);
-            chip.setChecked(false);
-            chip.setCheckedIconResource(R.drawable.check);  // Use your check icon
-            chip.setCheckedIconVisible(true);
-            chip.setCloseIconVisible(false);
-            chip.setChipBackgroundColorResource(R.color.white);
-            chip.setTextColor(getResources().getColorStateList(R.color.black));
-
-            chipGroup.addView(chip);
-        }
     }
 
     private void setupImagePicker(View view) {
@@ -166,26 +148,49 @@ public class ServiceFormFragment extends Fragment {
                     .setMessage("Are you sure you want to delete this service?")
                     .setCancelable(false)
                     .setPositiveButton("Yes", (dialog, which) -> {
-                        Service deleted = binding.getService();
-                        service.delete(deleted.getId());
-                        goBack();
+                        service.delete(selectedService.getId()).enqueue(new Callback<Void>() {
+                            @Override
+                            public void onResponse(Call<Void> call, Response<Void> response) {
+                                goBack();
+                            }
+
+                            @Override
+                            public void onFailure(Call<Void> call, Throwable t) {
+
+                            }
+                        });
                     })
                     .setNegativeButton("No", null)
                     .show();
         });
     }
 
-    private void setupSubmitButton(View view) {
-        Button submitBtn = view.findViewById(R.id.btnSubmit);
-        submitBtn.setOnClickListener(v -> {
-            hideKeyboard(binding.nameEditText);
-            Service updated = binding.getService();
-            Call<Service> call =service.update(updated.getId(), updated);
-            call.enqueue(new Callback<Service>() {
+    private SolutionCategory getCategory(String name) {
+        for (SolutionCategory category: categories) {
+            if (category.getName().equals(name))
+                return category;
+        }
+        return null;
+    }
+
+    private void getTypes(ArrayList<String> names) {
+        Set<EventType> set = selectedService.getEventTypes();
+        for (String name: names) {
+            for (EventType type: types) {
+                if (type.getName().equals(name))
+                    set.add(type);
+            }
+        }
+        selectedService.setEventTypes(set);
+    }
+
+
+    private void updateService() {
+        if (selectedService.getId() != null) {
+            service.update(selectedService.getId(), selectedService).enqueue(new Callback<Service>() {
                 @Override
                 public void onResponse(Call<Service> call, Response<Service> response) {
-                    if (!response.isSuccessful())
-                        service.add(updated);
+                    goBack();
                 }
 
                 @Override
@@ -193,8 +198,29 @@ public class ServiceFormFragment extends Fragment {
                     t.printStackTrace();
                 }
             });
-            goBack();
-        });
+        } else {
+            getTypes(selectedList);
+            if (binding.newCategory.getVisibility() == View.VISIBLE) {
+                SolutionCategory proposed = new SolutionCategory("",binding.newCategory.getText().toString(),binding.newCategoryDescription.toString(),false);
+                selectedService.setCategory(proposed);
+                selectedService.setStatus(Status.PENDING);
+            }
+            else {
+                selectedService.setCategory(getCategory(binding.categorySpinner1.getSelectedItem().toString()));
+                selectedService.setStatus(Status.ACCEPTED);
+            }
+            service.add(selectedService).enqueue(new Callback<Service>() {
+                @Override
+                public void onResponse(Call<Service> call, Response<Service> response) {
+                    goBack();
+                }
+
+                @Override
+                public void onFailure(Call<Service> call, Throwable t) {
+
+                }
+            });
+        }
 
     }
 
@@ -203,12 +229,6 @@ public class ServiceFormFragment extends Fragment {
         fragmentManager.popBackStack();
     }
 
-    public void hideKeyboard(EditText editText) {
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null && editText != null) {
-            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-        }
-    }
 
     private void openImagePicker() {
         Intent intent = new Intent(Intent.ACTION_PICK);
@@ -216,5 +236,154 @@ public class ServiceFormFragment extends Fragment {
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         imagePickerLauncher.launch(intent);
     }
+
+    public void getCategories() {
+        categoryService.getActive().enqueue(new Callback<Collection<SolutionCategory>>() {
+            @Override
+            public void onResponse(Call<Collection<SolutionCategory>> call, Response<Collection<SolutionCategory>> response) {
+                categories = response.body();
+                categoryNames.clear();
+                categoryNames.add("Select a category");
+                if (categories != null) {
+                    for (SolutionCategory category : categories) {
+                        categoryNames.add(category.getName());
+                    }
+                }
+                categoryNames.add("Other");
+
+                Spinner categorySpinner = binding.getRoot().findViewById(R.id.categorySpinner1);
+                ComponentsSetup.spinnerSetup(binding.getRoot(), R.id.categorySpinner1, categoryNames, getContext());
+
+                EditText newCategory = binding.getRoot().findViewById(R.id.newCategory);
+                EditText newCategoryDescription = binding.getRoot().findViewById(R.id.newCategoryDescription);
+
+                // Spinner item selection listener
+                categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        String selectedItem = categoryNames.get(position);
+                        if ("Other".equals(selectedItem)) {
+                            newCategory.setVisibility(View.VISIBLE);
+                            newCategoryDescription.setVisibility(View.VISIBLE);
+                        } else {
+                            newCategory.setVisibility(View.GONE);
+                            newCategoryDescription.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        // Optionally handle this case if needed
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Call<Collection<SolutionCategory>> call, Throwable t) {
+                // Handle failure here
+            }
+        });
+    }
+
+
+    public void getTypes() {
+        EventTypeService service = RetrofitClient.getClient().create(EventTypeService.class);
+        service.getAll().enqueue(new Callback<Collection<EventType>>() {
+            @Override
+            public void onResponse(Call<Collection<EventType>> call, Response<Collection<EventType>> response) {
+                types = response.body();
+                typeNames.clear();
+
+                if (types != null) {
+                    for (EventType type : types) {
+                        typeNames.add(type.getName());
+                    }
+                }
+
+                setupMultiSelectSpinner(typeNames);
+            }
+
+            @Override
+            public void onFailure(Call<Collection<EventType>> call, Throwable t) {
+                // Handle error
+            }
+        });
+    }
+
+    private void setupMultiSelectSpinner(ArrayList<String> items) {
+        Spinner spinner = binding.typeSpinner1;
+        boolean[] selectedItems = new boolean[items.size()];
+
+        // Set the initial display value for the spinner
+        ArrayAdapter<String> initialAdapter = new ArrayAdapter<String>(requireContext(),
+                android.R.layout.simple_spinner_item, new String[]{"Select a type"}) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                // Set the text color for the initial value ("Select a type")
+                ((TextView) view).setTextColor(getResources().getColor(android.R.color.black));
+                return view;
+            }
+        };
+        initialAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(initialAdapter);
+
+        spinner.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                new AlertDialog.Builder(requireContext())
+                        .setTitle("Select Types")
+                        .setMultiChoiceItems(items.toArray(new String[0]), selectedItems, (dialog, which, isChecked) -> {
+                            if (isChecked) {
+                                if (!selectedList.contains(items.get(which))) {
+                                    selectedList.add(items.get(which));
+                                }
+                            } else {
+                                selectedList.remove(items.get(which));
+                            }
+                        })
+                        .setPositiveButton("OK", (dialog, which) -> {
+                            // Handle the selected items after user confirms the selection
+                            if (selectedList.isEmpty()) {
+                                // Reset spinner to initial value if no selection is made
+                                ArrayAdapter<String> resetAdapter = new ArrayAdapter<String>(requireContext(),
+                                        android.R.layout.simple_spinner_item, new String[]{"Select a type"}) {
+                                    @Override
+                                    public View getView(int position, View convertView, ViewGroup parent) {
+                                        View view = super.getView(position, convertView, parent);
+                                        // Ensure the initial value is black when resetting
+                                        ((TextView) view).setTextColor(getResources().getColor(android.R.color.black));
+                                        return view;
+                                    }
+                                };
+                                resetAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                spinner.setAdapter(resetAdapter);
+                            } else {
+                                String selected = String.join(", ", selectedList);
+
+                                // Create an adapter with black text for the selected items
+                                ArrayAdapter<String> adapter = new ArrayAdapter<String>(requireContext(),
+                                        android.R.layout.simple_spinner_item, new String[]{selected}) {
+                                    @Override
+                                    public View getView(int position, View convertView, ViewGroup parent) {
+                                        View view = super.getView(position, convertView, parent);
+                                        // Ensure selected items are black
+                                        ((TextView) view).setTextColor(getResources().getColor(android.R.color.black));
+                                        return view;
+                                    }
+                                };
+                                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                spinner.setAdapter(adapter);
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+            }
+            return true; // Prevents default spinner behavior
+        });
+    }
+
+
+
+
 }
 

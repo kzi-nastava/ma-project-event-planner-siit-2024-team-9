@@ -48,6 +48,8 @@
     <string name="top_5_events_heading">Top 5 Open Events in Novi Sad</string>
     <string name="all_open_events_heading">All Open Events in Novi Sad</string>
     <string name="free">Free</string>
+    <string name="category">Select a category</string>
+    <string name="type">Select a type</string>
     <string name="dollar_sign">$</string>
 
 </resources>

@@ -26,7 +26,7 @@ public class Solution implements Parcelable, Observable {
     @Bindable
     private SolutionCategory category;
     @Bindable
-    private Set<EventType> eventTypes;
+    private Set<EventType> type;
     @Bindable
     private Status status;
     @Bindable
@@ -66,7 +66,7 @@ public class Solution implements Parcelable, Observable {
     ) {
         this.name = name;
         this.category = category;
-        this.eventTypes = type;
+        this.type = type;
         this.status = status;
         this.description = description;
         this.price = price;
@@ -90,7 +90,7 @@ public class Solution implements Parcelable, Observable {
         availability = in.readByte() != 0;
         isDeleted = in.readByte() != 0;
         category = in.readParcelable(SolutionCategory.class.getClassLoader());
-        eventTypes = new HashSet<>(in.createTypedArrayList(EventType.CREATOR));
+        type = new HashSet<>(in.createTypedArrayList(EventType.CREATOR));
         images = new ArrayList<>(in.createStringArrayList());
         owner = in.readParcelable(BusinessOwner.class.getClassLoader());
     }
@@ -124,12 +124,12 @@ public class Solution implements Parcelable, Observable {
     }
 
     public Set<EventType> getEventTypes() {
-        return eventTypes;
+        return type;
     }
 
     public void setEventTypes(Set<EventType> eventTypes) {
-        this.eventTypes = eventTypes;
-        notifyPropertyChanged(BR.eventTypes);
+        this.type = eventTypes;
+        notifyPropertyChanged(BR.type);
     }
 
     public Set<Review> getReviews() {
@@ -238,7 +238,7 @@ public class Solution implements Parcelable, Observable {
         dest.writeByte((byte) (availability ? 1 : 0));
         dest.writeByte((byte) (isDeleted ? 1 : 0));
         dest.writeParcelable(category, flags);
-        dest.writeTypedList(new ArrayList<>(eventTypes));
+        dest.writeTypedList(new ArrayList<>(type));
         dest.writeStringList(new ArrayList<>(images));
         dest.writeParcelable(owner, flags);
     }

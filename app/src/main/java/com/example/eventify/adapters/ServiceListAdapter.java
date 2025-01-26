@@ -85,7 +85,6 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
                 transaction.addToBackStack("details");
                 transaction.commit();
                 fragmentManager.executePendingTransactions();
-                fragment.setEdit();
             });
 
             holder.itemView.setOnClickListener(v -> {

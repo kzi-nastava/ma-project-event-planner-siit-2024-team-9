@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:paddingBottom="20dp"
     android:paddingHorizontal="16dp">
 
     <LinearLayout
@@ -16,11 +17,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Solution Categories"
-            android:layout_marginVertical="20dp"
+            android:layout_marginVertical="30dp"
             android:textSize="23sp"
             android:theme="@style/header_text"
-            android:textStyle="bold"
-            android:paddingBottom="16dp" />
+            android:textStyle="bold" />
 
         <!-- Existing Categories Section -->
         <LinearLayout
@@ -32,6 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:layout_marginBottom="20dp"
                 android:gravity="center_vertical">
 
                 <TextView
@@ -39,9 +40,9 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Existing Categories"
+                    android:textSize="18sp"
                     android:layout_marginStart="5dp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
+                    android:textColor="@color/black"/>
 
                 <ImageButton
                     android:id="@+id/addCategoryButton"
@@ -77,6 +78,8 @@
                 <TableLayout
                     android:id="@+id/existing"
                     android:layout_width="match_parent"
+                    android:background="@drawable/card"
+                    android:padding="5dp"
                     android:layout_height="wrap_content"
                     android:stretchColumns="1"
                     android:paddingTop="8dp">
@@ -128,6 +131,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:layout_marginBottom="20dp"
                 android:gravity="center_vertical">
 
                 <TextView
@@ -137,7 +141,7 @@
                     android:text="Proposed Categories"
                     android:layout_marginStart="5dp"
                     android:textColor="@color/black"
-                    android:textStyle="bold" />
+                    android:textSize="18sp" />
 
                 <ImageButton
                     android:id="@+id/editProposalButton"
@@ -163,6 +167,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:stretchColumns="1"
+                android:background="@drawable/card"
+                android:padding="5dp"
                 android:paddingTop="8dp">
 
                 <!-- Table Header -->
