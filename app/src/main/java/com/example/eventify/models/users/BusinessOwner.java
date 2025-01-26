@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 
 import com.example.eventify.models.solutions.Solution;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class BusinessOwner extends User implements Parcelable {
@@ -28,8 +29,11 @@ public class BusinessOwner extends User implements Parcelable {
     }
 
     protected BusinessOwner(Parcel in) {
+        super(in);
         name = in.readString();
         description = in.readString();
+        solutions = new HashSet<>(in.createTypedArrayList(Solution.CREATOR));
+        images = new HashSet<>(in.createStringArrayList());
     }
 
     public static final Creator<BusinessOwner> CREATOR = new Creator<BusinessOwner>() {
@@ -83,8 +87,11 @@ public class BusinessOwner extends User implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
         dest.writeString(name);
         dest.writeString(description);
+        dest.writeTypedList(solutions != null ? new java.util.ArrayList<>(solutions) : null);
+        dest.writeStringList(new java.util.ArrayList<>(images));
     }
 }
 
