@@ -16,15 +16,18 @@ import android.view.MenuItem;
 
 import com.example.eventify.fragments.CategoriesFragment;
 import com.example.eventify.fragments.DiscoverFragment;
+import com.example.eventify.fragments.SolutionFilterFragment;
 import com.example.eventify.models.enums.PrivacyType;
 import com.example.eventify.fragments.ServicesFragment;
 import com.example.eventify.models.events.Event;
+import com.example.eventify.models.solutions.Service;
 import com.example.eventify.models.solutions.Solution;
 import com.example.eventify.R;
 import com.example.eventify.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -231,9 +234,6 @@ public class MainActivity extends AppCompatActivity {
         // handler.removeCallbacksAndMessages(null); // Primer za Handler
         // unregisterReceiver(yourReceiver); // Primer za BroadcastReceiver
     }
-
-
-
 
 
 }
