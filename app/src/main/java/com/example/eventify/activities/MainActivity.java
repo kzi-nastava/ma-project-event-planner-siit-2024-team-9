@@ -16,6 +16,7 @@ import android.view.MenuItem;
 
 import com.example.eventify.fragments.CategoriesFragment;
 import com.example.eventify.fragments.DiscoverFragment;
+import com.example.eventify.fragments.PriceListFragment;
 import com.example.eventify.fragments.SolutionFilterFragment;
 import com.example.eventify.models.enums.PrivacyType;
 import com.example.eventify.fragments.ServicesFragment;
@@ -55,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
         navigationActions.put(R.id.categories, this::setCategoriesFragment);
         navigationActions.put(R.id.profile, this::setProfileFragment);
         navigationActions.put(R.id.chats, this::setChatsFragment);
+        navigationActions.put(R.id.priceList, this::setPricesFragment);
+
 
 
         bottomNavigationView = binding.bottomNavigation;
@@ -74,6 +77,10 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(this::navigationLogic);
         bottomNavigationView.setSelectedItemId(R.id.discover);
 
+    }
+
+    private void setPricesFragment() {
+        loadFragment(new PriceListFragment());
     }
 
     private boolean navigationLogic(MenuItem item){
