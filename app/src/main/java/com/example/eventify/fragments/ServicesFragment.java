@@ -168,7 +168,7 @@ public class ServicesFragment extends Fragment implements SolutionFilterFragment
 
 
     private void addBtnHandler() {
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
         transaction.replace(servicesBinding.fragmentContent.getId(), ServiceFormFragment.newInstance(new Service()));
         transaction.addToBackStack("services");
         transaction.commit();

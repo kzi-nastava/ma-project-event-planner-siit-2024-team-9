@@ -2,15 +2,15 @@
 <layout>
     <data>
         <variable
-            name="service"
-            type="com.example.eventify.models.solutions.Service" />
+            name="owner"
+            type="com.example.eventify.models.users.BusinessOwner" />
     </data>
     <ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="750dp"
+        android:layout_height="630dp"
         android:background="@drawable/form_card"
         android:padding="10dp">
 
@@ -29,9 +29,94 @@
                 android:layout_marginVertical="20dp"
                 android:text="Business owner details" />
 
+            <!-- Description -->
+            <TextView
+                android:id="@+id/nameLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Name"
+                android:textSize="18sp"
+                android:textColorHint="@color/black"
+                android:minLines="1"
+                android:textColor="@android:color/black"
+                android:backgroundTint="@android:color/black"
+                android:layout_marginBottom="5dp" />
 
+            <TextView
+                android:id="@+id/ownerName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@={owner.name}"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:layout_marginBottom="20dp" />
+
+            <!-- Specificities -->
+            <TextView
+                android:id="@+id/emailLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:hint="Email"
+                android:textColorHint="@color/black"
+                android:minLines="1"
+                android:textColor="@android:color/black"
+                android:backgroundTint="@android:color/black"
+                android:layout_marginBottom="5dp" />
+
+            <TextView
+                android:id="@+id/ownerEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@={owner.email}"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:layout_marginBottom="20dp" />
+
+            <!-- Category -->
+            <TextView
+                android:id="@+id/addressLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:hint="Address"
+                android:textColorHint="@color/black"
+                android:minLines="1"
+                android:textColor="@android:color/black"
+                android:backgroundTint="@android:color/black"
+                android:layout_marginBottom="5dp" />
+
+            <TextView
+                android:id="@+id/ownerAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@={owner.address}"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:layout_marginBottom="20dp" />
+
+            <!-- Event Types -->
+            <TextView
+                android:id="@+id/phoneLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:hint="Phone number"
+                android:textColorHint="@color/black"
+                android:minLines="1"
+                android:textColor="@android:color/black"
+                android:backgroundTint="@android:color/black"
+                android:layout_marginBottom="5dp" />
+
+            <TextView
+                android:id="@+id/ownerPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@={owner.phoneNumber}"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:layout_marginBottom="20dp" />
 
         </LinearLayout>
-
     </ScrollView>
 </layout>

@@ -1,29 +1,26 @@
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Welcome Frame -->
+    <FrameLayout
+        android:id="@+id/discover_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
     <!-- Scrollable container -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nested_scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:fillViewport="true"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
+            android:orientation="vertical"
             android:layout_height="wrap_content">
-
-            <!-- Welcome Frame -->
-            <FrameLayout
-                android:id="@+id/explore_welcome_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
 
             <!-- Top 5 Events Section -->
             <TextView
@@ -35,20 +32,12 @@
                 android:text="Top 5 Events"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="@android:color/black"
-                app:layout_constraintTop_toBottomOf="@id/explore_welcome_container"
-                app:layout_constraintStart_toStartOf="parent" />
+                android:textColor="@android:color/black"/>
 
             <FrameLayout
                 android:id="@+id/top_events_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/top_events_heading"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-
-
+                android:layout_height="wrap_content"/>
 
             <!-- All Events Section -->
             <TextView
@@ -60,18 +49,12 @@
                 android:text="All Events"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="@android:color/black"
-                app:layout_constraintTop_toBottomOf="@id/top_events_container"
-                app:layout_constraintStart_toStartOf="parent" />
+                android:textColor="@android:color/black"/>
 
             <FrameLayout
                 android:id="@+id/all_events_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/all_events_heading"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
+                android:layout_height="wrap_content"/>
 
             <!-- Top 5 Solutions Section -->
             <TextView
@@ -83,17 +66,12 @@
                 android:text="Top 5 Solutions"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="@android:color/black"
-                app:layout_constraintTop_toBottomOf="@id/all_events_container"
-                app:layout_constraintStart_toStartOf="parent" />
+                android:textColor="@android:color/black"/>
 
             <FrameLayout
                 android:id="@+id/top_solutions_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/top_solutions_heading"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                android:layout_height="wrap_content"/>
 
             <!-- All Solutions Section -->
             <TextView
@@ -105,18 +83,16 @@
                 android:text="All Solutions"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="@android:color/black"
-                app:layout_constraintTop_toBottomOf="@id/top_solutions_container"
-                app:layout_constraintStart_toStartOf="parent" />
+                android:textColor="@android:color/black"/>
 
             <FrameLayout
                 android:id="@+id/all_solutions_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/all_solutions_heading"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                android:layout_height="wrap_content"/>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
+
+</LinearLayout>

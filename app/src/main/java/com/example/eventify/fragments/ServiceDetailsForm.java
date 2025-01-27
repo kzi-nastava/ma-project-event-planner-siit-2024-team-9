@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.example.eventify.R;
 import com.example.eventify.databinding.FragmentServiceDetailsFormBinding;
+import com.example.eventify.models.events.EventType;
 import com.example.eventify.models.solutions.Service;
 
 /**
@@ -19,7 +20,7 @@ import com.example.eventify.models.solutions.Service;
  */
 public class ServiceDetailsForm extends Fragment {
 
-
+    Service service;
 
     public ServiceDetailsForm() {
         // Required empty public constructor
@@ -27,13 +28,7 @@ public class ServiceDetailsForm extends Fragment {
 
     FragmentServiceDetailsFormBinding binding;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment ServiceDetailsForm.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static ServiceDetailsForm newInstance(Service service) {
         ServiceDetailsForm fragment = new ServiceDetailsForm();
         Bundle args = new Bundle();
@@ -54,12 +49,30 @@ public class ServiceDetailsForm extends Fragment {
         binding = FragmentServiceDetailsFormBinding.inflate(inflater, container, false);
 
         if (getArguments() != null) {
-            Service service = getArguments().getParcelable("service");
+            service = getArguments().getParcelable("service");
             binding.setService(service);
-            binding.setLifecycleOwner(this);
+            if (service.getDuration()==0) {
+                binding.duration.setVisibility(View.GONE);
+                binding.durationInfo.setVisibility(View.GONE);
+            } else {
+                binding.min.setVisibility(View.GONE);
+                binding.minInfo.setVisibility(View.GONE);
+                binding.max.setVisibility(View.GONE);
+                binding.maxInfo.setVisibility(View.GONE);
+            }
         }
 
-        return inflater.inflate(R.layout.fragment_service_details_form, container, false);
+        setTypes();
+
+        return binding.getRoot();
+    }
+
+    private void setTypes() {
+        StringBuilder typesInfo = new StringBuilder();
+        for (EventType type: service.getEventTypes()) {
+            typesInfo.append(type.getName()).append(", ");
+        }
+        binding.eventTypesInfo.setText(typesInfo.toString());
     }
 
 

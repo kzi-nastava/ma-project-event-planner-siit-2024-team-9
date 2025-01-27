@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public class Solution implements Parcelable, Observable {
-    @Bindable
+
     private UUID id;
     @Bindable
     private String name;
@@ -27,7 +27,7 @@ public class Solution implements Parcelable, Observable {
     private SolutionCategory category;
     @Bindable
     private Set<EventType> type;
-    @Bindable
+
     private Status status;
     @Bindable
     private String description;
@@ -35,15 +35,12 @@ public class Solution implements Parcelable, Observable {
     private double price;
     @Bindable
     private double discount;
-    @Bindable
+
     private ArrayList<String> images;
     @Bindable
     private boolean visibility;
     @Bindable
     private boolean availability;
-    @Bindable
-    private boolean isDeleted;
-    @Bindable
     private BusinessOwner owner;
 
     private Set<Review> reviews;
@@ -88,7 +85,6 @@ public class Solution implements Parcelable, Observable {
         discount = in.readDouble();
         visibility = in.readByte() != 0;
         availability = in.readByte() != 0;
-        isDeleted = in.readByte() != 0;
         category = in.readParcelable(SolutionCategory.class.getClassLoader());
         type = new HashSet<>(in.createTypedArrayList(EventType.CREATOR));
         images = new ArrayList<>(in.createStringArrayList());
@@ -102,7 +98,6 @@ public class Solution implements Parcelable, Observable {
 
     public void setId(UUID id) {
         this.id = id;
-        notifyPropertyChanged(BR.id);
     }
 
     public String getName() {
@@ -146,7 +141,6 @@ public class Solution implements Parcelable, Observable {
 
     public void setStatus(Status status) {
         this.status = status;
-        notifyPropertyChanged(BR.status);
     }
 
     public String getDescription() {
@@ -182,7 +176,6 @@ public class Solution implements Parcelable, Observable {
 
     public void setImages(ArrayList<String> images) {
         this.images = images;
-        notifyPropertyChanged(BR.images);
     }
 
     public boolean isVisibility() {
@@ -201,15 +194,6 @@ public class Solution implements Parcelable, Observable {
     public void setAvailability(boolean availability) {
         this.availability = availability;
         notifyPropertyChanged(BR.availability);
-    }
-
-    public boolean isDeleted() {
-        return isDeleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
-        notifyPropertyChanged(BR.isDeleted);
     }
 
     public BusinessOwner getOwner() {
@@ -236,7 +220,6 @@ public class Solution implements Parcelable, Observable {
         dest.writeDouble(discount);
         dest.writeByte((byte) (visibility ? 1 : 0));
         dest.writeByte((byte) (availability ? 1 : 0));
-        dest.writeByte((byte) (isDeleted ? 1 : 0));
         dest.writeParcelable(category, flags);
         dest.writeTypedList(new ArrayList<>(type));
         dest.writeStringList(new ArrayList<>(images));

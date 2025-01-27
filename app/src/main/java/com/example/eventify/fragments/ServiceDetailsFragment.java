@@ -11,13 +11,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.example.eventify.R;
 import com.example.eventify.adapters.ImageListAdapter;
 import com.example.eventify.databinding.FragmentServiceDetailsBinding;
-import com.example.eventify.models.others.ImageItem;
+import com.example.eventify.models.solutions.Product;
 import com.example.eventify.models.solutions.Service;
+import com.example.eventify.models.solutions.Solution;
+import com.example.eventify.services.solutions.ProductService;
+import com.example.eventify.services.solutions.ServiceService;
+import com.example.eventify.utils.RetrofitClient;
 
-import java.util.ArrayList;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,7 +36,9 @@ public class ServiceDetailsFragment extends Fragment {
     private boolean isFavorite = true;
     private FragmentServiceDetailsBinding binding;
 
+    private Solution showedSolution;
     private Service showedService;
+    private Product showedProduct;
 
     private boolean serviceDetails = true;
 
@@ -39,10 +46,10 @@ public class ServiceDetailsFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static ServiceDetailsFragment newInstance(Service service) {
+    public static ServiceDetailsFragment newInstance(Solution solution) {
         ServiceDetailsFragment fragment = new ServiceDetailsFragment();
         Bundle args = new Bundle();
-        args.putParcelable("service", service);
+        args.putParcelable("solution", solution);
         fragment.setArguments(args);
         return fragment;
     }
@@ -59,22 +66,22 @@ public class ServiceDetailsFragment extends Fragment {
 
         binding = FragmentServiceDetailsBinding.inflate(inflater, container, false);
 
-        detailsBtnHandler();
-
         binding.right.setOnClickListener(v -> detailsBtnHandler());
 
         if (getArguments() != null) {
-            showedService = getArguments().getParcelable("service");
-            binding.setService(showedService);
+            showedSolution = getArguments().getParcelable("solution");
+            binding.setService(showedSolution);
             binding.setLifecycleOwner(this);
         }
+
+        detailsBtnHandler();
 
         binding.favorite.setOnClickListener(v -> {
             isFavorite = !isFavorite;
             binding.favorite.setSelected(isFavorite);
         });
 
-        adapter = new ImageListAdapter(requireContext(), showedService.getImages(), getParentFragmentManager());
+        adapter = new ImageListAdapter(requireContext(), showedSolution.getImages(), getParentFragmentManager());
         binding.recyclerView.setAdapter(adapter);
 
         binding.star1.setOnClickListener( v -> rate1());
@@ -88,39 +95,74 @@ public class ServiceDetailsFragment extends Fragment {
     }
 
     private void detailsBtnHandler() {
-        // Access the filter layout
-        FrameLayout details = binding.details;
 
-        // Dynamically set the height to 400dp
+        FrameLayout details = binding.details;
         ViewGroup.LayoutParams params = details.getLayoutParams();
 
-        // Check if the filter fragment is already shown
         if (serviceDetails) {
-            // Begin a fragment transaction to add the filter fragment
+
             params.height = (int) TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP,
-                    750, // Desired height in dp
+                    630,
                     getResources().getDisplayMetrics()
             );
             binding.right.setText("About us");
             details.setLayoutParams(params);
-            FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-            transaction.add(binding.details.getId(), ServiceDetailsForm.newInstance(getArguments().getParcelable("service")));
-            serviceDetails = false;
-            transaction.commit();
+            if (showedSolution.isService())
+                setService();
+            else
+                setProduct();
         } else {
             params.height = (int) TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP,
-                    750, // Desired height in dp
+                    630,
                     getResources().getDisplayMetrics()
             );
-            binding.right.setText("Service");
+            binding.right.setText("Solution");
             details.setLayoutParams(params);
             FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-            transaction.add(binding.details.getId(), PupDetailsForm.newInstance("gas", "gas"));
+            transaction.add(binding.details.getId(), PupDetailsForm.newInstance(showedSolution.getOwner()));
             serviceDetails = true;
             transaction.commit();
         }
+    }
+
+    private void setService() {
+        ServiceService service = RetrofitClient.getClient().create(ServiceService.class);
+        service.get(showedSolution.getId()).enqueue(new Callback<Service>() {
+            @Override
+            public void onResponse(Call<Service> call, Response<Service> response) {
+                showedService = response.body();
+                serviceDetails = false;
+                FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+                transaction.add(binding.details.getId(), ServiceDetailsForm.newInstance(showedService));
+                transaction.commit();
+            }
+
+            @Override
+            public void onFailure(Call<Service> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void setProduct() {
+        ProductService service = RetrofitClient.getClient().create(ProductService.class);
+        service.get(showedSolution.getId()).enqueue(new Callback<Product>() {
+            @Override
+            public void onResponse(Call<Product> call, Response<Product> response) {
+                showedProduct = response.body();
+                serviceDetails = false;
+                FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+                transaction.add(binding.details.getId(), ProductDetailsForm.newInstance(showedProduct));
+                transaction.commit();
+            }
+
+            @Override
+            public void onFailure(Call<Product> call, Throwable t) {
+
+            }
+        });
     }
 
     private void rate1() {
