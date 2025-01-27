@@ -42,6 +42,7 @@
     <string name="calendar">Calendar</string>
     <string name="categories">Categories</string>
     <string name="profile">Profile</string>
+    <string name="prices">Prices</string>
     <string name="events">Events</string>
     <string name="search_placeholder">Search events, products or services</string>
     <string name="welcome_message">Welcome, User!</string>

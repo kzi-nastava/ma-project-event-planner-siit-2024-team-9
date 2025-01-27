@@ -1,5 +1,7 @@
 package com.example.eventify.services.solutions;
 
+import com.example.eventify.models.others.Discount;
+import com.example.eventify.models.others.Price;
 import com.example.eventify.models.solutions.Solution;
 import com.google.gson.annotations.SerializedName;
 
@@ -33,6 +35,12 @@ public interface SolutionService {
 
     @PUT("solutions/update/{id}")
     Call<Boolean> update(@Path("id") String id, @Body Solution updatedSolution);
+
+    @PUT("solutions/price/{id}")
+    Call<Boolean> updatePrice(@Path("id") String id, @Body Price price);
+
+    @PUT("solutions/discount/{id}")
+    Call<Boolean> updateDiscount(@Path("id") String id, @Body Discount price);
 
     @DELETE("/solutions/{id}")
     Call<Boolean> delete(@Path("id") String id);
