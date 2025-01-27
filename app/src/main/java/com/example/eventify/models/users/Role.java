@@ -1,11 +1,16 @@
 package com.example.eventify.models.users;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import com.example.eventify.models.enums.UserRole;
 
 import java.util.UUID;
 
-public class Role {
-    private UUID id;
+public class Role implements Parcelable {
+    private String id;
     private UserRole name;
 
     public Role(UserRole name) {
@@ -31,11 +36,11 @@ public class Role {
         return name;
     }
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -43,4 +48,32 @@ public class Role {
     public String toString() {
         return name.toString();
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    protected Role(Parcel in) {
+        id = in.readString();
+        name = UserRole.valueOf(in.readString());
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeString(id);
+        parcel.writeString(name.toString());
+    }
+
+    public static final Creator<Role> CREATOR = new Creator<Role>() {
+        @Override
+        public Role createFromParcel(Parcel in) {
+            return new Role(in);
+        }
+
+        @Override
+        public Role[] newArray(int size) {
+            return new Role[size];
+        }
+    };
 }

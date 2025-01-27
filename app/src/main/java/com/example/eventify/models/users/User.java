@@ -1,14 +1,21 @@
 package com.example.eventify.models.users;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import com.example.eventify.models.enums.UserRole;
 import com.example.eventify.models.events.Event;
 import com.example.eventify.models.solutions.Solution;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Set;
 
-public class User {
+public class User implements Parcelable {
     private String id;
     private String email;
     private String password;
@@ -18,6 +25,8 @@ public class User {
     private String profileImage;
     private Role role;
     private boolean suspended;
+    public Date suspensionEndDate;
+
     private boolean activated;
     private Set<Solution> favoriteSolutions;
     private Set<Event> attendingEvents;
@@ -39,6 +48,22 @@ public class User {
         this.profileImage = profileImage;
         this.suspended = false;
         this.activated = false;
+    }
+
+    protected User(Parcel in) {
+        id = in.readString();
+        email = in.readString();
+        password = in.readString();
+        address = in.readString();
+        phoneNumber = in.readString();
+        profileImage = in.readString();
+        suspended = in.readByte() != 0;
+        activated = in.readByte() != 0;
+        lastPasswordResetDate = (Timestamp) in.readSerializable();
+        suspensionEndDate = (Date) in.readSerializable();
+        role = in.readParcelable(Role.class.getClassLoader());
+        favoriteSolutions = new java.util.HashSet<>(in.createTypedArrayList(Solution.CREATOR));
+        attendingEvents = new java.util.HashSet<>(in.createTypedArrayList(Event.CREATOR));
     }
 
     public String getId() {
@@ -113,6 +138,14 @@ public class User {
         this.suspended = suspended;
     }
 
+    public Date getSuspensionEndDate() {
+        return suspensionEndDate;
+    }
+
+    public void setSuspensionEndDate(Date suspensionEndDate) {
+        this.suspensionEndDate = suspensionEndDate;
+    }
+
     public boolean isActivated() {
         return activated;
     }
@@ -136,4 +169,40 @@ public class User {
     public void setAttendingEvents(Set<Event> attendingEvents) {
         this.attendingEvents = attendingEvents;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeString(id);
+        parcel.writeString(email);
+        parcel.writeString(password);
+        parcel.writeString(address);
+        parcel.writeString(phoneNumber);
+        parcel.writeString(profileImage);
+        parcel.writeByte((byte) (suspended ? 1 : 0)); // Convert boolean to byte (1 = true, 0 = false)
+        parcel.writeByte((byte) (activated ? 1 : 0)); // Convert boolean to byte
+        parcel.writeSerializable(lastPasswordResetDate); // Serialize Timestamp as it implements Serializable
+        parcel.writeSerializable(suspensionEndDate); // Serialize Date as it implements Serializable
+        parcel.writeParcelable(role, i); // Assuming Role implements Parcelable
+        parcel.writeTypedList(favoriteSolutions != null ? new ArrayList<>(favoriteSolutions) : null); // Convert Set to List
+        parcel.writeTypedList(attendingEvents != null ? new ArrayList<>(attendingEvents) : null); // Convert Set to List
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @NonNull
+        @Override
+        public User createFromParcel(@NonNull Parcel in) {
+            return new User(in);
+        }
+
+        @NonNull
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 }
