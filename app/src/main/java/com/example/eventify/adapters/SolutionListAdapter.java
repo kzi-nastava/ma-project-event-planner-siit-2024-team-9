@@ -8,10 +8,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.eventify.fragments.ServiceDetailsFragment;
 import com.example.eventify.models.events.EventType;
+import com.example.eventify.models.solutions.Service;
 import com.example.eventify.models.solutions.Solution;
 import com.example.eventify.R;
 import com.google.android.flexbox.FlexboxLayout;
@@ -23,9 +28,12 @@ public class SolutionListAdapter extends RecyclerView.Adapter<SolutionListAdapte
     private final Context context;
     private final List<Solution> solutions;
 
-    public SolutionListAdapter(Context context, List<Solution> solutions) {
+    private final FragmentManager fragmentManager;
+
+    public SolutionListAdapter(Context context, List<Solution> solutions, FragmentManager fragmentManager) {
         this.context = context;
         this.solutions = solutions;
+        this.fragmentManager = fragmentManager;
     }
 
     @NonNull
@@ -96,6 +104,13 @@ public class SolutionListAdapter extends RecyclerView.Adapter<SolutionListAdapte
                 holder.solutionEventTypes.addView(tag);
             }
         }
+
+        holder.itemView.setOnClickListener(v -> {
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.replace(R.id.discover_fragment, ServiceDetailsFragment.newInstance(solution));
+            transaction.addToBackStack(null);
+            transaction.commit();
+        });
     }
 
 

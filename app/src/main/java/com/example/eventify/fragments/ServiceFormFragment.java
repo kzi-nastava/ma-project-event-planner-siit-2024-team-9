@@ -4,11 +4,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -22,6 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -32,6 +37,7 @@ import com.example.eventify.models.solutions.SolutionCategory;
 import com.example.eventify.models.users.BusinessOwner;
 import com.example.eventify.services.events.EventTypeService;
 import com.example.eventify.services.solutions.SolutionCategoryService;
+import com.example.eventify.services.users.BusinessOwnerService;
 import com.example.eventify.utils.ComponentsSetup;
 import com.example.eventify.models.solutions.Service;
 import com.example.eventify.R;
@@ -85,6 +91,33 @@ public class ServiceFormFragment extends Fragment {
     public void setEdit() {
         setFormHeading();
         disableCategories();
+        if (selectedService.getDuration()==0) {
+            binding.duration.setVisibility(View.GONE);
+            binding.durationInfo.setVisibility(View.GONE);
+        }
+        else {
+            binding.min.setVisibility(View.GONE);
+            binding.minInfo.setVisibility(View.GONE);
+            binding.max.setVisibility(View.GONE);
+            binding.maxInfo.setVisibility(View.GONE);
+        }
+    }
+
+    private void setSwitchColor () {
+        SwitchCompat visibilitySwitch = binding.visibility;
+        visibilitySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                visibilitySwitch.setThumbTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.red)));
+                visibilitySwitch.setTrackTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.light_gray)));
+            }});
+
+        SwitchCompat availabilitySwitch = binding.availability;
+        availabilitySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                availabilitySwitch.setThumbTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.red)));
+                availabilitySwitch.setTrackTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.light_gray)));
+            }});
+
     }
 
     private void setFormHeading() {
@@ -103,6 +136,10 @@ public class ServiceFormFragment extends Fragment {
         binding = FragmentServiceFormBinding.inflate(inflater, container, false);  // Use the generated binding class directly
         View view = binding.getRoot();
 
+        getOwner();
+
+        setSwitchColor();
+
         getCategories();
         getTypes();
         setupImagePicker(view);
@@ -117,6 +154,21 @@ public class ServiceFormFragment extends Fragment {
         }
 
         return binding.getRoot();
+    }
+
+    private void getOwner() {
+        service.getAll().enqueue(new Callback<Collection<Service>>() {
+            @Override
+            public void onResponse(Call<Collection<Service>> call, Response<Collection<Service>> response) {
+                Service firstService = response.body().iterator().next();
+                owner = firstService.getOwner();
+            }
+
+            @Override
+            public void onFailure(Call<Collection<Service>> call, Throwable t) {
+
+            }
+        });
     }
 
     private void setupImagePicker(View view) {
@@ -173,9 +225,9 @@ public class ServiceFormFragment extends Fragment {
         return null;
     }
 
-    private void getTypes(ArrayList<String> names) {
+    private void setTypes() {
         Set<EventType> set = selectedService.getEventTypes();
-        for (String name: names) {
+        for (String name: selectedList) {
             for (EventType type: types) {
                 if (type.getName().equals(name))
                     set.add(type);
@@ -186,7 +238,13 @@ public class ServiceFormFragment extends Fragment {
 
 
     private void updateService() {
+        selectedService.setVisibility(binding.visibility.isChecked());
+        selectedService.setAvailability(binding.availability.isChecked());
+        int reservationMethod = binding.automatic.isChecked() ? 0:1;
+        selectedService.setReservationDeadline(reservationMethod);
         if (selectedService.getId() != null) {
+            if (!selectedList.isEmpty())
+                setTypes();
             service.update(selectedService.getId(), selectedService).enqueue(new Callback<Service>() {
                 @Override
                 public void onResponse(Call<Service> call, Response<Service> response) {
@@ -199,7 +257,8 @@ public class ServiceFormFragment extends Fragment {
                 }
             });
         } else {
-            getTypes(selectedList);
+            setTypes();
+            selectedService.setOwner(owner);
             if (binding.newCategory.getVisibility() == View.VISIBLE) {
                 SolutionCategory proposed = new SolutionCategory("",binding.newCategory.getText().toString(),binding.newCategoryDescription.toString(),false);
                 selectedService.setCategory(proposed);
@@ -209,6 +268,9 @@ public class ServiceFormFragment extends Fragment {
                 selectedService.setCategory(getCategory(binding.categorySpinner1.getSelectedItem().toString()));
                 selectedService.setStatus(Status.ACCEPTED);
             }
+            ArrayList<String> images = new ArrayList<>();
+            images.add("https://cdn.shopify.com/s/files/1/2026/7451/files/blog_w150_outdoor-party-1.jpg?1846900428569813131");
+            selectedService.setImages(images);
             service.add(selectedService).enqueue(new Callback<Service>() {
                 @Override
                 public void onResponse(Call<Service> call, Response<Service> response) {

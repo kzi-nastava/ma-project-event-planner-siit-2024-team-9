@@ -59,7 +59,7 @@ public class SolutionListFragment extends Fragment {
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         solutionRecyclerView.setLayoutManager(layoutManager);
-        solutionListAdapter = new SolutionListAdapter(getContext(), solutions);
+        solutionListAdapter = new SolutionListAdapter(requireContext(), solutions, requireActivity().getSupportFragmentManager());
         solutionRecyclerView.setAdapter(solutionListAdapter);
 
         solutionService = RetrofitClient.getClient().create(SolutionService.class);

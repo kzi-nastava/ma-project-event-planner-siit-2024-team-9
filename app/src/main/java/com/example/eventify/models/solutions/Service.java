@@ -76,7 +76,6 @@ public class Service extends Solution implements Parcelable, Observable {
             this.setImages(new ArrayList<>());
             this.setVisibility(true);
             this.setAvailability(true);
-            this.setDeleted(false);
             this.setOwner(null);
             this.setReviews(new HashSet<>());
             this.setSpecifity("");

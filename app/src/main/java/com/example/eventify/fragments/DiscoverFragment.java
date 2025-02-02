@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.eventify.R;
+import com.example.eventify.databinding.FragmentDiscoverBinding;
 import com.example.eventify.models.events.Event;
 import com.example.eventify.models.solutions.Solution;
 
@@ -22,12 +23,15 @@ public class DiscoverFragment extends Fragment {
     private List<Event> allEvents = new ArrayList<>();
     private List<Solution> allSolutions = new ArrayList<>();
 
+    FragmentDiscoverBinding binding;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_discover, container, false);
 
-        initRecyclerViews(view);
+        binding = FragmentDiscoverBinding.inflate(inflater, container, false);
+
+        initRecyclerViews();
 //        setupDummyData();
 //        setupPaginators(view);
 
@@ -36,30 +40,41 @@ public class DiscoverFragment extends Fragment {
 //        setTopSolutions();
 //        setAllSolutions();
 
-        return view;
+        return binding.getRoot();
     }
 
-    private void initRecyclerViews(View view) {
+    @Override
+    public void onResume() {
+        super.onResume();
+        initRecyclerViews();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    private void initRecyclerViews() {
         // Top 5 Events Fragment
         getChildFragmentManager().beginTransaction()
-                .replace(R.id.top_events_container, EventListFragment.newInstance(true))
+                .replace(binding.topEventsContainer.getId(), EventListFragment.newInstance(true))
                 .commit();
 
         // All Events Fragment
         getChildFragmentManager().beginTransaction()
-                .replace(R.id.all_events_container, EventListFragment.newInstance(false))
+                .replace(binding.allEventsContainer.getId(), EventListFragment.newInstance(false))
                 .commit();
 
 
 
         // Top 5 Solutions Fragment
         getChildFragmentManager().beginTransaction()
-                .replace(R.id.top_solutions_container, SolutionListFragment.newInstance(true))
+                .replace(binding.topSolutionsContainer.getId(), SolutionListFragment.newInstance(true))
                 .commit();
 
         // All Solutions Fragment
         getChildFragmentManager().beginTransaction()
-                .replace(R.id.all_solutions_container, SolutionListFragment.newInstance(false))
+                .replace(binding.allSolutionsContainer.getId(), SolutionListFragment.newInstance(false))
                 .commit();
 
 

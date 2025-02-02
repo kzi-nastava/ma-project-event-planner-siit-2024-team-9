@@ -5,6 +5,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.Bindable;
+import androidx.databinding.Observable;
 
 import com.example.eventify.models.enums.UserRole;
 import com.example.eventify.models.events.Event;
@@ -15,12 +17,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Set;
 
-public class User implements Parcelable {
+public class User implements Parcelable, Observable {
     private String id;
+    @Bindable
     private String email;
     private String password;
     private Timestamp lastPasswordResetDate;
+    @Bindable
     private String address;
+    @Bindable
     private String phoneNumber;
     private String profileImage;
     private Role role;
@@ -205,4 +210,14 @@ public class User implements Parcelable {
             return new User[size];
         }
     };
+
+    @Override
+    public void addOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
+
+    }
+
+    @Override
+    public void removeOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
+
+    }
 }

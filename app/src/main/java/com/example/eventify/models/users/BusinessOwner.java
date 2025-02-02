@@ -5,13 +5,17 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.Bindable;
+import androidx.databinding.Observable;
 
 import com.example.eventify.models.solutions.Solution;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class BusinessOwner extends User implements Parcelable {
+public class BusinessOwner extends User implements Parcelable, Observable {
+
+    @Bindable
     private String name;
     private String description;
     private Set<Solution> solutions;

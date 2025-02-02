@@ -10,7 +10,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="750dp"
+        android:layout_height="630dp"
         android:background="@drawable/form_card"
         android:padding="10dp">
 
@@ -46,8 +46,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@={service.description}"
+                android:textColor="@color/black"
                 android:textSize="14sp"
                 android:layout_marginBottom="20dp" />
+
+            <TextView
+                    android:id="@+id/specifitiesEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:hint="Specificities"
+                    android:textColorHint="@color/black"
+                    android:minLines="1"
+                    android:textColor="@android:color/black"
+                    android:backgroundTint="@android:color/black" />
+                <TextView
+                    android:id="@+id/specifitiesInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@={service.specifity}"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="20dp"
+                    android:textSize="14sp"/>
+
 
             <!-- Specificities and Categories in the same row -->
             <LinearLayout
@@ -57,30 +78,6 @@
                 android:layout_marginBottom="20dp"
                 android:weightSum="2">
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="10dp">
-
-                    <TextView
-                        android:id="@+id/specifitiesEditText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:hint="Specificities"
-                        android:textColorHint="@color/black"
-                        android:minLines="1"
-                        android:textColor="@android:color/black"
-                        android:backgroundTint="@android:color/black" />
-                    <TextView
-                        android:id="@+id/specifitiesInfo"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@={service.specifity}"
-                        android:textSize="14sp"/>
-                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -93,7 +90,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="18sp"
-                        android:hint="Categories"
+                        android:hint="Category"
                         android:textColorHint="@color/black"
                         android:minLines="1"
                         android:textColor="@android:color/black"
@@ -102,10 +99,38 @@
                         android:id="@+id/categoryInfo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/black"
                         android:text="@={service.category.name}"
                         android:textSize="14sp">
 
                     </TextView>
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/discount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:hint="Discount"
+                        android:textColorHint="@color/black"
+                        android:minLines="1"
+                        android:textColor="@android:color/black"
+                        android:backgroundTint="@android:color/black" />
+                    <TextView
+                        android:id="@+id/discountInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text='@{String.format("%.1f", service.discount)+"%"}'
+                        android:textSize="14sp"
+                        android:textColor="@color/black"
+                        />
                 </LinearLayout>
             </LinearLayout>
 
@@ -138,9 +163,43 @@
                         android:id="@+id/eventTypesInfo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Event Types Info"
+                        android:textColor="@color/black"
                         android:textSize="14sp" />
                 </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/duration"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:hint="Duration"
+                        android:textColorHint="@color/black"
+                        android:minLines="1"
+                        android:textColor="@android:color/black"
+                        android:backgroundTint="@android:color/black" />
+                    <TextView
+                        android:id="@+id/durationInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text='@{String.format("%.1f", (float) service.duration)}'
+                        android:textSize="14sp"
+                        android:textColor="@color/black" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="20dp"
+                android:weightSum="2">
+
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -149,106 +208,117 @@
                     android:layout_weight="1">
 
                     <TextView
-                        android:id="@+id/discount"
+                        android:id="@+id/min"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="18sp"
-                        android:hint="Discount"
+                        android:hint="Minimum engagement"
                         android:textColorHint="@color/black"
                         android:minLines="1"
                         android:textColor="@android:color/black"
                         android:backgroundTint="@android:color/black" />
                     <TextView
-                        android:id="@+id/discountInfo"
+                        android:id="@+id/minInfo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text='@{String.format("%.2f", service.discount)+"%"}'
+                        android:textColor="@color/black"
+                        android:text='@{String.format("%.1f", (float) service.minEngagement)}'
+                        android:textSize="14sp">
+
+                    </TextView>
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/max"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:hint="Maximum engagement"
+                        android:textColorHint="@color/black"
+                        android:minLines="1"
+                        android:textColor="@android:color/black"
+                        android:backgroundTint="@android:color/black" />
+                    <TextView
+                        android:id="@+id/maxInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text='@{String.format("%.1f", (float) service.maxEngagement)}'
                         android:textSize="14sp"
+                        android:textColor="@color/black"
                         />
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Sliders and other fields remain unchanged -->
-            <!-- Duration Slider -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:text="Duration"
-                android:textColor="@android:color/black" />
-            <com.google.android.material.slider.Slider
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:valueFrom="15"
-                android:valueTo="240"
-                android:stepSize="15"
-                android:value="15"
-                android:layout_marginBottom="10dp"
-                app:trackColor="@color/light_gray"
-                app:thumbColor="@color/red"
-                app:tickColor="@color/black" />
-
-            <!-- Min Engagement Slider -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Minimum engagement (60-300 min)"
-                android:layout_marginBottom="10dp"
-                android:textColor="@android:color/black" />
-
-            <com.google.android.material.slider.Slider
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:valueFrom="60"
-                android:valueTo="300"
-                android:stepSize="15"
-                android:value="60"
-                android:layout_marginBottom="10dp"
-                app:trackColor="@color/light_gray"
-                app:thumbColor="@color/red"
-                app:tickColor="@color/black" />
-
-            <!-- Max Engagement Slider -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Maximum engagement (60-300 min)"
-                android:layout_marginBottom="10dp"
-                android:textColor="@android:color/black" />
-
-            <com.google.android.material.slider.Slider
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:valueFrom="60"
-                android:valueTo="300"
-                android:layout_marginBottom="10dp"
-                android:stepSize="15"
-                android:value="60"
-                app:trackColor="@color/light_gray"
-                app:thumbColor="@color/red"
-                app:tickColor="@color/black" />
-
-            <!-- Booking Deadline Slider -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Booking deadline (days)"
-                android:layout_marginBottom="10dp"
-                android:textColor="@android:color/black" />
-
-            <com.google.android.material.slider.Slider
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:valueFrom="0"
-                android:valueTo="20"
-                android:stepSize="1"
-                android:value="0"
-                android:layout_marginBottom="25dp"
-                app:trackColor="@color/light_gray"
-                app:thumbColor="@color/red"
-                app:tickColor="@color/black" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp"
+            android:weightSum="2">
 
 
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/reservation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:hint="Reservation deadline"
+                    android:textColorHint="@color/black"
+                    android:minLines="1"
+                    android:textColor="@android:color/black"
+                    android:backgroundTint="@android:color/black" />
+                <TextView
+                    android:id="@+id/reservationInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:text='@{String.format("%.1f", (float) service.reservationDeadline)}'
+                    android:textSize="14sp">
+
+                </TextView>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/cancel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:hint="Cancellation deadline"
+                    android:textColorHint="@color/black"
+                    android:minLines="1"
+                    android:textColor="@android:color/black"
+                    android:backgroundTint="@android:color/black" />
+                <TextView
+                    android:id="@+id/cancelInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text='@{String.format("%.1f", (float) service.cancellationDeadline)}'
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    />
+            </LinearLayout>
+
+        </LinearLayout>
 
             <!-- Submit and Delete Buttons -->
             <LinearLayout
