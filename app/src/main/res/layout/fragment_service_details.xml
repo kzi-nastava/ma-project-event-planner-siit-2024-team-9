@@ -228,6 +228,24 @@
                         android:layout_marginBottom="20dp" />
                 </LinearLayout>
 
+                <!-- Submit and Delete Buttons -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="70dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnBook"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Buy product"
+                        android:backgroundTint="@color/white"
+                        android:textColor="@android:color/black"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_marginBottom="20dp" />
+                </LinearLayout>
+
 
 
             </LinearLayout>

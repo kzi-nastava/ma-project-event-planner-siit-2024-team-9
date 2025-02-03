@@ -7,8 +7,11 @@ import com.example.eventify.models.others.Invitation;
 import com.example.eventify.models.others.Location;
 import com.example.eventify.models.enums.PrivacyType;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Set;
+import java.util.TimeZone;
 
 public class Event implements Parcelable {
     private String id;

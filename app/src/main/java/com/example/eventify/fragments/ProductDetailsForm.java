@@ -34,9 +34,6 @@ public class ProductDetailsForm extends Fragment {
         // Required empty public constructor
     }
 
-    String[] events;
-
-    EventService eventService = RetrofitClient.getClient().create(EventService.class);
 
     FragmentProductDetailsFormBinding binding;
 
@@ -65,78 +62,12 @@ public class ProductDetailsForm extends Fragment {
             binding.setService(product);
         }
 
-        getEvents();
-
-        binding.btnBook.setOnClickListener(v -> showServiceDialog());
-
         setTypes();
 
         return binding.getRoot();
     }
 
 
-    private void getEvents() {
-        eventService.getAllPaginated(0, 5, "name", true).enqueue(new Callback<EventService.EventAllResponse>() {
-            @Override
-            public void onResponse(Call<EventService.EventAllResponse> call, Response<EventService.EventAllResponse> response) {
-                int i = 0;
-                events = new String[response.body().totalElements];
-                for (Event e:response.body().content) {
-                    events[i] = e.getName();
-                    i++;
-                }
-            }
-
-            @Override
-            public void onFailure(Call<EventService.EventAllResponse> call, Throwable t) {
-
-            }
-        });
-    }
-
-    private void showServiceDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Select your event");
-
-        builder.setItems(events, (dialog, which) -> {
-            eventService.getByName(events[which]).enqueue(new Callback<Event>() {
-                @Override
-                public void onResponse(Call<Event> call, Response<Event> response) {
-                    Event event = response.body();
-                    eventService.getBudget(event.getId()).enqueue(new Callback<Budget>() {
-                        @Override
-                        public void onResponse(Call<Budget> call, Response<Budget> response) {
-                            Budget budget = response.body();
-                            BudgetService budgetService = RetrofitClient.getClient().create(BudgetService.class);
-                            budgetService.buy(UUID.fromString(budget.getId()), product).enqueue(new Callback<Budget>() {
-                                @Override
-                                public void onResponse(Call<Budget> call, Response<Budget> response) {
-
-                                }
-
-                                @Override
-                                public void onFailure(Call<Budget> call, Throwable t) {
-
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onFailure(Call<Budget> call, Throwable t) {
-
-                        }
-                    });
-                }
-
-                @Override
-                public void onFailure(Call<Event> call, Throwable t) {
-
-                }
-            });
-        });
-
-        builder.show();
-    }
 
 
     private void setTypes() {
