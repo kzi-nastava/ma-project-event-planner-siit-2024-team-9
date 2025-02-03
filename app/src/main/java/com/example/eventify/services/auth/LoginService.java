@@ -28,8 +28,7 @@ public class LoginService {
 
 
     public void login(String email, String password){
-        Call<UserTokenState> call = loginService.login(new LoginRequest(email, password));
-        call.enqueue(new Callback<UserTokenState>() {
+        loginService.login(new LoginRequest(email, password)).enqueue(new Callback<UserTokenState>() {
             @Override
             public void onResponse(Call<UserTokenState> call, Response<UserTokenState> response) {
                 if(response.isSuccessful()){

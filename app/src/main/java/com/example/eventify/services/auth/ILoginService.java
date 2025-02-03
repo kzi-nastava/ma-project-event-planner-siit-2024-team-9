@@ -9,6 +9,6 @@ import retrofit2.http.POST;
 
 public interface ILoginService {
 
-    @POST("auth/login")
+    @POST("users/login")
     Call<UserTokenState> login(@Body LoginRequest loginRequest);
 }

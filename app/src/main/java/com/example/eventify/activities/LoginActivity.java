@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -101,14 +102,15 @@ public class LoginActivity extends AppCompatActivity {
     private void login(String email, String password) {
         try {
             loginService.login(email, password);
+            Log.i("Login", "Login successful "+loginService.getToken());
+
+
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
         }
         catch (Exception e){
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            return;
         }
-
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        startActivity(intent);
     }
 
 
