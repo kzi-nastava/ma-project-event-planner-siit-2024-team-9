@@ -1,6 +1,8 @@
 package com.example.eventify.services.events;
 
+import com.example.eventify.models.events.Budget;
 import com.example.eventify.models.events.Event;
+import com.example.eventify.models.solutions.Service;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -23,6 +25,12 @@ public interface EventService {
 
     @GET("events/{id}")
     Call<Event> get(@Path("id") String id);
+
+    @GET("events/name")
+    Call<Event> getByName(@Query("name") String name);
+
+    @GET("events/budget/{id}")
+    Call<Budget> getBudget(@Path("id") String id);
 
     @GET("events")
     Call<EventAllResponse> getAllPaginated(@Query("page") int page, @Query("size") int size, @Query("sortBy") String sortBy, @Query("ascending") boolean ascending);

@@ -1,8 +1,13 @@
 package com.example.eventify.models.events;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import java.util.Set;
 
-public class Budget {
+public class Budget implements Parcelable {
     private String id;
     private Set<BudgetItem> items;
     private double plannedValue;
@@ -19,6 +24,25 @@ public class Budget {
         this.actualValue = actualValue;
         this.isDeleted = isDeleted;
     }
+
+    protected Budget(Parcel in) {
+        id = in.readString();
+        plannedValue = in.readDouble();
+        actualValue = in.readDouble();
+        isDeleted = in.readByte() != 0;
+    }
+
+    public static final Creator<Budget> CREATOR = new Creator<Budget>() {
+        @Override
+        public Budget createFromParcel(Parcel in) {
+            return new Budget(in);
+        }
+
+        @Override
+        public Budget[] newArray(int size) {
+            return new Budget[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -58,5 +82,18 @@ public class Budget {
 
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeDouble(plannedValue);
+        dest.writeDouble(actualValue);
+        dest.writeByte((byte) (isDeleted ? 1 : 0));
     }
 }

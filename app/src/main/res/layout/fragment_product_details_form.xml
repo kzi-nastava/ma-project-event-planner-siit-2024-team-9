@@ -27,7 +27,7 @@
                 android:textStyle="bold"
                 android:textColor="@color/black"
                 android:layout_marginVertical="20dp"
-                android:text="Service details" />
+                android:text="Product details" />
 
             <!-- Description -->
             <TextView
@@ -163,7 +163,7 @@
                     android:id="@+id/btnBook"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Book service"
+                    android:text="Buy product"
                     android:backgroundTint="@color/white"
                     android:textColor="@android:color/black"
                     style="@style/Widget.Material3.Button.OutlinedButton"

@@ -328,7 +328,7 @@
                 android:paddingHorizontal="70dp">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnBook"
+                    android:id="@+id/serviceBooking"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Book service"

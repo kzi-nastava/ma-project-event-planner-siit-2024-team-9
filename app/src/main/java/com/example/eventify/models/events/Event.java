@@ -24,8 +24,9 @@ public class Event implements Parcelable {
     private Location location;
     private Double price;
     private Set<Invitation> invitations;
+    private Budget budget;
 
-    public Event(String id, String name, String description, String image, int maxAttendees, PrivacyType privacyType, Date eventStart, Date eventEnd, int attendance, EventType eventType, Location location, Double price, Set<Invitation> invitations) {
+    public Event(String id, String name, String description, String image, int maxAttendees, PrivacyType privacyType, Date eventStart, Date eventEnd, int attendance, EventType eventType, Location location, Double price, Set<Invitation> invitations, Budget budget) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -39,6 +40,7 @@ public class Event implements Parcelable {
         this.location = location;
         this.price = price;
         this.invitations = invitations;
+        this.budget = budget;
     }
 
     public Event() {}
@@ -49,7 +51,7 @@ public class Event implements Parcelable {
         description = in.readString();
         image = in.readString();
         maxAttendees = in.readInt();
-        privacyType = PrivacyType.valueOf(in.readString()); // Enum se serijalizuje kao String
+        privacyType = PrivacyType.valueOf(in.readString()); // Enum serialized as String
         eventStart = new Date(in.readLong());
         eventEnd = new Date(in.readLong());
         attendance = in.readInt();
@@ -57,6 +59,7 @@ public class Event implements Parcelable {
         location = in.readParcelable(Location.class.getClassLoader());
         price = in.readDouble();
         invitations = (Set<Invitation>) in.readSerializable();
+        budget = in.readParcelable(Budget.class.getClassLoader()); // Read budget
     }
 
     public String getId() {
@@ -163,6 +166,14 @@ public class Event implements Parcelable {
         this.invitations = invitations;
     }
 
+    public Budget getBudget() {
+        return budget;
+    }
+
+    public void setBudget(Budget budget) {
+        this.budget = budget;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -179,6 +190,7 @@ public class Event implements Parcelable {
         dest.writeLong(eventEnd.getTime());
         dest.writeInt(attendance);
         dest.writeParcelable(location, flags);
+        dest.writeParcelable(budget, flags); // Write budget
     }
 
     public static final Creator<Event> CREATOR = new Creator<Event>() {
