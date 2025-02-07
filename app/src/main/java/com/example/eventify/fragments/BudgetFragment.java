@@ -18,6 +18,7 @@ import com.example.eventify.models.events.BudgetItem;
 import com.example.eventify.models.events.Event;
 import com.example.eventify.models.solutions.Solution;
 import com.example.eventify.models.solutions.SolutionCategory;
+import com.example.eventify.services.events.BudgetService;
 import com.example.eventify.services.events.EventService;
 import com.example.eventify.services.solutions.SolutionCategoryService;
 import com.example.eventify.utils.RetrofitClient;
@@ -25,13 +26,15 @@ import com.example.eventify.utils.RetrofitClient;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class BudgetFragment extends Fragment implements CategoryListAdapter.OnCategoryClickListener {
+public class BudgetFragment extends Fragment implements CategoryListAdapter.OnCategoryClickListener, ItemListAdapter.OnBudgetUpdatedListener {
 
     public BudgetFragment() {}
 
@@ -41,7 +44,10 @@ public class BudgetFragment extends Fragment implements CategoryListAdapter.OnCa
     ArrayList<SolutionCategory> categories = new ArrayList<>();
     ArrayList<SolutionCategory> selected = new ArrayList<>();
     SolutionCategoryService categoryService = RetrofitClient.getClient().create(SolutionCategoryService.class);
-    ArrayList<BudgetItem> items = new ArrayList<>();
+    ItemListAdapter adapter;
+
+    BudgetService service = RetrofitClient.getClient().create(BudgetService.class);
+    ArrayList<BudgetItem> items;
 
     public static BudgetFragment newInstance(Event event) {
         BudgetFragment fragment = new BudgetFragment();
@@ -56,8 +62,13 @@ public class BudgetFragment extends Fragment implements CategoryListAdapter.OnCa
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             event = getArguments().getParcelable("event");
-            budget = event.getBudget();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getBudgetByEvent();
     }
 
     @Override
@@ -65,9 +76,7 @@ public class BudgetFragment extends Fragment implements CategoryListAdapter.OnCa
                              Bundle savedInstanceState) {
 
         binding = FragmentBudgetBinding.inflate(inflater, container, false);
-
-        getCategories(categories);
-
+        getBudgetByEvent();
         return binding.getRoot();
     }
 
@@ -92,6 +101,13 @@ public class BudgetFragment extends Fragment implements CategoryListAdapter.OnCa
         });
     }
 
+    private void getItems() {
+        binding.budgetItemsRecycler.setLayoutManager(new LinearLayoutManager(requireContext()));
+        items = new ArrayList<>(budget.getItems());
+        adapter = new ItemListAdapter(requireContext(), items, getParentFragmentManager(), budget, BudgetFragment.this);
+        binding.budgetItemsRecycler.setAdapter(adapter);
+    }
+
     @Override
     public void onCategoryClick(SolutionCategory category) {
         if (!selected.contains(category))
@@ -100,7 +116,55 @@ public class BudgetFragment extends Fragment implements CategoryListAdapter.OnCa
         BudgetItem item = new BudgetItem("",category,0, new HashSet<>());
         items.add(item);
         binding.budgetItemsRecycler.setLayoutManager(new LinearLayoutManager(requireContext()));
-        ItemListAdapter adapter = new ItemListAdapter(requireContext(), items, getParentFragmentManager());
+        ItemListAdapter adapter = new ItemListAdapter(requireContext(), items, requireActivity().getSupportFragmentManager(), budget, BudgetFragment.this);
         binding.budgetItemsRecycler.setAdapter(adapter);
+    }
+
+    private void getBudgetByEvent() {
+        EventService service = RetrofitClient.getClient().create(EventService.class);
+        service.getBudget(event.getId()).enqueue(new Callback<Budget>() {
+            @Override
+            public void onResponse(Call<Budget> call, Response<Budget> response) {
+                budget = response.body();
+                categoriesReset(false);
+            }
+
+            @Override
+            public void onFailure(Call<Budget> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void categoriesReset(boolean deletedItem) {
+        binding.setBudget(budget);
+        categories.clear();
+        for (BudgetItem item: budget.getItems()) {
+            categories.add(item.getCategory());
+            if (!deletedItem)
+                selected.add(item.getCategory());
+        }
+        getCategories(categories);
+        getItems();
+    }
+
+    private void getBudget(boolean deletedItem) {
+        service.get(UUID.fromString(budget.getId())).enqueue(new Callback<Budget>() {
+            @Override
+            public void onResponse(Call<Budget> call, Response<Budget> response) {
+                budget = response.body();
+                categoriesReset(deletedItem);
+            }
+
+            @Override
+            public void onFailure(Call<Budget> call, Throwable t) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onBudgetUpdated(boolean deletedItem) {
+        getBudget(deletedItem);
     }
 }
