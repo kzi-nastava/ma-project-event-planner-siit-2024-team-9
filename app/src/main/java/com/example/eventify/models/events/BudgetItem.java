@@ -9,17 +9,15 @@ public class BudgetItem {
     private String id;
     private SolutionCategory category;
     private double plannedValue;
-    private boolean isDeleted;
     private Set<Solution> selectedSolutions;
 
     public BudgetItem() {
     }
 
-    public BudgetItem(String id, SolutionCategory category, double plannedValue, boolean isDeleted, Set<Solution> selectedSolutions) {
+    public BudgetItem(String id, SolutionCategory category, double plannedValue, Set<Solution> selectedSolutions) {
         this.id = id;
         this.category = category;
         this.plannedValue = plannedValue;
-        this.isDeleted = isDeleted;
         this.selectedSolutions = selectedSolutions;
     }
 
@@ -45,14 +43,6 @@ public class BudgetItem {
 
     public void setPlannedValue(double plannedValue) {
         this.plannedValue = plannedValue;
-    }
-
-    public boolean isDeleted() {
-        return isDeleted;
-    }
-
-    public void setDeleted(boolean isDeleted) {
-        this.isDeleted = isDeleted;
     }
 
     public Set<Solution> getSelectedSolutions() {

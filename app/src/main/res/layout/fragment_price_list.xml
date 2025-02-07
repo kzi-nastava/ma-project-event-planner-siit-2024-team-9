@@ -19,6 +19,7 @@
             android:text="Price List"
             android:layout_marginVertical="30dp"
             android:textSize="23sp"
+            android:layout_marginStart="5dp"
             android:theme="@style/header_text"
             android:textStyle="bold" />
 

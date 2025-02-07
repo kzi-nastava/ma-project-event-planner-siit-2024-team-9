@@ -100,6 +100,8 @@ public class ServiceDetailsFragment extends Fragment {
             binding.favorite.setSelected(isFavorite);
         });
 
+        binding.submitReview.setVisibility(View.GONE);
+
         adapter = new ImageListAdapter(requireContext(), showedSolution.getImages(), getParentFragmentManager());
         binding.recyclerView.setAdapter(adapter);
 
