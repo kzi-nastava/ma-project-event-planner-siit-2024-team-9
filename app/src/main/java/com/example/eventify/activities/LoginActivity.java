@@ -8,12 +8,14 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.example.eventify.fragments.RegisterFragment;
 import com.example.eventify.R;
 import com.example.eventify.databinding.ActivityLoginBinding;
+import com.example.eventify.services.auth.LoginService;
 
 import java.util.List;
 
@@ -30,6 +32,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private Color primaryColor;
 
+    private LoginService loginService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +48,8 @@ public class LoginActivity extends AppCompatActivity {
         binding.registerButton.setOnClickListener(v -> openRegisterFragment());
 
         fragmentContainer = binding.fragmentContainer;
+
+        loginService = new LoginService(this);
 
         componentsToHide = List.of(
                 binding.titleTextView,
@@ -87,12 +93,26 @@ public class LoginActivity extends AppCompatActivity {
         final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
 
         if(email.matches(EMAIL_REGEX)){
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
+            login(email, binding.passwordEditText.getText().toString());
         } else{
             Toast.makeText(this, "Please enter a valid email address", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void login(String email, String password) {
+        try {
+            loginService.login(email, password);
+            Log.i("Login", "Login successful "+loginService.getToken());
+
+
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
+        catch (Exception e){
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     private void openRegisterFragment(){
         for(View view: componentsToHide){
