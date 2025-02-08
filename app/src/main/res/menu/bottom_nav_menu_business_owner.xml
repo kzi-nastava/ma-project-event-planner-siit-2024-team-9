@@ -8,9 +8,9 @@
         app:labelVisibilityMode="labeled"
         />
     <item
-        android:id="@+id/chats"
-        android:icon="@drawable/baseline_chat_24"
-        android:title="@string/chats"
+        android:id="@+id/budget"
+        android:icon="@drawable/budget"
+        android:title="@string/budget"
         app:labelVisibilityMode="labeled"
         />
 

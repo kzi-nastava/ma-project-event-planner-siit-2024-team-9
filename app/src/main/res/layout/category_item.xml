@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="75dp"
+    android:orientation="horizontal"
+    android:background="@drawable/card"
+    android:padding="10dp"
+    android:layout_marginBottom="20dp"
+    android:id="@+id/product_card_item"
+    >
+    <TextView
+        android:id="@+id/category_name"
+        android:layout_width="130sp"
+        android:layout_marginEnd="15sp"
+        android:textColor="@color/black"
+        android:layout_height="match_parent">
+    </TextView>
+
+
+</LinearLayout>

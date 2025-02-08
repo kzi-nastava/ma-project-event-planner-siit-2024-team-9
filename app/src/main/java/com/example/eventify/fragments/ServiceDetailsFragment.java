@@ -1,5 +1,6 @@
 package com.example.eventify.fragments;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -13,12 +14,22 @@ import android.widget.FrameLayout;
 
 import com.example.eventify.adapters.ImageListAdapter;
 import com.example.eventify.databinding.FragmentServiceDetailsBinding;
+import com.example.eventify.models.events.Budget;
+import com.example.eventify.models.events.Event;
+import com.example.eventify.models.others.Purchase;
 import com.example.eventify.models.solutions.Product;
 import com.example.eventify.models.solutions.Service;
 import com.example.eventify.models.solutions.Solution;
+import com.example.eventify.services.events.BudgetService;
+import com.example.eventify.services.events.EventService;
 import com.example.eventify.services.solutions.ProductService;
 import com.example.eventify.services.solutions.ServiceService;
+import com.example.eventify.services.solutions.SolutionService;
 import com.example.eventify.utils.RetrofitClient;
+
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.UUID;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,7 +51,16 @@ public class ServiceDetailsFragment extends Fragment {
     private Service showedService;
     private Product showedProduct;
 
+    String[] events;
+
+    Event[] organizerEvents;
+
+    EventService eventService = RetrofitClient.getClient().create(EventService.class);
+
     private boolean serviceDetails = true;
+
+    private boolean isPurchased = false;
+    private Purchase purchase;
 
     public ServiceDetailsFragment() {
         // Required empty public constructor
@@ -66,8 +86,6 @@ public class ServiceDetailsFragment extends Fragment {
 
         binding = FragmentServiceDetailsBinding.inflate(inflater, container, false);
 
-        binding.right.setOnClickListener(v -> detailsBtnHandler());
-
         if (getArguments() != null) {
             showedSolution = getArguments().getParcelable("solution");
             binding.setService(showedSolution);
@@ -75,11 +93,14 @@ public class ServiceDetailsFragment extends Fragment {
         }
 
         detailsBtnHandler();
+        binding.right.setOnClickListener(v -> detailsBtnHandler());
 
         binding.favorite.setOnClickListener(v -> {
             isFavorite = !isFavorite;
             binding.favorite.setSelected(isFavorite);
         });
+
+        binding.submitReview.setVisibility(View.GONE);
 
         adapter = new ImageListAdapter(requireContext(), showedSolution.getImages(), getParentFragmentManager());
         binding.recyclerView.setAdapter(adapter);
@@ -90,9 +111,92 @@ public class ServiceDetailsFragment extends Fragment {
         binding.star4.setOnClickListener( v -> rate4());
         binding.star5.setOnClickListener( v -> rate5());
 
-
         return binding.getRoot();
     }
+
+    private void getEvents() {
+        SolutionService solutionService = RetrofitClient.getClient().create(SolutionService.class);
+        eventService.getAllPaginated(0, 5, "name", true).enqueue(new Callback<EventService.EventAllResponse>() {
+            @Override
+            public void onResponse(Call<EventService.EventAllResponse> call, Response<EventService.EventAllResponse> response) {
+                int i = 0;
+                events = new String[response.body().totalElements];
+                organizerEvents = new Event[response.body().totalElements];
+                for (Event e:response.body().content) {
+                    events[i] = e.getName();
+                    organizerEvents[i] = e;
+                    i++;
+                }
+                organizerEvents = Arrays.stream(organizerEvents)
+                        .filter(Objects::nonNull)
+                        .toArray(Event[]::new);
+                purchase = new Purchase(organizerEvents, showedSolution);
+                solutionService.isPurchased(purchase).enqueue(new Callback<Boolean>() {
+                    @Override
+                    public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                        isPurchased = response.body();
+                        reviewPermission();
+                    }
+
+                    @Override
+                    public void onFailure(Call<Boolean> call, Throwable t) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Call<EventService.EventAllResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void buyProduct() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Select your event");
+
+        builder.setItems(events, (dialog, which) -> {
+            eventService.getByName(events[which]).enqueue(new Callback<Event>() {
+                @Override
+                public void onResponse(Call<Event> call, Response<Event> response) {
+                    Event event = response.body();
+                    eventService.getBudget(event.getId()).enqueue(new Callback<Budget>() {
+                        @Override
+                        public void onResponse(Call<Budget> call, Response<Budget> response) {
+                            Budget budget = response.body();
+                            BudgetService budgetService = RetrofitClient.getClient().create(BudgetService.class);
+                            budgetService.buy(UUID.fromString(budget.getId()), showedProduct).enqueue(new Callback<Budget>() {
+                                @Override
+                                public void onResponse(Call<Budget> call, Response<Budget> response) {
+                                    isPurchased = true;
+                                    reviewPermission();
+                                }
+
+                                @Override
+                                public void onFailure(Call<Budget> call, Throwable t) {
+
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onFailure(Call<Budget> call, Throwable t) {
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailure(Call<Event> call, Throwable t) {
+
+                }
+            });
+        });
+
+        builder.show();
+    }
+
 
     private void detailsBtnHandler() {
 
@@ -103,15 +207,19 @@ public class ServiceDetailsFragment extends Fragment {
 
             params.height = (int) TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP,
-                    630,
+                    600,
                     getResources().getDisplayMetrics()
             );
             binding.right.setText("About us");
             details.setLayoutParams(params);
-            if (showedSolution.isService())
+            if (showedSolution.isService()) {
                 setService();
-            else
+                binding.btnBook.setText("Book service");
+            }
+            else {
                 setProduct();
+                binding.btnBook.setOnClickListener(v -> buyProduct());
+            }
         } else {
             params.height = (int) TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP,
@@ -125,6 +233,11 @@ public class ServiceDetailsFragment extends Fragment {
             serviceDetails = true;
             transaction.commit();
         }
+    }
+
+    private void reviewPermission() {
+        binding.btnBook.setVisibility(isPurchased ? View.GONE:View.VISIBLE);
+        binding.submitReview.setVisibility(isPurchased ? View.VISIBLE:View.GONE);
     }
 
     private void setService() {
@@ -152,6 +265,7 @@ public class ServiceDetailsFragment extends Fragment {
             @Override
             public void onResponse(Call<Product> call, Response<Product> response) {
                 showedProduct = response.body();
+                getEvents();
                 serviceDetails = false;
                 FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
                 transaction.add(binding.details.getId(), ProductDetailsForm.newInstance(showedProduct));

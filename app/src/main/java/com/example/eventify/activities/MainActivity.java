@@ -14,23 +14,31 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.MenuItem;
 
 
+import com.example.eventify.fragments.BudgetFragment;
 import com.example.eventify.fragments.CategoriesFragment;
 import com.example.eventify.fragments.DiscoverFragment;
 import com.example.eventify.fragments.PriceListFragment;
 import com.example.eventify.fragments.SolutionFilterFragment;
 import com.example.eventify.models.enums.PrivacyType;
 import com.example.eventify.fragments.ServicesFragment;
+import com.example.eventify.models.events.Budget;
 import com.example.eventify.models.events.Event;
 import com.example.eventify.models.solutions.Service;
 import com.example.eventify.models.solutions.Solution;
 import com.example.eventify.R;
 import com.example.eventify.databinding.ActivityMainBinding;
+import com.example.eventify.services.events.EventService;
+import com.example.eventify.utils.RetrofitClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -52,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
         navigationActions.put(R.id.discover, this::setDiscoverFragment);
         navigationActions.put(R.id.services, this::setServicesFragment);
+        navigationActions.put(R.id.budget, this::setBudgetFragment);
         navigationActions.put(R.id.events, this::setEventsFragment);
         navigationActions.put(R.id.categories, this::setCategoriesFragment);
         navigationActions.put(R.id.profile, this::setProfileFragment);
@@ -99,6 +108,24 @@ public class MainActivity extends AppCompatActivity {
     private void setServicesFragment(){
         loadFragment(new ServicesFragment());
     }
+
+    private void getBudget() {
+        EventService service = RetrofitClient.getClient().create(EventService.class);
+        service.getAllPaginated(0, 5, "name", true).enqueue(new Callback<EventService.EventAllResponse>() {
+            @Override
+            public void onResponse(Call<EventService.EventAllResponse> call, Response<EventService.EventAllResponse> response) {
+                List<Event> events = response.body().content;
+                loadFragment(new BudgetFragment().newInstance(events.get(0)));
+            }
+
+            @Override
+            public void onFailure(Call<EventService.EventAllResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void setBudgetFragment() {getBudget();}
 
     private void setProfileFragment(){
         Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show();

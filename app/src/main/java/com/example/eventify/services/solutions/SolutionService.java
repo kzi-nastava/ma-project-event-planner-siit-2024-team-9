@@ -2,6 +2,7 @@ package com.example.eventify.services.solutions;
 
 import com.example.eventify.models.others.Discount;
 import com.example.eventify.models.others.Price;
+import com.example.eventify.models.others.Purchase;
 import com.example.eventify.models.solutions.Solution;
 import com.google.gson.annotations.SerializedName;
 
@@ -23,6 +24,9 @@ public interface SolutionService {
 
     @POST("solutions")
     Call<Solution> create(@Body Solution solution);
+
+    @POST("solutions/purchased")
+    Call<Boolean> isPurchased(@Body Purchase purchase);
 
     @GET("solutions/{id}")
     Call<Solution> get(@Path("id") String id);
