@@ -24,10 +24,6 @@ public interface SolutionCategoryService {
     @GET("solution-categories/{id}")
     Call<SolutionCategory> get(@Path("id") UUID id);
 
-    // Get all solution categories
-    @GET("solution-categories")
-    Call<Collection<SolutionCategory>> getAll();
-
     // Get active solution categories
     @GET("solution-categories/active")
     Call<Collection<SolutionCategory>> getActive();
