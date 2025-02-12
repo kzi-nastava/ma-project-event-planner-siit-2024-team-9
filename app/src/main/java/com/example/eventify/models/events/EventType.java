@@ -12,18 +12,15 @@ public class EventType implements Parcelable {
     private String description;
     private boolean isActive;
 
-    // Constructor
     public EventType(String name, String description, boolean isActive) {
         this.name = name;
         this.description = description;
         this.isActive = isActive;
     }
 
-    // Getters and Setters
     public UUID getId() {
         return id;
     }
-
     public boolean isActive() {
         return isActive;
     }

@@ -139,11 +139,13 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
     }
 
     private void deleteItem(ItemViewHolder holder, BudgetItem item) {
-        editMode = false;
-        Set<BudgetItem> items = budget.getItems();
-        items.remove(item);
-        budget.setItems(items);
-        updateBudget(holder, true);
+        if (item.getSelectedSolutions().isEmpty()) {
+            editMode = false;
+            Set<BudgetItem> items = budget.getItems();
+            items.remove(item);
+            budget.setItems(items);
+            updateBudget(holder, true);
+        }
     }
 
     private void updateBudget(ItemViewHolder holder, boolean deleted) {

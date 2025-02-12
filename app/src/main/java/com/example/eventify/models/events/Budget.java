@@ -12,7 +12,6 @@ public class Budget implements Parcelable {
     private Set<BudgetItem> items;
     private double plannedValue;
     private double actualValue;
-    private boolean isDeleted;
 
     public Budget() {
     }
@@ -22,14 +21,12 @@ public class Budget implements Parcelable {
         this.items = items;
         this.plannedValue = plannedValue;
         this.actualValue = actualValue;
-        this.isDeleted = isDeleted;
     }
 
     protected Budget(Parcel in) {
         id = in.readString();
         plannedValue = in.readDouble();
         actualValue = in.readDouble();
-        isDeleted = in.readByte() != 0;
     }
 
     public static final Creator<Budget> CREATOR = new Creator<Budget>() {
@@ -76,14 +73,6 @@ public class Budget implements Parcelable {
         this.actualValue = actualValue;
     }
 
-    public boolean isDeleted() {
-        return isDeleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -94,6 +83,5 @@ public class Budget implements Parcelable {
         dest.writeString(id);
         dest.writeDouble(plannedValue);
         dest.writeDouble(actualValue);
-        dest.writeByte((byte) (isDeleted ? 1 : 0));
     }
 }
