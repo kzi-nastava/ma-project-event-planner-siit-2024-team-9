@@ -42,6 +42,7 @@ import com.example.eventify.utils.ComponentsSetup;
 import com.example.eventify.models.solutions.Service;
 import com.example.eventify.R;
 import com.example.eventify.services.solutions.ServiceService;
+import com.example.eventify.utils.FileUtils;
 import com.example.eventify.utils.RetrofitClient;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -49,8 +50,10 @@ import com.google.android.material.chip.ChipGroup;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -73,6 +76,8 @@ public class ServiceFormFragment extends Fragment {
     private ArrayList<String> selectedList = new ArrayList<>();
     SolutionCategoryService categoryService = RetrofitClient.getClient().create(SolutionCategoryService.class);
     BusinessOwner owner;
+
+    List<MultipartBody.Part> images = new ArrayList<>();
 
 
     public static ServiceFormFragment newInstance(Service service) {
@@ -172,25 +177,44 @@ public class ServiceFormFragment extends Fragment {
     }
 
     private void setupImagePicker(View view) {
-        // Set click listener for service image
         view.findViewById(R.id.serviceImage).setOnClickListener(v -> openImagePicker());
 
-        // Register image picker activity result callback
         imagePickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
                         if (data != null) {
-                            Uri selectedImageUri = data.getClipData() != null ?
-                                    data.getClipData().getItemAt(0).getUri() : data.getData();
-                            ImageView serviceImage = view.findViewById(R.id.serviceImage);
-                            serviceImage.setImageURI(selectedImageUri);
+                            ArrayList<Uri> imageUris = new ArrayList<>();
+
+                            if (data.getClipData() != null) {
+                                int count = data.getClipData().getItemCount();
+                                for (int i = 0; i < count; i++) {
+                                    Uri imageUri = data.getClipData().getItemAt(i).getUri();
+                                    imageUris.add(imageUri);
+                                }
+                            } else if (data.getData() != null) {
+                                imageUris.add(data.getData());
+                            }
+
+                            Uri[] imageArray = imageUris.toArray(new Uri[0]);
+
+                            if (!imageUris.isEmpty()) {
+                                ImageView serviceImage = view.findViewById(R.id.serviceImage);
+                                serviceImage.setImageURI(imageUris.get(0)); // Show first image
+                            }
+
+                            try {
+                                images = FileUtils.prepareMultipleFiles(imageUris, requireContext());
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                     }
                 }
         );
     }
+
 
     private void setupDeleteButton(View view) {
         Button deleteBtn = view.findViewById(R.id.deleteBtn);
@@ -245,7 +269,7 @@ public class ServiceFormFragment extends Fragment {
         if (selectedService.getId() != null) {
             if (!selectedList.isEmpty())
                 setTypes();
-            service.update(selectedService.getId(), selectedService).enqueue(new Callback<Service>() {
+            service.update(selectedService.getId(), FileUtils.createPartFromObject(selectedService), images).enqueue(new Callback<Service>() {
                 @Override
                 public void onResponse(Call<Service> call, Response<Service> response) {
                     goBack();
@@ -268,10 +292,11 @@ public class ServiceFormFragment extends Fragment {
                 selectedService.setCategory(getCategory(binding.categorySpinner1.getSelectedItem().toString()));
                 selectedService.setStatus(Status.ACCEPTED);
             }
-            ArrayList<String> images = new ArrayList<>();
-            images.add("https://cdn.shopify.com/s/files/1/2026/7451/files/blog_w150_outdoor-party-1.jpg?1846900428569813131");
-            selectedService.setImages(images);
-            service.add(selectedService).enqueue(new Callback<Service>() {
+            /*
+            ArrayList<String> urls = new ArrayList<>();
+            urls.add("https://cdn.shopify.com/s/files/1/2026/7451/files/blog_w150_outdoor-party-1.jpg?1846900428569813131");
+            selectedService.setImages(urls);*/
+            service.add(FileUtils.createPartFromObject(selectedService), images).enqueue(new Callback<Service>() {
                 @Override
                 public void onResponse(Call<Service> call, Response<Service> response) {
                     goBack();
