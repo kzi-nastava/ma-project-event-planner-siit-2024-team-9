@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.eventify.R;
 import com.example.eventify.models.others.ImageItem;
+import com.example.eventify.utils.RetrofitClient;
 
 import java.util.ArrayList;
 
@@ -47,7 +48,19 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String imageItem = images.get(position);
-        Glide.with(context).load(imageItem).into(holder.imageView);
+        
+        // Construct the full URL for the image
+        // Spring Boot serves static resources directly from the root
+        String baseUrl = RetrofitClient.BASE_URL.replace("api/", "");
+        String imageUrl = baseUrl + "images/service/" + imageItem;
+        
+        Log.d("ImageListAdapter", "Loading image from: " + imageUrl);
+        
+        Glide.with(context)
+            .load(imageUrl)
+            .placeholder(R.drawable.add) // Show placeholder while loading
+            .error(R.drawable.add) // Show error image if loading fails
+            .into(holder.imageView);
     }
 
     @Override
