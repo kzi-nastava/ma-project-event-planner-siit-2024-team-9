@@ -1,6 +1,7 @@
 package com.example.eventify.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.example.eventify.R;
 import com.example.eventify.models.solutions.Service;
 import com.example.eventify.fragments.ServiceFormFragment;
 import com.example.eventify.databinding.FragmentCardBinding;
+import com.example.eventify.utils.RetrofitClient;
 
 import java.util.ArrayList;
 
@@ -72,7 +74,26 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
         Service service = services.get(position);
 
         if (service != null) {
-            Glide.with(context).load(service.getImages().toArray()[0]).into(holder.imageView);
+            // Load image with proper URL construction
+            if (service.getImages() != null && !service.getImages().isEmpty()) {
+                String imageItem = service.getImages().get(0); // Get first image
+                
+                // Construct the full URL for the image
+                String baseUrl = RetrofitClient.BASE_URL.replace("api/", "");
+                String imageUrl = baseUrl + "images/service/" + imageItem;
+                
+                Log.d("ServiceListAdapter", "Loading image from: " + imageUrl);
+                
+                Glide.with(context)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.add) // Show placeholder while loading
+                    .error(R.drawable.add) // Show error image if loading fails
+                    .into(holder.imageView);
+            } else {
+                // No images available, show placeholder
+                holder.imageView.setImageResource(R.drawable.add);
+            }
+            
             holder.productTitle.setText(service.getName());
             holder.productDescription.setText(service.getSpecifity());
 

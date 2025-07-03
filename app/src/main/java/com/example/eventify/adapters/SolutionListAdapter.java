@@ -1,6 +1,7 @@
 package com.example.eventify.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.example.eventify.models.events.EventType;
 import com.example.eventify.models.solutions.Service;
 import com.example.eventify.models.solutions.Solution;
 import com.example.eventify.R;
+import com.example.eventify.utils.RetrofitClient;
 import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.List;
@@ -63,8 +65,27 @@ public class SolutionListAdapter extends RecyclerView.Adapter<SolutionListAdapte
             holder.solutionOriginalPrice.setVisibility(solution.getDiscount() > 0 ? View.VISIBLE : View.GONE);
         }
 
-        // Load Image using Glide
-        Glide.with(context).load(solution.getImages().toArray()[0]).into(holder.solutionImage);
+        // Load image with proper URL construction
+        if (solution.getImages() != null && !solution.getImages().isEmpty()) {
+            String imageItem = solution.getImages().get(0); // Get first image
+            
+            // Construct the full URL for the image
+            // Determine folder based on solution type (service or product)
+            String imageFolder = solution.isService() ? "service" : "product";
+            String baseUrl = RetrofitClient.BASE_URL.replace("api/", "");
+            String imageUrl = baseUrl + "images/" + imageFolder + "/" + imageItem;
+            
+            Log.d("SolutionListAdapter", "Loading image from: " + imageUrl);
+            
+            Glide.with(context)
+                .load(imageUrl)
+                .placeholder(R.drawable.add) // Show placeholder while loading
+                .error(R.drawable.add) // Show error image if loading fails
+                .into(holder.solutionImage);
+        } else {
+            // No images available, show placeholder
+            holder.solutionImage.setImageResource(R.drawable.add);
+        }
 
         // Set Type Badge
         if (solution.isService()) {
