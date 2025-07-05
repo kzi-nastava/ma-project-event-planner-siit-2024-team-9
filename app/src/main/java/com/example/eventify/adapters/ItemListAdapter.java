@@ -25,6 +25,8 @@ import com.example.eventify.models.events.BudgetItem;
 import com.example.eventify.models.solutions.Solution;
 import com.example.eventify.services.events.BudgetService;
 import com.example.eventify.utils.RetrofitClient;
+import com.example.eventify.activities.MainActivity;
+import com.example.eventify.utils.NavigationManager;
 
 import java.util.List;
 import java.util.Set;
@@ -47,6 +49,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
     private boolean editMode=false;
     private Budget budget;
     private BudgetService service = RetrofitClient.getClient().create(BudgetService.class);
+    private NavigationManager navigationManager;
 
     public ItemListAdapter(Context context, List<BudgetItem> items, FragmentManager fragmentManager, Budget budget, OnBudgetUpdatedListener budgetUpdatedListener) {
         this.context = context;
@@ -54,6 +57,9 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
         this.fragmentManager = fragmentManager;
         this.budget = budget;
         this.budgetUpdatedListener = budgetUpdatedListener;
+        if (context instanceof NavigationManager) {
+            this.navigationManager = (NavigationManager) context;
+        }
     }
 
     @NonNull
@@ -102,10 +108,9 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
             nameCell.setText(solution.getName());
 
             tableRow.findViewById(R.id.solutionDetails).setOnClickListener(v -> {
-                FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.replace(R.id.home_container, ServiceDetailsFragment.newInstance(solution));
-                transaction.addToBackStack(null);
-                transaction.commit();
+                if (navigationManager != null) {
+                    navigationManager.navigateToFragment(ServiceDetailsFragment.newInstance(solution));
+                }
             });
 
             table.addView(tableRow);

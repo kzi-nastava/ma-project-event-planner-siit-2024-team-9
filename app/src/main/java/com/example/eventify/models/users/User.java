@@ -10,12 +10,16 @@ import androidx.databinding.Observable;
 
 import com.example.eventify.models.enums.UserRole;
 import com.example.eventify.models.events.Event;
-import com.example.eventify.models.solutions.Solution;
+import com.example.eventify.models.solutions.Solution; 
+import com.example.eventify.models.users.Role;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Set;
+
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.Expose;
 
 public class User implements Parcelable, Observable {
     private String id;
@@ -28,15 +32,26 @@ public class User implements Parcelable, Observable {
     @Bindable
     private String phoneNumber;
     private String profileImage;
-    private Role role;
+    @SerializedName("role")
+    @Expose
+    private com.example.eventify.models.users.Role role;
+    
+    // Add role.name property for Jackson type resolution
+    @SerializedName("role.name")
+    @Expose
+    private String roleName;
+    
     private boolean suspended;
     public Date suspensionEndDate;
 
     private boolean activated;
-    private Set<Solution> favoriteSolutions;
+    private Set<Solution> favorites;
     private Set<Event> attendingEvents;
 
     public User() {
+        // Initialize collections to prevent null pointer exceptions
+        this.favorites = new java.util.HashSet<>();
+        this.attendingEvents = new java.util.HashSet<>();
     }
 
     public User(String email,
@@ -50,6 +65,7 @@ public class User implements Parcelable, Observable {
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.role = new Role(UserRole.AUTHENTICATED_USER);
+        this.roleName = UserRole.AUTHENTICATED_USER.name(); // Set role.name for Jackson
         this.profileImage = profileImage;
         this.suspended = false;
         this.activated = false;
@@ -67,7 +83,8 @@ public class User implements Parcelable, Observable {
         lastPasswordResetDate = (Timestamp) in.readSerializable();
         suspensionEndDate = (Date) in.readSerializable();
         role = in.readParcelable(Role.class.getClassLoader());
-        favoriteSolutions = new java.util.HashSet<>(in.createTypedArrayList(Solution.CREATOR));
+        roleName = in.readString(); // Add roleName to parcel
+        favorites = new java.util.HashSet<>(in.createTypedArrayList(Solution.CREATOR));
         attendingEvents = new java.util.HashSet<>(in.createTypedArrayList(Event.CREATOR));
     }
 
@@ -133,6 +150,18 @@ public class User implements Parcelable, Observable {
 
     public void setRole(Role role) {
         this.role = role;
+        // Update roleName when role changes
+        if (role != null && role.getName() != null) {
+            this.roleName = role.getName().name();
+        }
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 
     public boolean isSuspended() {
@@ -159,12 +188,12 @@ public class User implements Parcelable, Observable {
         this.activated = activated;
     }
 
-    public Set<Solution> getFavoriteSolutions() {
-        return favoriteSolutions;
+    public Set<Solution> getFavorites() {
+        return favorites;
     }
 
-    public void setFavoriteSolutions(Set<Solution> favoriteSolutions) {
-        this.favoriteSolutions = favoriteSolutions;
+    public void setFavorites(Set<Solution> favorites) {
+        this.favorites = favorites;
     }
 
     public Set<Event> getAttendingEvents() {
@@ -192,9 +221,10 @@ public class User implements Parcelable, Observable {
         parcel.writeByte((byte) (activated ? 1 : 0)); // Convert boolean to byte
         parcel.writeSerializable(lastPasswordResetDate); // Serialize Timestamp as it implements Serializable
         parcel.writeSerializable(suspensionEndDate); // Serialize Date as it implements Serializable
-        parcel.writeParcelable(role, i); // Assuming Role implements Parcelable
-        parcel.writeTypedList(favoriteSolutions != null ? new ArrayList<>(favoriteSolutions) : null); // Convert Set to List
-        parcel.writeTypedList(attendingEvents != null ? new ArrayList<>(attendingEvents) : null); // Convert Set to List
+        parcel.writeParcelable(role, i); // Add role to parcel
+        parcel.writeString(roleName); // Add roleName to parcel
+        parcel.writeTypedList(new ArrayList<>(favorites)); // Convert Set to List for parceling
+        parcel.writeTypedList(new ArrayList<>(attendingEvents)); // Convert Set to List for parceling
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {

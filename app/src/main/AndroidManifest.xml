@@ -22,6 +22,7 @@
             android:exported="false"
             android:label="@string/title_activity_login"
             android:theme="@style/Theme.Eventify.Fullscreen" />
+
         <activity
             android:name=".activities.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

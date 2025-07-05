@@ -23,13 +23,16 @@ import com.example.eventify.models.solutions.Service;
 import com.example.eventify.fragments.ServiceFormFragment;
 import com.example.eventify.databinding.FragmentCardBinding;
 import com.example.eventify.utils.RetrofitClient;
+import com.example.eventify.utils.NavigationManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.ViewHolder> {
     private final ArrayList<Service> services;
     private final Context context;
     private final FragmentManager fragmentManager; // Add FragmentManager
+    private NavigationManager navigationManager;
 
     // Bindings are not needed here since we are not using them in the adapter
     private FragmentCardBinding cardBinding;
@@ -40,6 +43,9 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
         this.context = context;
         this.services = services;
         this.fragmentManager = fragmentManager; // Assign the FragmentManager
+        if (context instanceof NavigationManager) {
+            this.navigationManager = (NavigationManager) context;
+        }
     }
 
     // ViewHolder class to hold references to each item view for efficient recycling.
@@ -109,11 +115,9 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
             });
 
             holder.itemView.setOnClickListener(v -> {
-                // Use the FragmentManager to perform the transaction
-                FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.replace(R.id.fragment_content, ServiceDetailsFragment.newInstance(service));
-                transaction.addToBackStack("list");
-                transaction.commit();
+                if (navigationManager != null) {
+                    navigationManager.navigateToFragment(ServiceDetailsFragment.newInstance(service));
+                }
             });
         }
     }

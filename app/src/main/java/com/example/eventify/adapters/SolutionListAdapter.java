@@ -22,6 +22,7 @@ import com.example.eventify.models.solutions.Solution;
 import com.example.eventify.R;
 import com.example.eventify.utils.RetrofitClient;
 import com.google.android.flexbox.FlexboxLayout;
+import com.example.eventify.utils.NavigationManager;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class SolutionListAdapter extends RecyclerView.Adapter<SolutionListAdapte
 
     private final Context context;
     private final List<Solution> solutions;
+    private NavigationManager navigationManager;
 
     private final FragmentManager fragmentManager;
 
@@ -36,6 +38,9 @@ public class SolutionListAdapter extends RecyclerView.Adapter<SolutionListAdapte
         this.context = context;
         this.solutions = solutions;
         this.fragmentManager = fragmentManager;
+        if (context instanceof NavigationManager) {
+            this.navigationManager = (NavigationManager) context;
+        }
     }
 
     @NonNull
@@ -127,14 +132,11 @@ public class SolutionListAdapter extends RecyclerView.Adapter<SolutionListAdapte
         }
 
         holder.itemView.setOnClickListener(v -> {
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.replace(R.id.discover_fragment, ServiceDetailsFragment.newInstance(solution));
-            transaction.addToBackStack(null);
-            transaction.commit();
+            if (navigationManager != null) {
+                navigationManager.navigateToFragment(ServiceDetailsFragment.newInstance(solution));
+            }
         });
     }
-
-
 
     @Override
     public int getItemCount() {

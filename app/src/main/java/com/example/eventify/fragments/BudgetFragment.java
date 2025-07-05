@@ -22,6 +22,7 @@ import com.example.eventify.services.events.BudgetService;
 import com.example.eventify.services.events.EventService;
 import com.example.eventify.services.solutions.SolutionCategoryService;
 import com.example.eventify.utils.RetrofitClient;
+import com.example.eventify.utils.UserSession;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,19 +41,21 @@ public class BudgetFragment extends Fragment implements CategoryListAdapter.OnCa
 
     Budget budget;
     Event event;
+    String eventName;
     FragmentBudgetBinding binding;
     ArrayList<SolutionCategory> categories = new ArrayList<>();
     ArrayList<SolutionCategory> selected = new ArrayList<>();
     SolutionCategoryService categoryService = RetrofitClient.getClient().create(SolutionCategoryService.class);
     ItemListAdapter adapter;
+    UserSession userSession;
 
     BudgetService service = RetrofitClient.getClient().create(BudgetService.class);
     ArrayList<BudgetItem> items;
 
-    public static BudgetFragment newInstance(Event event) {
+    public static BudgetFragment newInstance(String eventName) {
         BudgetFragment fragment = new BudgetFragment();
         Bundle args = new Bundle();
-        args.putParcelable("event", event);
+        args.putString("eventName", eventName);
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,15 +63,18 @@ public class BudgetFragment extends Fragment implements CategoryListAdapter.OnCa
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        userSession = new UserSession(requireContext());
         if (getArguments() != null) {
-            event = getArguments().getParcelable("event");
+            eventName = getArguments().getString("eventName");
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getBudgetByEvent();
+        if (eventName != null) {
+            getEventAndBudget();
+        }
     }
 
     @Override
@@ -76,8 +82,37 @@ public class BudgetFragment extends Fragment implements CategoryListAdapter.OnCa
                              Bundle savedInstanceState) {
 
         binding = FragmentBudgetBinding.inflate(inflater, container, false);
-        getBudgetByEvent();
+        if (eventName != null) {
+            getEventAndBudget();
+        }
         return binding.getRoot();
+    }
+
+    private void getEventAndBudget() {
+        EventService eventService = RetrofitClient.getClient().create(EventService.class);
+        // Get event by name using the backend getByName endpoint
+        eventService.getByName(eventName).enqueue(new Callback<Event>() {
+            @Override
+            public void onResponse(Call<Event> call, Response<Event> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    event = response.body();
+                    getBudgetByEvent();
+                } else {
+                    // Handle error - event not found
+                    if (binding != null) {
+                        // You could show an error message or empty state
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Event> call, Throwable t) {
+                // Handle network error
+                if (binding != null) {
+                    // You could show an error message or retry option
+                }
+            }
+        });
     }
 
     private void getCategories(ArrayList<SolutionCategory> selected) {
