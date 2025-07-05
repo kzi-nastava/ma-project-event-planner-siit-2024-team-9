@@ -17,6 +17,9 @@ import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -41,6 +44,7 @@ public class RetrofitClient {
                     .registerTypeAdapter(BusinessOwner.class, userTypeAdapter) // Add polymorphic BusinessOwner handling
                     .registerTypeAdapter(UUID.class, new UUIDTypeAdapter()) // Handle UUID serialization
                     .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter()) // Handle LocalDateTime
+                    .registerTypeAdapter(Date.class, new DateTypeAdapter()) // Handle Date objects
                     .setLenient() // Be more lenient with JSON parsing
                     .create();
 
@@ -115,6 +119,61 @@ public class RetrofitClient {
                 android.util.Log.e("LocalDateTimeTypeAdapter", "Error deserializing LocalDateTime: " + e.getMessage(), e);
                 android.util.Log.e("LocalDateTimeTypeAdapter", "JSON value was: " + json);
                 return LocalDateTime.now(); // Fallback to current time
+            }
+        }
+    }
+
+    // Date Type Adapter to handle various date formats from backend
+    private static class DateTypeAdapter implements JsonSerializer<Date>, JsonDeserializer<Date> {
+        private static final SimpleDateFormat[] dateFormats = {
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"),
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS"),
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS"),
+            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"),
+            new SimpleDateFormat("yyyy-MM-dd")
+        };
+
+        @Override
+        public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
+            return new JsonPrimitive(dateFormats[0].format(src));
+        }
+
+        @Override
+        public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            try {
+                if (json.isJsonArray()) {
+                    // Handle array format [year, month, day, hour, minute, second]
+                    JsonArray array = json.getAsJsonArray();
+                    int year = array.get(0).getAsInt();
+                    int month = array.get(1).getAsInt() - 1; // Month is 0-based in Date
+                    int day = array.get(2).getAsInt();
+                    int hour = array.size() > 3 ? array.get(3).getAsInt() : 0;
+                    int minute = array.size() > 4 ? array.get(4).getAsInt() : 0;
+                    int second = array.size() > 5 ? array.get(5).getAsInt() : 0;
+                    
+                    java.util.Calendar calendar = java.util.Calendar.getInstance();
+                    calendar.set(year, month, day, hour, minute, second);
+                    calendar.set(java.util.Calendar.MILLISECOND, 0);
+                    return calendar.getTime();
+                } else if (json.isJsonPrimitive()) {
+                    String dateString = json.getAsString();
+                    
+                    // Try different date formats
+                    for (SimpleDateFormat format : dateFormats) {
+                        try {
+                            return format.parse(dateString);
+                        } catch (ParseException e) {
+                            // Try next format
+                        }
+                    }
+                    
+                    throw new JsonParseException("Unable to parse date: " + dateString);
+                }
+                throw new JsonParseException("Unexpected date format");
+            } catch (Exception e) {
+                android.util.Log.e("DateTypeAdapter", "Error deserializing Date: " + e.getMessage(), e);
+                android.util.Log.e("DateTypeAdapter", "JSON value was: " + json);
+                return new Date(); // Fallback to current time
             }
         }
     }

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -18,17 +19,20 @@ import android.widget.Toast;
 
 import com.example.eventify.R;
 import com.example.eventify.adapters.ImageListAdapter;
+import com.example.eventify.adapters.ReviewAdapter;
 import com.example.eventify.databinding.FragmentServiceDetailsBinding;
 import com.example.eventify.models.events.Budget;
 import com.example.eventify.models.events.Event;
 import com.example.eventify.models.others.Purchase;
 import com.example.eventify.models.solutions.Product;
+import com.example.eventify.models.solutions.Review;
 import com.example.eventify.models.solutions.Service;
 import com.example.eventify.models.solutions.Solution;
 import com.example.eventify.models.users.User;
 import com.example.eventify.services.events.BudgetService;
 import com.example.eventify.services.events.EventService;
 import com.example.eventify.services.solutions.ProductService;
+import com.example.eventify.services.solutions.ReviewService;
 import com.example.eventify.services.solutions.ServiceService;
 import com.example.eventify.services.solutions.SolutionService;
 import com.example.eventify.services.users.UserService;
@@ -37,7 +41,9 @@ import com.example.eventify.utils.UserSession;
 import com.example.eventify.activities.MainActivity;
 import com.example.eventify.utils.NavigationManager;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -68,12 +74,14 @@ public class ServiceDetailsFragment extends Fragment {
 
     EventService eventService = RetrofitClient.getClient().create(EventService.class);
     UserService userService = RetrofitClient.getClient().create(UserService.class);
+    ReviewService reviewService = RetrofitClient.getClient().create(ReviewService.class);
     private UserSession userSession;
 
     private boolean serviceDetails = true;
 
     private boolean isPurchased = false;
     private Purchase purchase;
+    private int currentRating = 0;
 
     private NavigationManager navigationManager;
 
@@ -115,6 +123,8 @@ public class ServiceDetailsFragment extends Fragment {
         // Check if solution is already favorited
         checkFavoriteStatus();
 
+        loadReviewsByOwner();
+
         detailsBtnHandler();
         binding.right.setOnClickListener(v -> detailsBtnHandler());
         binding.left.setOnClickListener(v -> openChat());
@@ -131,6 +141,11 @@ public class ServiceDetailsFragment extends Fragment {
         binding.star3.setOnClickListener( v -> rate3());
         binding.star4.setOnClickListener( v -> rate4());
         binding.star5.setOnClickListener( v -> rate5());
+
+        binding.submitReview.setOnClickListener(v -> submitReview());
+
+        setupCommentsSection();
+        loadSolutionReviews();
 
         return binding.getRoot();
     }
@@ -207,96 +222,133 @@ public class ServiceDetailsFragment extends Fragment {
         }
     }
 
-    private void getEvents() {
+    private void buyProductWithEventSelection() {
         if (!userSession.isValidSession()) {
-            // Handle case where user is not logged in
+            Toast.makeText(requireContext(), "Please log in to buy products", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        // Get current user's events using getByOwner
+        UUID currentUserId = userSession.getCurrentUserId();
         
-        SolutionService solutionService = RetrofitClient.getClient().create(SolutionService.class);
-        
-        // Get all events using standard endpoint
-        eventService.getAllPaginated(0, 10, "name", true).enqueue(new Callback<EventService.EventAllResponse>() {
+        eventService.getByOwner(currentUserId).enqueue(new Callback<List<Event>>() {
             @Override
-            public void onResponse(Call<EventService.EventAllResponse> call, Response<EventService.EventAllResponse> response) {
+            public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
+                android.util.Log.d("ServiceDetails", "Response code: " + response.code());
+                android.util.Log.d("ServiceDetails", "Response message: " + response.message());
+                
                 if (response.isSuccessful() && response.body() != null) {
+                    List<Event> userEvents = response.body();
+                    android.util.Log.d("ServiceDetails", "Successfully loaded " + userEvents.size() + " events");
+                    
+                    if (userEvents.isEmpty()) {
+                        Toast.makeText(requireContext(), "You need to create an event first to buy products", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    
+                    // Update events arrays
                     int i = 0;
-                    events = new String[response.body().totalElements];
-                    organizerEvents = new Event[response.body().totalElements];
-                    for (Event e : response.body().content) {
+                    events = new String[userEvents.size()];
+                    organizerEvents = new Event[userEvents.size()];
+                    for (Event e : userEvents) {
                         events[i] = e.getName();
                         organizerEvents[i] = e;
                         i++;
                     }
-                    organizerEvents = Arrays.stream(organizerEvents)
-                            .filter(Objects::nonNull)
-                            .toArray(Event[]::new);
-                    purchase = new Purchase(organizerEvents, showedSolution);
-                    solutionService.isPurchased(purchase).enqueue(new Callback<Boolean>() {
-                        @Override
-                        public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                            isPurchased = response.body();
-                            reviewPermission();
+                    
+                    // Show event selection dialog
+                    showEventSelectionForPurchase();
+                } else {
+                    android.util.Log.e("ServiceDetails", "Response not successful. Code: " + response.code());
+                    if (response.errorBody() != null) {
+                        try {
+                            String errorString = response.errorBody().string();
+                            android.util.Log.e("ServiceDetails", "Error body: " + errorString);
+                        } catch (Exception e) {
+                            android.util.Log.e("ServiceDetails", "Error reading error body", e);
                         }
-
-                        @Override
-                        public void onFailure(Call<Boolean> call, Throwable t) {
-
-                        }
-                    });
+                    }
+                    Toast.makeText(requireContext(), "Failed to load your events", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<EventService.EventAllResponse> call, Throwable t) {
-
+            public void onFailure(Call<List<Event>> call, Throwable t) {
+                android.util.Log.e("ServiceDetails", "Request failed with throwable: " + t.getClass().getSimpleName(), t);
+                android.util.Log.e("ServiceDetails", "Full error: " + t.toString());
+                android.util.Log.e("ServiceDetails", "Message: " + t.getMessage());
+                
+                String errorMsg = "";
+                if (t instanceof java.net.ConnectException) {
+                    errorMsg += "Cannot connect to server";
+                } else if (t instanceof java.net.UnknownHostException) {
+                    errorMsg += "Cannot resolve server address";
+                } else if (t instanceof java.net.SocketTimeoutException) {
+                    errorMsg += "Connection timeout";
+                } else if (t instanceof retrofit2.HttpException) {
+                    retrofit2.HttpException httpException = (retrofit2.HttpException) t;
+                    errorMsg += "HTTP " + httpException.code() + " - " + httpException.message();
+                } else if (t instanceof com.google.gson.JsonSyntaxException) {
+                    com.google.gson.JsonSyntaxException jsonException = (com.google.gson.JsonSyntaxException) t;
+                    errorMsg += "JSON Parse Error: " + jsonException.getMessage();
+                    android.util.Log.e("ServiceDetails", "JSON parsing failed", jsonException);
+                } else {
+                    errorMsg += t.getClass().getSimpleName();
+                    if (t.getMessage() != null && !t.getMessage().isEmpty()) {
+                        errorMsg += " - " + t.getMessage();
+                    }
+                }
+                Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_LONG).show();
             }
         });
     }
 
-    private void buyProduct() {
+    private void showEventSelectionForPurchase() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Select your event");
+        builder.setTitle("Select your event to buy this product");
 
         builder.setItems(events, (dialog, which) -> {
-            eventService.getByName(events[which]).enqueue(new Callback<Event>() {
-                @Override
-                public void onResponse(Call<Event> call, Response<Event> response) {
-                    Event event = response.body();
-                    eventService.getBudget(event.getId()).enqueue(new Callback<Budget>() {
+            Event selectedEvent = organizerEvents[which];
+            executePurchaseForEvent(selectedEvent);
+        });
+
+        builder.show();
+    }
+
+    private void executePurchaseForEvent(Event selectedEvent) {
+        eventService.getBudget(selectedEvent.getId()).enqueue(new Callback<Budget>() {
+            @Override
+            public void onResponse(Call<Budget> call, Response<Budget> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Budget budget = response.body();
+                    BudgetService budgetService = RetrofitClient.getClient().create(BudgetService.class);
+                    budgetService.buy(UUID.fromString(budget.getId()), showedProduct).enqueue(new Callback<Budget>() {
                         @Override
                         public void onResponse(Call<Budget> call, Response<Budget> response) {
-                            Budget budget = response.body();
-                            BudgetService budgetService = RetrofitClient.getClient().create(BudgetService.class);
-                            budgetService.buy(UUID.fromString(budget.getId()), showedProduct).enqueue(new Callback<Budget>() {
-                                @Override
-                                public void onResponse(Call<Budget> call, Response<Budget> response) {
-                                    isPurchased = true;
-                                    reviewPermission();
-                                }
-
-                                @Override
-                                public void onFailure(Call<Budget> call, Throwable t) {
-
-                                }
-                            });
+                            if (response.isSuccessful()) {
+                                Toast.makeText(requireContext(), "Product purchased successfully for event: " + selectedEvent.getName(), Toast.LENGTH_LONG).show();
+                                isPurchased = true;
+                                reviewPermission();
+                            } else {
+                                Toast.makeText(requireContext(), "Failed to purchase product", Toast.LENGTH_SHORT).show();
+                            }
                         }
 
                         @Override
                         public void onFailure(Call<Budget> call, Throwable t) {
-
+                            Toast.makeText(requireContext(), "Error purchasing product", Toast.LENGTH_SHORT).show();
                         }
                     });
+                } else {
+                    Toast.makeText(requireContext(), "Failed to get event budget", Toast.LENGTH_SHORT).show();
                 }
+            }
 
-                @Override
-                public void onFailure(Call<Event> call, Throwable t) {
-
-                }
-            });
+            @Override
+            public void onFailure(Call<Budget> call, Throwable t) {
+                Toast.makeText(requireContext(), "Error getting event budget", Toast.LENGTH_SHORT).show();
+            }
         });
-
-        builder.show();
     }
 
 
@@ -306,7 +358,6 @@ public class ServiceDetailsFragment extends Fragment {
         ViewGroup.LayoutParams params = details.getLayoutParams();
 
         if (serviceDetails) {
-
             params.height = (int) TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP,
                     600,
@@ -317,10 +368,12 @@ public class ServiceDetailsFragment extends Fragment {
             if (showedSolution.isService()) {
                 setService();
                 binding.btnBook.setText("Book service");
+                binding.btnBook.setOnClickListener(null); // No functionality for services
             }
             else {
                 setProduct();
-                binding.btnBook.setOnClickListener(v -> buyProduct());
+                binding.btnBook.setText("Buy Product");
+                binding.btnBook.setOnClickListener(v -> buyProductWithEventSelection());
             }
         } else {
             params.height = (int) TypedValue.applyDimension(
@@ -340,6 +393,122 @@ public class ServiceDetailsFragment extends Fragment {
     private void reviewPermission() {
         binding.btnBook.setVisibility(isPurchased ? View.GONE:View.VISIBLE);
         binding.submitReview.setVisibility(isPurchased ? View.VISIBLE:View.GONE);
+    }
+
+    private void checkIfProductAlreadyPurchased() {
+        if (!userSession.isValidSession() || showedProduct == null) {
+            isPurchased = false;
+            reviewPermission();
+            return;
+        }
+
+        // Get current user's events and check if product is purchased using backend endpoint
+        UUID currentUserId = userSession.getCurrentUserId();
+        
+        eventService.getByOwner(currentUserId).enqueue(new Callback<List<Event>>() {
+            @Override
+            public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Event> userEvents = response.body();
+                    
+                    // Convert List<Event> to Event[] for Purchase object
+                    Event[] eventsArray = userEvents.toArray(new Event[0]);
+                    
+                    // Create Purchase object for isPurchased check
+                    Purchase purchase = new Purchase(eventsArray, showedProduct);
+                    
+                    // Call backend isPurchased endpoint
+                    SolutionService solutionService = RetrofitClient.getClient().create(SolutionService.class);
+                    solutionService.isPurchased(purchase).enqueue(new Callback<Boolean>() {
+                        @Override
+                        public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                            if (response.isSuccessful() && response.body() != null) {
+                                isPurchased = response.body();
+                                reviewPermission();
+                            } else {
+                                isPurchased = false;
+                                reviewPermission();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Boolean> call, Throwable t) {
+                            isPurchased = false;
+                            reviewPermission();
+                        }
+                    });
+                } else {
+                    isPurchased = false;
+                    reviewPermission();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Event>> call, Throwable t) {
+                isPurchased = false;
+                reviewPermission();
+            }
+        });
+    }
+
+    private void loadReviewsByOwner() {
+        if (showedSolution != null && showedSolution.getOwner() != null) {
+            reviewService.getByOwner(UUID.fromString(showedSolution.getOwner().getId())).enqueue(new Callback<Collection<Review>>() {
+                @Override
+                public void onResponse(Call<Collection<Review>> call, Response<Collection<Review>> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        List<Review> ownerReviews = new ArrayList<>(response.body());
+                        displayOwnerReviews(ownerReviews);
+                    } else {
+                        Toast.makeText(requireContext(), "Failed to load owner reviews", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Collection<Review>> call, Throwable t) {
+                    Toast.makeText(requireContext(), "Error loading owner reviews", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    private void displayOwnerReviews(List<Review> reviews) {
+        if (reviews.isEmpty()) {
+            Toast.makeText(requireContext(), "No reviews found for this owner", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Display reviews in the RecyclerView below Reviews & Comments
+        ReviewAdapter ownerReviewAdapter = new ReviewAdapter(requireContext(), reviews);
+        binding.commentsRecyclerView.setAdapter(ownerReviewAdapter);
+    }
+
+    private void setupCommentsSection() {
+        // Setup RecyclerView for comments
+        List<Review> reviews = new ArrayList<>();
+        ReviewAdapter reviewAdapter = new ReviewAdapter(requireContext(), reviews);
+        binding.commentsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.commentsRecyclerView.setAdapter(reviewAdapter);
+    }
+
+    private void loadSolutionReviews() {
+        if (showedSolution != null) {
+            reviewService.getBySolution(showedSolution.getId()).enqueue(new Callback<Collection<Review>>() {
+                @Override
+                public void onResponse(Call<Collection<Review>> call, Response<Collection<Review>> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        List<Review> reviews = new ArrayList<>(response.body());
+                        ReviewAdapter reviewAdapter = new ReviewAdapter(requireContext(), reviews);
+                        binding.commentsRecyclerView.setAdapter(reviewAdapter);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Collection<Review>> call, Throwable t) {
+                    Toast.makeText(requireContext(), "Failed to load reviews", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     private void setService() {
@@ -367,11 +536,13 @@ public class ServiceDetailsFragment extends Fragment {
             @Override
             public void onResponse(Call<Product> call, Response<Product> response) {
                 showedProduct = response.body();
-                getEvents();
                 serviceDetails = false;
                 FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-                                    transaction.add(binding.details.getId(), ProductDetailsForm.newInstance(showedProduct));
+                transaction.add(binding.details.getId(), ProductDetailsForm.newInstance(showedProduct));
                 transaction.commit();
+                
+                // Check if product is already purchased
+                checkIfProductAlreadyPurchased();
             }
 
             @Override
@@ -382,38 +553,74 @@ public class ServiceDetailsFragment extends Fragment {
     }
 
     private void rate1() {
-        resetRatings();
-        binding.star1.setSelected(true);
+        currentRating = 1;
+        updateStarRating();
     }
 
     private void rate2() {
-        resetRatings();
-        binding.star1.setSelected(true);
-        binding.star2.setSelected(true);
+        currentRating = 2;
+        updateStarRating();
     }
 
     private void rate3() {
-        resetRatings();
-        binding.star1.setSelected(true);
-        binding.star2.setSelected(true);
-        binding.star3.setSelected(true);
+        currentRating = 3;
+        updateStarRating();
     }
 
     private void rate4() {
-        resetRatings();
-        binding.star1.setSelected(true);
-        binding.star2.setSelected(true);
-        binding.star3.setSelected(true);
-        binding.star4.setSelected(true);
+        currentRating = 4;
+        updateStarRating();
     }
 
     private void rate5() {
-        resetRatings();
-        binding.star1.setSelected(true);
-        binding.star2.setSelected(true);
-        binding.star3.setSelected(true);
-        binding.star4.setSelected(true);
-        binding.star5.setSelected(true);
+        currentRating = 5;
+        updateStarRating();
+    }
+
+    private void updateStarRating() {
+        binding.star1.setSelected(currentRating >= 1);
+        binding.star2.setSelected(currentRating >= 2);
+        binding.star3.setSelected(currentRating >= 3);
+        binding.star4.setSelected(currentRating >= 4);
+        binding.star5.setSelected(currentRating >= 5);
+    }
+
+    private void submitReview() {
+        if (!userSession.isValidSession()) {
+            Toast.makeText(requireContext(), "Please log in to submit a review", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String commentText = binding.descriptionEditText.getText().toString().trim();
+        if (commentText.isEmpty() || currentRating == 0) {
+            Toast.makeText(requireContext(), "Please provide a rating and comment", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Review review = new Review();
+        review.setSolution(showedSolution);
+        review.setComment(commentText);
+        review.setGrade(currentRating);
+        review.setStatus("PENDING");
+
+        reviewService.add(review).enqueue(new Callback<Review>() {
+            @Override
+            public void onResponse(Call<Review> call, Response<Review> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(requireContext(), "Review submitted successfully", Toast.LENGTH_SHORT).show();
+                    binding.descriptionEditText.setText("");
+                    currentRating = 0;
+                    updateStarRating();
+                } else {
+                    Toast.makeText(requireContext(), "Failed to submit review", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Review> call, Throwable t) {
+                Toast.makeText(requireContext(), "Error submitting review", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 

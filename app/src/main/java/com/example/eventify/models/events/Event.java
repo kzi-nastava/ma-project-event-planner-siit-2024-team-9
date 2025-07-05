@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.example.eventify.models.others.Invitation;
 import com.example.eventify.models.others.Location;
 import com.example.eventify.models.enums.PrivacyType;
+import com.example.eventify.models.users.User;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,6 +17,7 @@ import java.util.TimeZone;
 public class Event implements Parcelable {
     private String id;
     private String name;
+    private User organizer;
     private String description;
     private String image;
     private int maxAttendees;
@@ -27,11 +29,13 @@ public class Event implements Parcelable {
     private Location location;
     private Double price;
     private Set<Invitation> invitations;
+    private Set<User> attendees;
     private Budget budget;
 
-    public Event(String id, String name, String description, String image, int maxAttendees, PrivacyType privacyType, Date eventStart, Date eventEnd, int attendance, EventType eventType, Location location, Double price, Set<Invitation> invitations, Budget budget) {
+    public Event(String id, String name, User organizer, String description, String image, int maxAttendees, PrivacyType privacyType, Date eventStart, Date eventEnd, int attendance, EventType eventType, Location location, Double price, Set<Invitation> invitations, Set<User> attendees, Budget budget) {
         this.id = id;
         this.name = name;
+        this.organizer = organizer;
         this.description = description;
         this.image = image;
         this.maxAttendees = maxAttendees;
@@ -43,6 +47,7 @@ public class Event implements Parcelable {
         this.location = location;
         this.price = price;
         this.invitations = invitations;
+        this.attendees = attendees;
         this.budget = budget;
     }
 
@@ -51,6 +56,7 @@ public class Event implements Parcelable {
     protected Event(Parcel in) {
         id = in.readString();
         name = in.readString();
+        organizer = in.readParcelable(User.class.getClassLoader());
         description = in.readString();
         image = in.readString();
         maxAttendees = in.readInt();
@@ -62,6 +68,7 @@ public class Event implements Parcelable {
         location = in.readParcelable(Location.class.getClassLoader());
         price = in.readDouble();
         invitations = (Set<Invitation>) in.readSerializable();
+        attendees = (Set<User>) in.readSerializable();
         budget = in.readParcelable(Budget.class.getClassLoader()); // Read budget
     }
 
@@ -79,6 +86,14 @@ public class Event implements Parcelable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public User getOrganizer() {
+        return organizer;
+    }
+
+    public void setOrganizer(User organizer) {
+        this.organizer = organizer;
     }
 
     public String getDescription() {
@@ -169,6 +184,14 @@ public class Event implements Parcelable {
         this.invitations = invitations;
     }
 
+    public Set<User> getAttendees() {
+        return attendees;
+    }
+
+    public void setAttendees(Set<User> attendees) {
+        this.attendees = attendees;
+    }
+
     public Budget getBudget() {
         return budget;
     }
@@ -186,13 +209,19 @@ public class Event implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
         dest.writeString(name);
+        dest.writeParcelable(organizer, flags);
         dest.writeString(description);
+        dest.writeString(image);
         dest.writeInt(maxAttendees);
         dest.writeString(privacyType.name());
         dest.writeLong(eventStart.getTime());
         dest.writeLong(eventEnd.getTime());
         dest.writeInt(attendance);
+        dest.writeParcelable(eventType, flags);
         dest.writeParcelable(location, flags);
+        dest.writeDouble(price);
+        dest.writeSerializable((java.io.Serializable) invitations);
+        dest.writeSerializable((java.io.Serializable) attendees);
         dest.writeParcelable(budget, flags); // Write budget
     }
 
