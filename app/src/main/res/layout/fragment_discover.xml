@@ -4,11 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Welcome Frame -->
-    <FrameLayout
-        android:id="@+id/discover_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+   
 
     <!-- Scrollable container -->
     <androidx.core.widget.NestedScrollView
@@ -93,6 +89,5 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    </FrameLayout>
 
 </LinearLayout>

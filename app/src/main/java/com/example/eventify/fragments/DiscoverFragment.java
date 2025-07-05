@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.eventify.R;
+import com.example.eventify.activities.MainActivity;
 import com.example.eventify.databinding.FragmentDiscoverBinding;
 import com.example.eventify.models.events.Event;
 import com.example.eventify.models.solutions.Solution;
@@ -40,6 +41,8 @@ public class DiscoverFragment extends Fragment {
 //        setTopSolutions();
 //        setAllSolutions();
 
+       
+
         return binding.getRoot();
     }
 
@@ -55,7 +58,7 @@ public class DiscoverFragment extends Fragment {
     }
 
     private void initRecyclerViews() {
-        // Top 5 Events Fragment
+        // Top 5 Events FragmentloadChildFragment
         getChildFragmentManager().beginTransaction()
                 .replace(binding.topEventsContainer.getId(), EventListFragment.newInstance(true))
                 .commit();
@@ -64,8 +67,6 @@ public class DiscoverFragment extends Fragment {
         getChildFragmentManager().beginTransaction()
                 .replace(binding.allEventsContainer.getId(), EventListFragment.newInstance(false))
                 .commit();
-
-
 
         // Top 5 Solutions Fragment
         getChildFragmentManager().beginTransaction()
@@ -76,7 +77,6 @@ public class DiscoverFragment extends Fragment {
         getChildFragmentManager().beginTransaction()
                 .replace(binding.allSolutionsContainer.getId(), SolutionListFragment.newInstance(false))
                 .commit();
-
 
 //        topSolutionsRecyclerView = view.findViewById(R.id.top_solutions_recycler_view);
 //        topSolutionsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -141,4 +141,6 @@ public class DiscoverFragment extends Fragment {
 //        List<Solution> paginatedSolutions = allSolutions.subList(start, end);
 //        allSolutionsRecyclerView.setAdapter(new SolutionListAdapter(getContext(), paginatedSolutions));
 //    }
+
+   
 }

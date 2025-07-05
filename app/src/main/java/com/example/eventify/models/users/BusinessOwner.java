@@ -8,7 +8,10 @@ import androidx.annotation.NonNull;
 import androidx.databinding.Bindable;
 import androidx.databinding.Observable;
 
+import com.example.eventify.models.enums.UserRole;
 import com.example.eventify.models.solutions.Solution;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -26,10 +29,14 @@ public class BusinessOwner extends User implements Parcelable, Observable {
         this.name = name;
         this.description = description;
         this.images = images;
+        // Ensure BusinessOwner always has the correct role
+        this.setRole(new Role(UserRole.BUSINESS_OWNER));
     }
 
     public BusinessOwner() {
         super();
+        // Ensure BusinessOwner always has the correct role
+        this.setRole(new Role(UserRole.BUSINESS_OWNER));
     }
 
     protected BusinessOwner(Parcel in) {
@@ -38,6 +45,10 @@ public class BusinessOwner extends User implements Parcelable, Observable {
         description = in.readString();
         solutions = new HashSet<>(in.createTypedArrayList(Solution.CREATOR));
         images = new HashSet<>(in.createStringArrayList());
+        // Ensure BusinessOwner always has the correct role
+        if (this.getRole() == null) {
+            this.setRole(new Role(UserRole.BUSINESS_OWNER));
+        }
     }
 
     public static final Creator<BusinessOwner> CREATOR = new Creator<BusinessOwner>() {
@@ -82,6 +93,18 @@ public class BusinessOwner extends User implements Parcelable, Observable {
 
     public void setImages(Set<String> images) {
         this.images = images;
+    }
+
+    // Override getRole to ensure BusinessOwner always has the correct role
+    @Override
+    public Role getRole() {
+        Role role = super.getRole();
+        // Ensure the role is set correctly if it's null
+        if (role == null) {
+            role = new Role(UserRole.BUSINESS_OWNER);
+            this.setRole(role);
+        }
+        return role;
     }
 
     @Override

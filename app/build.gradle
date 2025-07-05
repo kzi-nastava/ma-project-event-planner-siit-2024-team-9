@@ -31,6 +31,17 @@ android {
         viewBinding true
         dataBinding true
     }
+    
+    packagingOptions {
+        pickFirst '**/META-INF/license.txt'
+        pickFirst '**/META-INF/LICENSE.txt'
+        pickFirst '**/META-INF/LICENSE'
+        pickFirst '**/META-INF/NOTICE.txt'
+        pickFirst '**/META-INF/NOTICE'
+        pickFirst '**/META-INF/ASL2.0'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/INDEX.LIST'
+    }
 }
 
 dependencies {
@@ -62,5 +73,10 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
     implementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
+    
+    // WebSocket dependencies for chat
+    implementation 'org.java-websocket:Java-WebSocket:1.5.3'
+    implementation 'com.neovisionaries:nv-websocket-client:2.14'
+    implementation 'org.springframework:spring-messaging:5.3.21'
 
 }

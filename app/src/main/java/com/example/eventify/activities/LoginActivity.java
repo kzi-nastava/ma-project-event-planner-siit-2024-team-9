@@ -100,17 +100,31 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login(String email, String password) {
-        try {
-            loginService.login(email, password);
-            Log.i("Login", "Login successful "+loginService.getToken());
+        // Show loading indicator or disable button to prevent multiple requests
+        binding.loginButton.setEnabled(false);
+        binding.loginButton.setText("Logging in...");
+        
+        loginService.login(email, password, new LoginService.LoginCallback() {
+            @Override
+            public void onSuccess(String userEmail, String userRole) {
+                Log.i("Login", "Login successful for: " + userEmail + " (Role: " + userRole + ")");
+                Toast.makeText(LoginActivity.this, "Welcome, " + userEmail + "!", Toast.LENGTH_SHORT).show();
+                
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish(); // Close login activity
+            }
 
-
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-        }
-        catch (Exception e){
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+            @Override
+            public void onFailure(String errorMessage) {
+                Log.e("Login", "Login failed: " + errorMessage);
+                Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                
+                // Re-enable login button
+                binding.loginButton.setEnabled(true);
+                binding.loginButton.setText("LOGIN");
+            }
+        });
     }
 
 
