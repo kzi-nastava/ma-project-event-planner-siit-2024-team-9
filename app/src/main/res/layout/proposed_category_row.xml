@@ -1,6 +1,8 @@
 <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:background="?android:attr/selectableItemBackground">
 
     <EditText
         android:id="@+id/categoryName"
@@ -8,12 +10,13 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:hint="Item name"
-        android:textColor="@color/black"
-        android:textColorHint="@color/medium_gray"
+        android:textColor="#212121"
+        android:textColorHint="#757575"
         android:padding="8dp"
         android:inputType="textMultiLine"
         android:scrollbars="vertical"
-        android:lines="3" />
+        android:lines="3"
+        android:background="@null"/>
 
     <EditText
         android:id="@+id/categoryDescription"
@@ -21,8 +24,8 @@
         android:layout_height="wrap_content"
         android:layout_weight="2"
         android:hint="Description"
-        android:textColor="@color/black"
-        android:textColorHint="@color/medium_gray"
+        android:textColor="#212121"
+        android:textColorHint="#757575"
         android:padding="8dp"
         android:inputType="textMultiLine"
         android:scrollbars="vertical"
@@ -30,14 +33,15 @@
         android:maxLines="5"
         android:singleLine="false"
         android:ellipsize="none"
-        android:gravity="top|start" />
+        android:gravity="top|start"
+        android:background="@null"/>
 
     <ImageButton
         android:id="@+id/approveCategory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Approve"
-        android:background="@drawable/white_favorite"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/approve"
         android:padding="8dp" />
 </TableRow>

@@ -1,88 +1,64 @@
 <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="0dp"
-    android:layout_margin="0dp"
-    android:weightSum="9"> <!-- Total weight matches the sum of all columns -->
+    android:padding="4dp"
+    android:background="?android:attr/selectableItemBackground">
 
-    <EditText
+    <!-- Number -->
+    <TextView
         android:id="@+id/solutionNumber"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:hint="Solution number"
+        android:layout_weight="0.5"
         android:textColor="@android:color/black"
-        android:textColorHint="@android:color/darker_gray"
         android:padding="8dp"
-        android:inputType="textMultiLine"
-        android:gravity="top|start"
-        android:ellipsize="none"
-        android:lines="2"
-        android:maxLines="2"
-        android:singleLine="false" />
+        android:gravity="center" />
 
-    <EditText
+    <!-- Name -->
+    <TextView
         android:id="@+id/solutionName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="2"
-        android:hint="Solution name"
         android:textColor="@android:color/black"
-        android:textColorHint="@android:color/darker_gray"
         android:padding="8dp"
-        android:inputType="textMultiLine"
-        android:gravity="top|start"
-        android:ellipsize="none"
-        android:lines="2"
         android:maxLines="2"
-        android:singleLine="false" />
+        android:ellipsize="end" />
 
+    <!-- Price -->
     <EditText
         android:id="@+id/solutionPrice"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:hint="Solution price"
+        android:layout_weight="1"
         android:textColor="@android:color/black"
         android:textColorHint="@android:color/darker_gray"
         android:padding="8dp"
-        android:inputType="textMultiLine"
-        android:gravity="top|start"
-        android:ellipsize="none"
-        android:lines="2"
-        android:maxLines="2"
-        android:singleLine="false" />
+        android:inputType="numberDecimal"
+        android:background="@null"
+        android:hint="0.00" />
 
+    <!-- Discount -->
     <EditText
         android:id="@+id/solutionDiscount"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:hint="Solution discount"
+        android:layout_weight="1"
         android:textColor="@android:color/black"
         android:textColorHint="@android:color/darker_gray"
         android:padding="8dp"
-        android:inputType="textMultiLine"
-        android:gravity="top|start"
-        android:ellipsize="none"
-        android:lines="2"
-        android:maxLines="2"
-        android:singleLine="false" />
+        android:inputType="numberDecimal"
+        android:background="@null"
+        android:hint="0%" />
 
-    <EditText
+    <!-- Final Price -->
+    <TextView
         android:id="@+id/solutionDiscounted"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:hint="Discounted solution"
+        android:layout_weight="1"
         android:textColor="@android:color/black"
-        android:textColorHint="@android:color/darker_gray"
         android:padding="8dp"
-        android:inputType="textMultiLine"
-        android:gravity="top|start"
-        android:ellipsize="none"
-        android:lines="2"
-        android:maxLines="2"
-        android:singleLine="false" />
+        android:gravity="start" />
 
 </TableRow>

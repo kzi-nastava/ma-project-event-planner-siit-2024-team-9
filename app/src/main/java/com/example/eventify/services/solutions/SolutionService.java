@@ -61,6 +61,9 @@ public interface SolutionService {
     @GET("solutions/stats")
     Call<Map<String, Double>> getStats();
 
+    @GET("solutions/owner/{ownerId}")
+    Call<List<Solution>> getByOwner(@Path("ownerId") String ownerId);
+
     class SolutionAllResponse {
         @SerializedName("content")
         public List<Solution> content;

@@ -29,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.eventify.databinding.FragmentServiceFormBinding;
 import com.example.eventify.models.enums.Status;
@@ -44,6 +45,7 @@ import com.example.eventify.R;
 import com.example.eventify.services.solutions.ServiceService;
 import com.example.eventify.utils.FileUtils;
 import com.example.eventify.utils.RetrofitClient;
+import com.example.eventify.utils.UserSession;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
@@ -52,6 +54,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import okhttp3.MultipartBody;
 import retrofit2.Call;
@@ -141,6 +144,9 @@ public class ServiceFormFragment extends Fragment {
         binding = FragmentServiceFormBinding.inflate(inflater, container, false);  // Use the generated binding class directly
         View view = binding.getRoot();
 
+        // Initialize images list
+        images = new ArrayList<>();
+
         getOwner();
 
         setSwitchColor();
@@ -156,22 +162,41 @@ public class ServiceFormFragment extends Fragment {
             binding.setService(selectedService);
             if (selectedService.getId() != null)
                 setEdit();
+        } else {
+            selectedService = new Service();
+            binding.setService(selectedService);
         }
 
         return binding.getRoot();
     }
 
     private void getOwner() {
-        service.getAll().enqueue(new Callback<Collection<Service>>() {
+        BusinessOwnerService businessOwnerService = RetrofitClient.getClient().create(BusinessOwnerService.class);
+        UserSession userSession = new UserSession(requireContext());
+        UUID currentUserId = userSession.getCurrentUserId();
+        
+        if (currentUserId == null) {
+            showError("User session not found. Please log in again.");
+            return;
+        }
+        
+        businessOwnerService.get(currentUserId.toString()).enqueue(new Callback<BusinessOwner>() {
             @Override
-            public void onResponse(Call<Collection<Service>> call, Response<Collection<Service>> response) {
-                Service firstService = response.body().iterator().next();
-                owner = firstService.getOwner();
+            public void onResponse(Call<BusinessOwner> call, Response<BusinessOwner> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    owner = response.body();
+                    Toast.makeText(requireContext(), "Owner set successfully: " + owner.toString(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(requireContext(), "Failed to get owner. Response: " + response.code(), Toast.LENGTH_LONG).show();
+                    showError("Failed to get owner information. Please try again.");
+                }
             }
-
+            
             @Override
-            public void onFailure(Call<Collection<Service>> call, Throwable t) {
-
+            public void onFailure(Call<BusinessOwner> call, Throwable t) {
+                Toast.makeText(requireContext(), "Network error getting owner: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                showError("Network error while getting owner information. Please check your connection.");
+                t.printStackTrace();
             }
         });
     }
@@ -251,64 +276,227 @@ public class ServiceFormFragment extends Fragment {
 
     private void setTypes() {
         Set<EventType> set = selectedService.getEventTypes();
-        for (String name: selectedList) {
-            for (EventType type: types) {
-                if (type.getName().equals(name))
-                    set.add(type);
+        if (set == null) {
+            set = new HashSet<>();
+            selectedService.setEventTypes(set);
+        }
+        set.clear(); // Clear existing types before adding new ones
+        
+        Toast.makeText(requireContext(), "Setting types for service...", Toast.LENGTH_SHORT).show();
+        
+        // Add existing EventType objects with their IDs
+        for (String selectedName : selectedList) {
+            for (EventType existingType : types) {
+                if (existingType.getName().equals(selectedName)) {
+                    // Use the existing EventType object that has an ID
+                    set.add(existingType);
+                    Toast.makeText(requireContext(), "Adding type: " + existingType.getName() + " with ID: " + existingType.getId(), Toast.LENGTH_SHORT).show();
+                    break; // Found the match, no need to continue inner loop
+                }
             }
         }
-        selectedService.setEventTypes(set);
+
+        // Debug log the final set
+        for (EventType type : set) {
+            Toast.makeText(requireContext(), "Final set type: " + type.getName() + " with ID: " + type.getId(), Toast.LENGTH_SHORT).show();
+        }
     }
 
 
     private void updateService() {
+        // Validate required fields
+        if (!validateForm()) {
+            return;
+        }
+
+        // Check if owner is set
+        if (owner == null) {
+            showError("Owner information not loaded yet. Please wait a moment and try again.");
+            return;
+        }
+
+        Toast.makeText(requireContext(), "Starting service creation...", Toast.LENGTH_SHORT).show();
+
+        // Update service fields from form
         selectedService.setVisibility(binding.visibility.isChecked());
         selectedService.setAvailability(binding.availability.isChecked());
-        int reservationMethod = binding.automatic.isChecked() ? 0:1;
-        selectedService.setReservationDeadline(reservationMethod);
+        selectedService.setReservationDeadline(binding.automatic.isChecked() ? 0 : 1);
+
+        // If this is an existing service (has ID)
         if (selectedService.getId() != null) {
-            if (!selectedList.isEmpty())
+            // Update event types if any were selected
+            if (!selectedList.isEmpty()) {
                 setTypes();
-            service.update(selectedService.getId(), FileUtils.createPartFromObject(selectedService), images).enqueue(new Callback<Service>() {
+            }
+
+            Toast.makeText(requireContext(), "Updating existing service...", Toast.LENGTH_SHORT).show();
+
+            // Create service part and update with images
+            service.update(
+                selectedService.getId(), 
+                FileUtils.createPartFromObject(selectedService), 
+                images
+            ).enqueue(new Callback<Service>() {
                 @Override
                 public void onResponse(Call<Service> call, Response<Service> response) {
-                    goBack();
+                    if (response.isSuccessful() && response.body() != null) {
+                        goBack();
+                    } else {
+                        Toast.makeText(requireContext(), "Update failed with code: " + response.code(), Toast.LENGTH_LONG).show();
+                        showError("Failed to update service. Please try again.");
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<Service> call, Throwable t) {
+                    Toast.makeText(requireContext(), "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                    showError("Network error. Please check your connection.");
                     t.printStackTrace();
                 }
             });
         } else {
+            // This is a new service
             setTypes();
             selectedService.setOwner(owner);
+
+            Toast.makeText(requireContext(), "Creating new service with owner: " + owner.getEmail(), Toast.LENGTH_SHORT).show();
+
+            // Handle category selection
             if (binding.newCategory.getVisibility() == View.VISIBLE) {
-                SolutionCategory proposed = new SolutionCategory("",binding.newCategory.getText().toString(),binding.newCategoryDescription.toString(),false);
+                // New category was entered
+                SolutionCategory proposed = new SolutionCategory(
+                    "",
+                    binding.newCategory.getText().toString().trim(),
+                    binding.newCategoryDescription.getText().toString().trim(),
+                    false
+                );
                 selectedService.setCategory(proposed);
                 selectedService.setStatus(Status.PENDING);
-            }
-            else {
-                selectedService.setCategory(getCategory(binding.categorySpinner1.getSelectedItem().toString()));
+                Toast.makeText(requireContext(), "Using new category: " + proposed.getName(), Toast.LENGTH_SHORT).show();
+            } else {
+                // Existing category was selected
+                String selectedCategory = binding.categorySpinner1.getSelectedItem().toString();
+                if (selectedCategory.equals("Select a category")) {
+                    showError("Please select a category");
+                    return;
+                }
+                selectedService.setCategory(getCategory(selectedCategory));
                 selectedService.setStatus(Status.ACCEPTED);
+                Toast.makeText(requireContext(), "Using existing category: " + selectedCategory, Toast.LENGTH_SHORT).show();
             }
-            /*
-            ArrayList<String> urls = new ArrayList<>();
-            urls.add("https://cdn.shopify.com/s/files/1/2026/7451/files/blog_w150_outdoor-party-1.jpg?1846900428569813131");
-            selectedService.setImages(urls);*/
-            service.add(FileUtils.createPartFromObject(selectedService), images).enqueue(new Callback<Service>() {
+
+            Toast.makeText(requireContext(), "Number of images to upload: " + images.size(), Toast.LENGTH_SHORT).show();
+
+            // Create service
+            service.add(
+                FileUtils.createPartFromObject(selectedService), 
+                images
+            ).enqueue(new Callback<Service>() {
                 @Override
                 public void onResponse(Call<Service> call, Response<Service> response) {
-                    goBack();
+                    if (response.isSuccessful() && response.body() != null) {
+                        Toast.makeText(requireContext(), "Service created successfully", Toast.LENGTH_SHORT).show();
+                        goBack();
+                    } else {
+                        Toast.makeText(requireContext(), "Creation failed with code: " + response.code(), Toast.LENGTH_LONG).show();
+                        try {
+                            String errorBody = response.errorBody().string();
+                            Toast.makeText(requireContext(), "Error: " + errorBody, Toast.LENGTH_LONG).show();
+                        } catch (Exception e) {
+                            Toast.makeText(requireContext(), "Could not read error details", Toast.LENGTH_SHORT).show();
+                        }
+                        showError("Failed to create service. Please try again.");
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<Service> call, Throwable t) {
-
+                    Toast.makeText(requireContext(), "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                    showError("Network error. Please check your connection.");
+                    t.printStackTrace();
                 }
             });
         }
+    }
 
+    private boolean validateForm() {
+        // Validate name
+        if (binding.nameEditText.getText().toString().trim().isEmpty()) {
+            showError("Please enter a service name");
+            return false;
+        }
+
+        // Validate image
+        if (images.isEmpty()) {
+            showError("Please select at least one image");
+            return false;
+        }
+
+        // Validate description
+        if (binding.descriptionEditText.getText().toString().trim().isEmpty()) {
+            showError("Please enter a service description");
+            return false;
+        }
+
+        // Validate price
+        try {
+            double price = Double.parseDouble(binding.priceEditText.getText().toString().trim());
+            if (price <= 0) {
+                showError("Please enter a valid price");
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            showError("Please enter a valid price");
+            return false;
+        }
+
+        // Validate duration or min/max time
+        if (binding.duration.getVisibility() == View.VISIBLE) {
+            try {
+                int duration = Integer.parseInt(binding.durationInfo.getText().toString().trim());
+            } catch (NumberFormatException e) {
+                showError("Please enter a valid duration");
+                return false;
+            }
+        } else {
+            String minStr = binding.minInfo.getText().toString().trim();
+            String maxStr = binding.maxInfo.getText().toString().trim();
+
+            if (minStr.isEmpty() || maxStr.isEmpty()) {
+                showError("Minimum and maximum values cannot be empty");
+                return false;
+            }
+
+            try {
+                int min = Integer.parseInt(minStr);
+                int max = Integer.parseInt(maxStr);
+                if (min <= 0 || max <= 0 || min >= max) {
+                    showError("Please enter valid minimum and maximum times");
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                showError("Please enter valid numeric values for minimum and maximum");
+                return false;
+            }
+        }
+
+        // Validate event types
+        if (selectedList.isEmpty()) {
+            showError("Please select at least one event type");
+            return false;
+        }
+
+        return true;
+    }
+
+    private void showError(String message) {
+        if (getContext() != null) {
+            new AlertDialog.Builder(getContext())
+                .setTitle("Error")
+                .setMessage(message)
+                .setPositiveButton("OK", null)
+                .show();
+        }
     }
 
     private void goBack() {
@@ -328,6 +516,10 @@ public class ServiceFormFragment extends Fragment {
         categoryService.getActive().enqueue(new Callback<Collection<SolutionCategory>>() {
             @Override
             public void onResponse(Call<Collection<SolutionCategory>> call, Response<Collection<SolutionCategory>> response) {
+                if (!response.isSuccessful() || response.body() == null) {
+                    showError("Failed to load categories. Please try again.");
+                    return;
+                }
                 categories = response.body();
                 categoryNames.clear();
                 categoryNames.add("Select a category");
@@ -367,7 +559,8 @@ public class ServiceFormFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Collection<SolutionCategory>> call, Throwable t) {
-                // Handle failure here
+                showError("Network error while loading categories. Please check your connection.");
+                t.printStackTrace();
             }
         });
     }
@@ -378,12 +571,17 @@ public class ServiceFormFragment extends Fragment {
         service.getAll().enqueue(new Callback<Collection<EventType>>() {
             @Override
             public void onResponse(Call<Collection<EventType>> call, Response<Collection<EventType>> response) {
+                if (!response.isSuccessful() || response.body() == null) {
+                    showError("Failed to load event types. Please try again.");
+                    return;
+                }
                 types = response.body();
                 typeNames.clear();
 
                 if (types != null) {
                     for (EventType type : types) {
                         typeNames.add(type.getName());
+                        Toast.makeText(requireContext(), "Loaded type: " + type.getName() + " with ID: " + type.getId(), Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -392,7 +590,8 @@ public class ServiceFormFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Collection<EventType>> call, Throwable t) {
-                // Handle error
+                showError("Network error while loading event types. Please check your connection.");
+                t.printStackTrace();
             }
         });
     }

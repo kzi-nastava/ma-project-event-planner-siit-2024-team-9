@@ -320,6 +320,23 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/price_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text='@{String.format("%.2f", service.price)+"$"}'
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginTop="5dp" />
+
+        <TextView
+            android:id="@+id/availability_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_marginTop="5dp"
+            android:visibility="gone"
+            android:textStyle="italic" />
 
         </LinearLayout>
 

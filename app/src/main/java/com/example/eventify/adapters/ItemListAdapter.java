@@ -1,11 +1,14 @@
 package com.example.eventify.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -28,7 +31,9 @@ import com.example.eventify.utils.RetrofitClient;
 import com.example.eventify.activities.MainActivity;
 import com.example.eventify.utils.NavigationManager;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -46,7 +51,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
     private final List<BudgetItem> items;
     private final FragmentManager fragmentManager;
     private final OnBudgetUpdatedListener budgetUpdatedListener;
-    private boolean editMode=false;
+    private Map<Integer, Boolean> editModeMap = new HashMap<>();
     private Budget budget;
     private BudgetService service = RetrofitClient.getClient().create(BudgetService.class);
     private NavigationManager navigationManager;
@@ -74,31 +79,69 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
         BudgetItem item = items.get(position);
         holder.itemName.setText(item.getCategory().getName());
         holder.itemValue.setText(String.valueOf(item.getPlannedValue()));
+        
+        // Set initial state based on edit mode
+        boolean isInEditMode = editModeMap.getOrDefault(position, false);
+        holder.itemValue.setEnabled(isInEditMode);
+        
+        // Handle keyboard done action
+        holder.itemValue.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                try {
+                    String value = holder.itemValue.getText().toString();
+                    if (!value.isEmpty()) {
+                        item.setPlannedValue(Double.parseDouble(value));
+                        saveItem(holder, item, position);
+                    }
+                } catch (NumberFormatException e) {
+                    // Handle invalid number
+                }
+                return true;
+            }
+            return false;
+        });
+
+        // Handle focus changes
         holder.itemValue.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) {
-                InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(holder.itemValue, InputMethodManager.SHOW_IMPLICIT);
+            if (hasFocus && !isInEditMode) {
+                // If getting focus while not in edit mode, enter edit mode
+                editItem(holder, position);
             }
         });
-        holder.itemValue.addTextChangedListener(new TextWatcher() {
+        
+        // Clear any existing TextWatcher to avoid duplicates
+        TextWatcher existingWatcher = (TextWatcher) holder.itemValue.getTag();
+        if (existingWatcher != null) {
+            holder.itemValue.removeTextChangedListener(existingWatcher);
+        }
+
+        TextWatcher watcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (!s.toString().isEmpty())
-                    item.setPlannedValue(Double.valueOf(s.toString()));
+                try {
+                    if (!s.toString().isEmpty()) {
+                        double value = Double.parseDouble(s.toString());
+                        item.setPlannedValue(value);
+                    }
+                } catch (NumberFormatException e) {
+                    // Handle invalid number format
+                }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
             }
-        });
+        };
+        
+        holder.itemValue.setTag(watcher);
+        holder.itemValue.addTextChangedListener(watcher);
 
         TableLayout table = holder.itemTable;
+        table.removeAllViews();
         LayoutInflater inflater = LayoutInflater.from(table.getContext());
 
         for (Solution solution : item.getSelectedSolutions()) {
@@ -116,59 +159,101 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
             table.addView(tableRow);
         }
 
-        btnHandler(holder);
+        btnHandler(holder, position);
 
-        holder.save.setOnClickListener(v -> saveItem(holder, item));
-        holder.edit.setOnClickListener(v -> editItem(holder));
-        holder.delete.setOnClickListener(v -> deleteItem(holder, item));
-
+        holder.save.setOnClickListener(v -> saveItem(holder, item, position));
+        holder.edit.setOnClickListener(v -> editItem(holder, position));
+        holder.delete.setOnClickListener(v -> deleteItem(holder, item, position));
     }
 
-    private void btnHandler(ItemViewHolder holder) {
-        holder.delete.setVisibility(editMode ? View.GONE:View.VISIBLE);
-        holder.edit.setVisibility(editMode ? View.GONE:View.VISIBLE);
-        holder.itemValue.setEnabled(editMode);
-    }
-
-    private void saveItem(ItemViewHolder holder, BudgetItem item) {
-        holder.save.setVisibility(View.GONE);
-        Set<BudgetItem> items = budget.getItems();
-        items.add(item);
-        budget.setItems(items);
-        updateBudget(holder, false);
-    }
-
-    private void editItem(ItemViewHolder holder) {
-        editMode = true;
-        btnHandler(holder);
-    }
-
-    private void deleteItem(ItemViewHolder holder, BudgetItem item) {
-        if (item.getSelectedSolutions().isEmpty()) {
-            editMode = false;
-            Set<BudgetItem> items = budget.getItems();
-            items.remove(item);
-            budget.setItems(items);
-            updateBudget(holder, true);
+    private void btnHandler(ItemViewHolder holder, int position) {
+        boolean isInEditMode = editModeMap.getOrDefault(position, false);
+        
+        if (isInEditMode) {
+            // In edit mode
+            holder.delete.setVisibility(View.GONE);
+            holder.edit.setVisibility(View.GONE);
+            holder.save.setVisibility(View.VISIBLE);
+            holder.itemValue.setEnabled(true);
+            
+            // Post the focus and keyboard show to ensure the window has focus
+            holder.itemValue.post(() -> {
+                holder.itemValue.requestFocus();
+                if (context instanceof Activity && !((Activity) context).isFinishing()) {
+                    InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.showSoftInput(holder.itemValue, InputMethodManager.SHOW_IMPLICIT);
+                    }
+                }
+            });
+        } else {
+            // Not in edit mode
+            holder.delete.setVisibility(View.VISIBLE);
+            holder.edit.setVisibility(View.VISIBLE);
+            holder.save.setVisibility(View.GONE);
+            holder.itemValue.setEnabled(false);
+            
+            // Hide keyboard safely
+            if (holder.itemValue.hasFocus()) {
+                holder.itemValue.clearFocus();
+                if (context instanceof Activity && !((Activity) context).isFinishing()) {
+                    InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(holder.itemValue.getWindowToken(), 0);
+                    }
+                }
+            }
         }
     }
 
-    private void updateBudget(ItemViewHolder holder, boolean deleted) {
+    private void saveItem(ItemViewHolder holder, BudgetItem item, int position) {
+        editModeMap.put(position, false);
+        Set<BudgetItem> items = budget.getItems();
+        items.add(item);
+        budget.setItems(items);
+        
+        // Hide keyboard safely
+        if (context instanceof Activity && !((Activity) context).isFinishing()) {
+            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null && holder.itemValue.getWindowToken() != null) {
+                imm.hideSoftInputFromWindow(holder.itemValue.getWindowToken(), 0);
+            }
+        }
+        
+        updateBudget(holder, false, position);
+        btnHandler(holder, position);
+    }
+
+    private void editItem(ItemViewHolder holder, int position) {
+        editModeMap.put(position, true);
+        btnHandler(holder, position);
+    }
+
+    private void deleteItem(ItemViewHolder holder, BudgetItem item, int position) {
+        if (item.getSelectedSolutions().isEmpty()) {
+            editModeMap.put(position, false);
+            Set<BudgetItem> items = budget.getItems();
+            items.remove(item);
+            budget.setItems(items);
+            updateBudget(holder, true, position);
+        }
+    }
+
+    private void updateBudget(ItemViewHolder holder, boolean deleted, int position) {
         service.update(UUID.fromString(budget.getId()), budget).enqueue(new Callback<Budget>() {
             @Override
             public void onResponse(Call<Budget> call, Response<Budget> response) {
                 budgetUpdatedListener.onBudgetUpdated(deleted);
-                editMode = false;
-                btnHandler(holder);
+                editModeMap.put(position, false);
+                btnHandler(holder, position);
             }
 
             @Override
             public void onFailure(Call<Budget> call, Throwable t) {
-
+                // Handle error
             }
         });
     }
-
 
     @Override
     public int getItemCount() {

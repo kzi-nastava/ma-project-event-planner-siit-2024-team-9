@@ -8,6 +8,6 @@ import retrofit2.http.Path;
 
 public interface BusinessOwnerService {
 
-    @GET("businessOwner/{id}")
+    @GET("businessowner/{id}")
     Call<BusinessOwner> get(@Path("id") String id);
 }

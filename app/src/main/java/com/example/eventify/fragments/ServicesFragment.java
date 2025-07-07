@@ -13,16 +13,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.example.eventify.adapters.ServiceListAdapter;
 import com.example.eventify.databinding.FragmentServicesBinding;
 import com.example.eventify.models.solutions.Service;
+import com.example.eventify.models.users.BusinessOwner;
 import com.example.eventify.databinding.FragmentCardBinding;
 import com.example.eventify.services.solutions.ServiceService;
+import com.example.eventify.services.users.BusinessOwnerService;
 import com.example.eventify.utils.RetrofitClient;
+import com.example.eventify.utils.UserSession;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.UUID;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,6 +44,7 @@ public class ServicesFragment extends Fragment implements SolutionFilterFragment
     private FragmentCardBinding cardBinding;
 
     private ServiceListAdapter adapter;
+    private UserSession userSession;
 
     private boolean searchOn = false;
 
@@ -51,6 +57,7 @@ public class ServicesFragment extends Fragment implements SolutionFilterFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        userSession = new UserSession(requireContext());
     }
 
     @Override
@@ -90,19 +97,34 @@ public class ServicesFragment extends Fragment implements SolutionFilterFragment
     }
 
     private void getServices() {
-        service.getAll().enqueue(new Callback<Collection<Service>>() {
-            @Override
-            public void onResponse(Call<Collection<Service>> call, Response<Collection<Service>> response) {
-                setServices(response);
+        // Get current user's ID from UserSession
+        UUID userId = userSession.getCurrentUserId();
+        if (userId == null) {
+            Toast.makeText(requireContext(), "Please log in first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        
+
+        service.getByOwner(userId).enqueue(new Callback<Collection<Service>>() {
+                        @Override
+                        public void onResponse(Call<Collection<Service>> call, Response<Collection<Service>> response) {
+                            if (response.isSuccessful() && response.body() != null) {
+                                setServices(response);
+                            } else {
+                                Toast.makeText(requireContext(), "Failed to load services", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Collection<Service>> call, Throwable t) {
+                            Toast.makeText(requireContext(), "Network error loading services", Toast.LENGTH_SHORT).show();
+                            Log.e("RetrofitError", "Error: " + t.getMessage());
+                            t.printStackTrace();
+                        }
+                    });
             }
 
-            @Override
-            public void onFailure(Call<Collection<Service>> call, Throwable t) {
-                Log.e("RetrofitError", "Error: " + t.getMessage());
-                t.printStackTrace();
-            }
-        });
-    }
 
     private void search(String searchItem) {
         searchOn = true;
