@@ -7,6 +7,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -64,4 +65,6 @@ public interface EventService {
     }
     // Response wrapper for filter endpoint
 
+    @GET("events/owner/{ownerId}")
+    Call<List<Event>> getByOwner(@Path("ownerId") UUID ownerId);
 }
