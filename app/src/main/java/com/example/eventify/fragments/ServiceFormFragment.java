@@ -185,7 +185,6 @@ public class ServiceFormFragment extends Fragment {
             public void onResponse(Call<BusinessOwner> call, Response<BusinessOwner> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     owner = response.body();
-                    Toast.makeText(requireContext(), "Owner set successfully: " + owner.toString(), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(requireContext(), "Failed to get owner. Response: " + response.code(), Toast.LENGTH_LONG).show();
                     showError("Failed to get owner information. Please try again.");
@@ -193,8 +192,7 @@ public class ServiceFormFragment extends Fragment {
             }
             
             @Override
-            public void onFailure(Call<BusinessOwner> call, Throwable t) {
-                Toast.makeText(requireContext(), "Network error getting owner: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            public void onFailure(Call<BusinessOwner> call, Throwable t) {  
                 showError("Network error while getting owner information. Please check your connection.");
                 t.printStackTrace();
             }
@@ -282,7 +280,6 @@ public class ServiceFormFragment extends Fragment {
         }
         set.clear(); // Clear existing types before adding new ones
         
-        Toast.makeText(requireContext(), "Setting types for service...", Toast.LENGTH_SHORT).show();
         
         // Add existing EventType objects with their IDs
         for (String selectedName : selectedList) {
@@ -290,16 +287,11 @@ public class ServiceFormFragment extends Fragment {
                 if (existingType.getName().equals(selectedName)) {
                     // Use the existing EventType object that has an ID
                     set.add(existingType);
-                    Toast.makeText(requireContext(), "Adding type: " + existingType.getName() + " with ID: " + existingType.getId(), Toast.LENGTH_SHORT).show();
                     break; // Found the match, no need to continue inner loop
                 }
             }
         }
 
-        // Debug log the final set
-        for (EventType type : set) {
-            Toast.makeText(requireContext(), "Final set type: " + type.getName() + " with ID: " + type.getId(), Toast.LENGTH_SHORT).show();
-        }
     }
 
 
@@ -315,8 +307,6 @@ public class ServiceFormFragment extends Fragment {
             return;
         }
 
-        Toast.makeText(requireContext(), "Starting service creation...", Toast.LENGTH_SHORT).show();
-
         // Update service fields from form
         selectedService.setVisibility(binding.visibility.isChecked());
         selectedService.setAvailability(binding.availability.isChecked());
@@ -328,8 +318,6 @@ public class ServiceFormFragment extends Fragment {
             if (!selectedList.isEmpty()) {
                 setTypes();
             }
-
-            Toast.makeText(requireContext(), "Updating existing service...", Toast.LENGTH_SHORT).show();
 
             // Create service part and update with images
             service.update(
@@ -359,8 +347,6 @@ public class ServiceFormFragment extends Fragment {
             setTypes();
             selectedService.setOwner(owner);
 
-            Toast.makeText(requireContext(), "Creating new service with owner: " + owner.getEmail(), Toast.LENGTH_SHORT).show();
-
             // Handle category selection
             if (binding.newCategory.getVisibility() == View.VISIBLE) {
                 // New category was entered
@@ -372,7 +358,6 @@ public class ServiceFormFragment extends Fragment {
                 );
                 selectedService.setCategory(proposed);
                 selectedService.setStatus(Status.PENDING);
-                Toast.makeText(requireContext(), "Using new category: " + proposed.getName(), Toast.LENGTH_SHORT).show();
             } else {
                 // Existing category was selected
                 String selectedCategory = binding.categorySpinner1.getSelectedItem().toString();
@@ -382,10 +367,7 @@ public class ServiceFormFragment extends Fragment {
                 }
                 selectedService.setCategory(getCategory(selectedCategory));
                 selectedService.setStatus(Status.ACCEPTED);
-                Toast.makeText(requireContext(), "Using existing category: " + selectedCategory, Toast.LENGTH_SHORT).show();
             }
-
-            Toast.makeText(requireContext(), "Number of images to upload: " + images.size(), Toast.LENGTH_SHORT).show();
 
             // Create service
             service.add(
@@ -395,7 +377,6 @@ public class ServiceFormFragment extends Fragment {
                 @Override
                 public void onResponse(Call<Service> call, Response<Service> response) {
                     if (response.isSuccessful() && response.body() != null) {
-                        Toast.makeText(requireContext(), "Service created successfully", Toast.LENGTH_SHORT).show();
                         goBack();
                     } else {
                         Toast.makeText(requireContext(), "Creation failed with code: " + response.code(), Toast.LENGTH_LONG).show();
@@ -581,7 +562,6 @@ public class ServiceFormFragment extends Fragment {
                 if (types != null) {
                     for (EventType type : types) {
                         typeNames.add(type.getName());
-                        Toast.makeText(requireContext(), "Loaded type: " + type.getName() + " with ID: " + type.getId(), Toast.LENGTH_SHORT).show();
                     }
                 }
 
