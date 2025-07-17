@@ -118,6 +118,26 @@ public class ServiceDetailsFragment extends Fragment {
             showedSolution = getArguments().getParcelable("solution");
             binding.setService(showedSolution);
             binding.setLifecycleOwner(this);
+
+            // Check visibility - if not visible, show message and return
+            if (!showedSolution.isVisibility()) {
+                Toast.makeText(requireContext(), "This item is no longer available", Toast.LENGTH_SHORT).show();
+                if (navigationManager != null) {
+                    navigationManager.navigateBack();
+                }
+                return binding.getRoot();
+            }
+
+            // Check availability and update UI
+            if (!showedSolution.isAvailability()) {
+                binding.availabilityStatus.setVisibility(View.VISIBLE);
+                binding.availabilityStatus.setText("Currently Unavailable");
+                binding.btnBook.setEnabled(false);
+                binding.btnBook.setAlpha(0.5f);
+            } else {
+                binding.availabilityStatus.setVisibility(View.VISIBLE);
+                binding.availabilityStatus.setText("Available");
+            }
         }
 
         // Check if solution is already favorited
@@ -225,6 +245,12 @@ public class ServiceDetailsFragment extends Fragment {
     private void buyProductWithEventSelection() {
         if (!userSession.isValidSession()) {
             Toast.makeText(requireContext(), "Please log in to buy products", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Check if product is available
+        if (!showedSolution.isAvailability()) {
+            Toast.makeText(requireContext(), "This product is currently unavailable", Toast.LENGTH_SHORT).show();
             return;
         }
 

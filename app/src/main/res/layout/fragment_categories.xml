@@ -1,208 +1,265 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:paddingBottom="20dp"
-    android:paddingHorizontal="16dp">
+    android:paddingBottom="20dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Title -->
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Solution Categories"
-            android:layout_marginVertical="30dp"
-            android:textSize="23sp"
-            android:theme="@style/header_text"
-            android:textStyle="bold" />
-
-        <!-- Existing Categories Section -->
-        <LinearLayout
+        <!-- Header Section with Material Card -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_margin="16dp"
+            app:cardElevation="2dp"
+            app:cardCornerRadius="8dp"
+            app:cardBackgroundColor="@color/white">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="20dp"
-                android:gravity="center_vertical">
+                android:orientation="vertical"
+                android:padding="16dp">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:text="Solution Categories"
+                    android:textSize="24sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Manage your solution categories"
+                    android:textSize="14sp"
+                    android:layout_marginTop="4dp"
+                    android:textColor="#757575"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="16dp"
+                    android:gravity="end">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/addCategoryButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Add"
+                        app:icon="@drawable/add"
+                        android:layout_marginEnd="8dp"
+                        style="@style/Widget.MaterialComponents.Button"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/editCategoryButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Edit"
+                        app:icon="@drawable/edit"
+                        android:layout_marginEnd="8dp"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/saveCategoryButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Save"
+                        app:icon="@drawable/save"
+                        style="@style/Widget.MaterialComponents.Button"/>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Existing Categories Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp"
+            app:cardElevation="1dp"
+            app:cardCornerRadius="8dp"
+            app:cardBackgroundColor="@color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="Existing Categories"
                     android:textSize="18sp"
-                    android:layout_marginStart="5dp"
-                    android:textColor="@color/black"/>
+                    android:textColor="#616161"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp"/>
 
-                <ImageButton
-                    android:id="@+id/addCategoryButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/add"
-                    android:background="@drawable/white_favorite"
-                    android:text="Add" />
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-                <ImageButton
-                    android:id="@+id/editCategoryButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/edit"
-                    android:layout_marginStart="25dp"
-                    android:background="@drawable/white_favorite"
-                    android:text="Edit" />
+                    <TableLayout
+                        android:id="@+id/existing"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:stretchColumns="1">
 
-                <ImageButton
-                    android:id="@+id/saveCategoryButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/save"
-                    android:layout_marginStart="25dp"
-                    android:background="@drawable/white_favorite"
-                    android:text="Edit" />
+                        <!-- Table Header -->
+                        <TableRow
+                            android:background="#F5F5F5"
+                            android:padding="8dp">
+                            
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="Name"
+                                android:layout_weight="1"
+                                android:textColor="#616161"
+                                android:textStyle="bold"
+                                android:padding="8dp" />
+                                
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="2"
+                                android:text="Description"
+                                android:textColor="#616161"
+                                android:textStyle="bold"
+                                android:padding="8dp" />
+                                
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Action"
+                                android:textColor="#616161"
+                                android:textStyle="bold"
+                                android:padding="8dp" />
+                        </TableRow>
+
+                    </TableLayout>
+                </HorizontalScrollView>
             </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-            <HorizontalScrollView
+        <!-- Proposed Categories Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp"
+            app:cardElevation="1dp"
+            app:cardCornerRadius="8dp"
+            app:cardBackgroundColor="@color/white">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Proposed Categories"
+                    android:textSize="18sp"
+                    android:textColor="#616161"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="end"
+                    android:layout_marginBottom="16dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/editProposalButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Edit"
+                        app:icon="@drawable/edit"
+                        android:layout_marginEnd="8dp"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/saveProposalButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Save"
+                        app:icon="@drawable/save"
+                        style="@style/Widget.MaterialComponents.Button"/>
+                </LinearLayout>
 
                 <TableLayout
-                    android:id="@+id/existing"
+                    android:id="@+id/proposed"
                     android:layout_width="match_parent"
-                    android:background="@drawable/card"
-                    android:padding="5dp"
                     android:layout_height="wrap_content"
-                    android:stretchColumns="1"
-                    android:paddingTop="8dp">
+                    android:stretchColumns="1">
 
                     <!-- Table Header -->
-                    <TableRow>
+                    <TableRow
+                        android:background="#F5F5F5"
+                        android:padding="8dp">
+                        
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text="Name"
                             android:layout_weight="1"
-                            android:textColor="@color/black"
+                            android:textColor="#616161"
                             android:textStyle="bold"
                             android:padding="8dp" />
+                            
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
+                            android:layout_weight="2"
                             android:text="Description"
-                            android:textColor="@color/black"
+                            android:textColor="#616161"
                             android:textStyle="bold"
                             android:padding="8dp" />
+                            
                         <TextView
-                            android:layout_width="0dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Action"
-                            android:layout_weight="1"
-                            android:textAlignment="textEnd"
-                            android:textColor="@color/black"
+                            android:textColor="#616161"
                             android:textStyle="bold"
                             android:padding="8dp" />
                     </TableRow>
 
                 </TableLayout>
-            </HorizontalScrollView>
-
-
-        </LinearLayout>
-
-        <!-- Proposed Categories Section -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="30dp"
-            android:paddingTop="16dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="20dp"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Proposed Categories"
-                    android:layout_marginStart="5dp"
-                    android:textColor="@color/black"
-                    android:textSize="18sp" />
-
-                <ImageButton
-                    android:id="@+id/editProposalButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/edit"
-                    android:background="@drawable/white_favorite"
-                    android:text="Edit" />
-
-                <ImageButton
-                    android:id="@+id/saveProposalButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/save"
-                    android:layout_marginStart="25dp"
-                    android:background="@drawable/white_favorite"
-                    android:text="Edit" />
             </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-            <!-- Table for Proposed Categories -->
-            <TableLayout
-                android:id="@+id/proposed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:stretchColumns="1"
-                android:background="@drawable/card"
-                android:padding="5dp"
-                android:paddingTop="8dp">
+        <!-- Loading and Error States -->
+        <ProgressBar
+            android:id="@+id/loadingProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="32dp"
+            android:visibility="gone"/>
 
-                <!-- Table Header -->
-                <TableRow>
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="Name"
-                        android:layout_weight="1"
-                        android:textColor="@color/black"
-                        android:textStyle="bold"
-                        android:padding="8dp" />
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Description"
-                        android:textColor="@color/black"
-                        android:textStyle="bold"
-                        android:padding="8dp" />
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="Action"
-                        android:layout_weight="1"
-                        android:textAlignment="textEnd"
-                        android:textColor="@color/black"
-                        android:textStyle="bold"
-                        android:padding="8dp" />
-                </TableRow>
-
-
-            </TableLayout>
-        </LinearLayout>
+        <TextView
+            android:id="@+id/errorText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="32dp"
+            android:textColor="@android:color/holo_red_dark"
+            android:visibility="gone"/>
 
     </LinearLayout>
 </ScrollView>

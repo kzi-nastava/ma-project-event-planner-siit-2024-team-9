@@ -51,6 +51,17 @@ public class ServiceDetailsForm extends Fragment {
         if (getArguments() != null) {
             service = getArguments().getParcelable("service");
             binding.setService(service);
+            
+            // Show availability status
+            binding.availabilityStatus.setVisibility(View.VISIBLE);
+            if (service.isAvailability()) {
+                binding.availabilityStatus.setText("Available");
+                binding.availabilityStatus.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
+            } else {
+                binding.availabilityStatus.setText("Currently Unavailable");
+                binding.availabilityStatus.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+            }
+            
             if (service.getDuration()==0) {
                 binding.duration.setVisibility(View.GONE);
                 binding.durationInfo.setVisibility(View.GONE);

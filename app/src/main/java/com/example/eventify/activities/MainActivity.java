@@ -30,6 +30,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -118,24 +119,28 @@ public class MainActivity extends AppCompatActivity implements NavigationManager
         }
 
         EventService service = RetrofitClient.getClient().create(EventService.class);
-        service.getAllPaginated(0, 5, "name", true).enqueue(new Callback<EventService.EventAllResponse>() {
+        // Get events by owner and navigate to the first event's budget
+        service.getByOwner(userSession.getCurrentUserId()).enqueue(new Callback<List<Event>>() {
             @Override
-            public void onResponse(Call<EventService.EventAllResponse> call, Response<EventService.EventAllResponse> response) {
+            public void onResponse(Call<List<Event>> call, Response<List<Event>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<Event> events = response.body().content;
+                    List<Event> events = response.body();
                     if (!events.isEmpty()) {
-                        navigateToFragment(BudgetFragment.newInstance(events.get(0).getName()), false);
+                        Event firstEvent = events.get(0);
+                        // Navigate to BudgetFragment with the first event's name
+                        navigateToFragment(BudgetFragment.newInstance(firstEvent.getName()), false);
                     } else {
-                        Toast.makeText(MainActivity.this, "No events found", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "No events found. Please create an event first.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(MainActivity.this, "Error loading events", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error response: " + response.code() + " - " + response.message());
                 }
             }
 
             @Override
-            public void onFailure(Call<EventService.EventAllResponse> call, Throwable t) {
-                Toast.makeText(MainActivity.this, "Network error", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<List<Event>> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "Network error. Please check your connection.", Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "Network error loading budget", t);
             }
         });

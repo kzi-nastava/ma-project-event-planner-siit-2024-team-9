@@ -13,6 +13,7 @@ import java.util.UUID;
 
 public interface ServiceService {
 
+    @Multipart
     @POST("services")
     Call<Service> add(@Part("service") RequestBody service, @Part List<MultipartBody.Part> images);
 
@@ -21,6 +22,9 @@ public interface ServiceService {
 
     @GET("services")
     Call<Collection<Service>> getAll();
+
+    @GET("services/owner/{id}")
+    Call<Collection<Service>> getByOwner(@Path("id") UUID ownerId);
 
     @Multipart
     @PUT("services/{id}")
