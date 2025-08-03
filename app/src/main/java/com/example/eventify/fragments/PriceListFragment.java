@@ -1,7 +1,11 @@
 package com.example.eventify.fragments;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import androidx.fragment.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,11 +16,22 @@ import android.widget.EditText;
 import android.widget.TableRow;
 import android.widget.Toast;
 
+import android.Manifest;
+import android.util.Log;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import okhttp3.ResponseBody;
 import com.example.eventify.R;
+import androidx.annotation.NonNull;
 import com.example.eventify.databinding.FragmentPriceListBinding;
 import com.example.eventify.models.others.Discount;
 import com.example.eventify.models.others.Price;
 import com.example.eventify.models.solutions.Solution;
+import com.example.eventify.services.others.PDFService;
 import com.example.eventify.services.solutions.SolutionService;
 import com.example.eventify.utils.RetrofitClient;
 import com.example.eventify.utils.UserSession;
@@ -36,6 +51,8 @@ public class PriceListFragment extends Fragment {
     private List<Solution> solutions = new ArrayList<>();
     private boolean editMode = false;
     private UserSession userSession;
+
+    private static final int REQUEST_CODE_STORAGE = 2001;
 
     public PriceListFragment() {}
 
@@ -65,10 +82,172 @@ public class PriceListFragment extends Fragment {
         binding.savePrices.setOnClickListener(v -> save());
         binding.editPrices.setOnClickListener(v -> setEditMode());
 
+        binding.downloadPrices.setOnClickListener(v -> downloadPriceList());
+
         // Load solutions
         loadSolutions();
 
         return binding.getRoot();
+    }
+
+    private void downloadPriceList() {
+        if (!userSession.isValidSession()) {
+            Toast.makeText(requireContext(), "Please log in to download price list", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // Check permissions based on Android version
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            // For Android 9 and below, need WRITE_EXTERNAL_STORAGE permission
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                    requireContext().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_STORAGE);
+                return;
+            }
+        }
+        // For Android 10+, no special permissions needed for MediaStore API
+        
+        startPriceListDownload();
+    }
+
+    private void startPriceListDownload() {
+        showLoading();
+        UUID userId = userSession.getCurrentUserId();
+        Log.d("PDFDownload", "Attempting to download PDF for userId: " + userId);
+        PDFService pdfApi = RetrofitClient.getClient().create(PDFService.class);
+        pdfApi.getPriceListPdf(userId).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                hideLoading();
+                Log.d("PDFDownload", "Response code: " + response.code() + ", URL: " + call.request().url());
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d("PDFDownload", "Response body size: " + response.body().contentLength());
+                    Log.d("PDFDownload", "Response body type: " + response.body().contentType());
+                    savePdfToStorage(requireContext(), response.body(), "price-list.pdf");
+                } else {
+                    String errorMessage = "Failed to download PDF";
+                    if (response.code() == 404) {
+                        errorMessage = "No solutions found to generate price list";
+                    } else if (response.code() == 401) {
+                        errorMessage = "Please log in to download price list";
+                    } else if (response.code() >= 500) {
+                        errorMessage = "Server error. Please try again later";
+                    }
+                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                hideLoading();
+                String errorMessage = "Download error: " + t.getMessage();
+                if (t instanceof java.net.UnknownHostException) {
+                    errorMessage = "Cannot connect to server. Check your internet connection.";
+                } else if (t instanceof java.net.SocketTimeoutException) {
+                    errorMessage = "Connection timeout. Please try again.";
+                }
+                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void savePdfToStorage(Context context, ResponseBody body, String filename) {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // Use MediaStore API for Android 10+
+                savePdfToMediaStore(context, body, filename);
+            } else {
+                // Use traditional file API for older versions
+                savePdfToFile(context, body, filename);
+            }
+        } catch (Exception e) {
+            Log.e("PDFDownload", "Error saving PDF: " + e.getMessage(), e);
+            Toast.makeText(requireContext(), 
+                "Error saving PDF: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void savePdfToMediaStore(Context context, ResponseBody body, String filename) {
+        try {
+            android.content.ContentValues values = new android.content.ContentValues();
+            values.put(android.provider.MediaStore.Downloads.DISPLAY_NAME, filename);
+            values.put(android.provider.MediaStore.Downloads.MIME_TYPE, "application/pdf");
+            values.put(android.provider.MediaStore.Downloads.IS_PENDING, 1);
+
+            android.content.ContentResolver resolver = context.getContentResolver();
+            android.net.Uri uri = resolver.insert(android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+
+            if (uri != null) {
+                try (OutputStream outputStream = resolver.openOutputStream(uri);
+                     InputStream inputStream = body.byteStream()) {
+
+                    byte[] buffer = new byte[4096];
+                    int read;
+                    long totalBytes = 0;
+                    while ((read = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, read);
+                        totalBytes += read;
+                    }
+
+                    values.clear();
+                    values.put(android.provider.MediaStore.Downloads.IS_PENDING, 0);
+                    resolver.update(uri, values, null, null);
+
+                    Log.d("PDFDownload", "File saved to MediaStore: " + uri);
+                    Log.d("PDFDownload", "File size: " + totalBytes + " bytes");
+
+                    Toast.makeText(requireContext(), 
+                        "PDF saved to Downloads folder (" + totalBytes + " bytes)", Toast.LENGTH_LONG).show();
+                }
+            } else {
+                Toast.makeText(requireContext(), "Failed to create file in Downloads", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            Log.e("PDFDownload", "Error saving to MediaStore: " + e.getMessage(), e);
+            Toast.makeText(requireContext(), "Error saving PDF: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void savePdfToFile(Context context, ResponseBody body, String filename) {
+        try {
+            // Use public Downloads directory
+            File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            if (!downloadsDir.exists()) {
+                downloadsDir.mkdirs();
+            }
+
+            File file = new File(downloadsDir, filename);
+            InputStream inputStream = body.byteStream();
+            OutputStream outputStream = new FileOutputStream(file);
+
+            byte[] buffer = new byte[4096];
+            int read;
+            long totalBytes = 0;
+            while ((read = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, read);
+                totalBytes += read;
+            }
+
+            outputStream.flush();
+            inputStream.close();
+            outputStream.close();
+
+        } catch (Exception e) {
+            Log.e("PDFDownload", "Error saving to file: " + e.getMessage(), e);
+            Toast.makeText(requireContext(), "Error saving PDF: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CODE_STORAGE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startPriceListDownload();
+            } else {
+                Toast.makeText(requireContext(), "Storage permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void loadSolutions() {
@@ -272,7 +451,7 @@ public class PriceListFragment extends Fragment {
         binding.errorText.setVisibility(View.GONE);
     }
 
-    private void hideLoading() {
+    public void hideLoading() {
         binding.loadingProgress.setVisibility(View.GONE);
     }
 

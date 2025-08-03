@@ -22,13 +22,15 @@ import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
 import okhttp3.OkHttpClient;
+import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class RetrofitClient {
 
-    public static final String BASE_URL = "http://192.168.1.6:8080/api/";
+    public static final String BASE_URL = "http://192.168.1.3:8080/api/";
     private static Retrofit retrofit;
 
     public static Retrofit getClient() {
@@ -55,6 +57,7 @@ public class RetrofitClient {
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .client(client)
+                    .addConverterFactory(ScalarsConverterFactory.create()) // Add support for ResponseBody
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
