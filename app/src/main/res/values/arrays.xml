@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="default_range_0_2000">
+        <item>0</item>
+        <item>2000</item>
+    </array>
+
+    <array name="default_range_0_20">
+        <item>0</item>
+        <item>20</item>
+    </array>
+
+    <array name="default_range_0_12">
+        <item>0</item>
+        <item>12</item>
+    </array>
+
+    <array name="default_range_0_500">
+        <item>0</item>
+        <item>500</item>
+    </array>
+</resources>

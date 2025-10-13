@@ -1,20 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- progress bar -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/top_actions_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:visibility="gone"
+        app:cardElevation="2dp"
+        app:cardUseCompatPadding="true">
+
+        <LinearLayout
+            android:padding="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/search_input_layout"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/search_solutions">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/search_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionSearch"
+                    android:singleLine="true"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageButton
+                android:id="@+id/btn_filter"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:contentDescription="@string/filter"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/baseline_filter_list_24"/>
+
+            <ImageButton
+                android:id="@+id/btn_sort"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:contentDescription="@string/sort"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_swap_vert_24"/>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
     <ProgressBar
         android:id="@+id/solution_loading_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
         android:visibility="gone" />
 
-    <!-- solution list -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/solution_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="horizontal" />
-</FrameLayout>
+
+</LinearLayout>

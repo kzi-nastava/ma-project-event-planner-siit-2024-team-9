@@ -53,5 +53,44 @@
     <string name="category">Select a category</string>
     <string name="type">Select a type</string>
     <string name="dollar_sign">$</string>
+    <string name="filter_events">Filter Events</string>
+    <string name="start_date">Start Date</string>
+    <string name="end_date">End Date</string>
+    <string name="max_attendees">Max Attendees</string>
+    <string name="attendance">Attendance</string>
+    <string name="event_types">Event Type</string>
+    <string name="locations">Location</string>
+    <string name="max_price">Max Price</string>
+    <string name="search_events">Search events</string>
+    <string name="search_solutions">Search solutions</string>
+    <string name="filter">Filter</string>
+    <string name="sort">Sort</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="apply">Apply</string>
+    <string name="reset">Reset</string>
+    <string name="invalid_price">Invalid price</string>
+    <string name="sort_by">Sort by</string>
+    <string name="sort_name">Name</string>
+    <string name="sort_date">Date</string>
+    <string name="sort_location">Location</string>
+    <string name="sort_price">Price</string>
+    <string name="sort_direction_now">Direction: %1$s</string>
+    <string name="ascending">ascending</string>
+    <string name="descending">descending</string>
+    <string name="max_reservation_deadline">Max Reservation Deadline</string>
+    <string name="max_cancellation_deadline">Max Cancellation Deadline</string>
+    <string name="reservation_methods">Reservation Methods</string>
+    <string name="filter_solutions">Filter Solutions</string>
+    <string name="product">Product</string>
+    <string name="service">Service</string>
+    <string name="solution_categories">Solution Categories</string>
+    <string name="price_range">Price Range</string>
+    <string name="discount_range">Discount Range</string>
+    <string name="visible">Visible</string>
+    <string name="available">Available</string>
+    <string name="duration_range_h">Duration Range (h)</string>
+    <string name="engagement_range">Engagement Range</string>
+
 
 </resources>
