@@ -129,12 +129,17 @@ public class RetrofitClient {
     // Date Type Adapter to handle various date formats from backend
     private static class DateTypeAdapter implements JsonSerializer<Date>, JsonDeserializer<Date> {
         private static final SimpleDateFormat[] dateFormats = {
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"),
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS"),
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS"),
-            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"),
-            new SimpleDateFormat("yyyy-MM-dd")
+                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"),
+                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS"),
+                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS"),
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"),
+                new SimpleDateFormat("yyyy-MM-dd")
         };
+        static {
+            for (SimpleDateFormat f : dateFormats) {
+                f.setLenient(true);
+            }
+        }
 
         @Override
         public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
@@ -144,40 +149,54 @@ public class RetrofitClient {
         @Override
         public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             try {
+                if (json == null || json.isJsonNull()) return null;
+
+                if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isNumber()) {
+                    long epoch = json.getAsLong();
+                    return new Date(epoch);
+                }
+
+                if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) {
+                    String s = json.getAsString().trim();
+                    if (s.isEmpty()) return null;
+
+                    if (s.matches("^\\d{10,}$")) {
+                        long epoch = Long.parseLong(s);
+                        if (s.length() == 10) { // epoch seconds
+                            epoch *= 1000L;
+                        }
+                        return new Date(epoch);
+                    }
+
+                    for (SimpleDateFormat fmt : dateFormats) {
+                        try {
+                            return fmt.parse(s);
+                        } catch (ParseException ignored) {}
+                    }
+                }
+
                 if (json.isJsonArray()) {
-                    // Handle array format [year, month, day, hour, minute, second]
                     JsonArray array = json.getAsJsonArray();
                     int year = array.get(0).getAsInt();
-                    int month = array.get(1).getAsInt() - 1; // Month is 0-based in Date
+                    int month = array.get(1).getAsInt() - 1;
                     int day = array.get(2).getAsInt();
                     int hour = array.size() > 3 ? array.get(3).getAsInt() : 0;
                     int minute = array.size() > 4 ? array.get(4).getAsInt() : 0;
                     int second = array.size() > 5 ? array.get(5).getAsInt() : 0;
-                    
-                    java.util.Calendar calendar = java.util.Calendar.getInstance();
-                    calendar.set(year, month, day, hour, minute, second);
-                    calendar.set(java.util.Calendar.MILLISECOND, 0);
-                    return calendar.getTime();
-                } else if (json.isJsonPrimitive()) {
-                    String dateString = json.getAsString();
-                    
-                    // Try different date formats
-                    for (SimpleDateFormat format : dateFormats) {
-                        try {
-                            return format.parse(dateString);
-                        } catch (ParseException e) {
-                            // Try next format
-                        }
-                    }
-                    
-                    throw new JsonParseException("Unable to parse date: " + dateString);
+
+                    java.util.Calendar cal = java.util.Calendar.getInstance();
+                    cal.set(year, month, day, hour, minute, second);
+                    cal.set(java.util.Calendar.MILLISECOND, 0);
+                    return cal.getTime();
                 }
-                throw new JsonParseException("Unexpected date format");
+
+                throw new JsonParseException("Unexpected date format: " + json);
             } catch (Exception e) {
                 android.util.Log.e("DateTypeAdapter", "Error deserializing Date: " + e.getMessage(), e);
                 android.util.Log.e("DateTypeAdapter", "JSON value was: " + json);
-                return new Date(); // Fallback to current time
+                return new Date();
             }
         }
     }
+
 }

@@ -91,6 +91,9 @@
     <string name="available">Available</string>
     <string name="duration_range_h">Duration Range (h)</string>
     <string name="engagement_range">Engagement Range</string>
+    <string name="reports">Reports</string>
+    <string name="reviews">Reviews</string>
+    <string name="notifications">Notifications</string>
 
 
 </resources>
