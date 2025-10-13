@@ -94,6 +94,12 @@
     <string name="reports">Reports</string>
     <string name="reviews">Reviews</string>
     <string name="notifications">Notifications</string>
+    <string name="no_notifications_yet">No notifications yet</string>
+    <string name="no_notifications">No notifications</string>
+    <string name="deleted">Deleted</string>
+    <string name="action_failed">Action Failed</string>
+    <string name="network_error">Network Error</string>
+    <string name="delete">Delete</string>
 
 
 </resources>

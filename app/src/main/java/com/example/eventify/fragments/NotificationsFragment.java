@@ -1,66 +1,149 @@
 package com.example.eventify.fragments;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventify.R;
+import com.example.eventify.adapters.NotificationListAdapter;
+import com.example.eventify.models.others.Notification;
+import com.example.eventify.services.others.NotificationService;
+import com.example.eventify.utils.RetrofitClient;
+import com.example.eventify.utils.UserSession;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link NotificationsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class NotificationsFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private RecyclerView notificationRecyclerView;
+    private NotificationListAdapter notificationListAdapter;
+    private ProgressBar loadingIndicator;
+    private View emptyState;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private NotificationService notificationService;
+    private final List<Notification> notifications = new ArrayList<>();
 
-    public NotificationsFragment() {
-        // Required empty public constructor
+    public static NotificationsFragment newInstance() {
+        return new NotificationsFragment();
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment NotificationsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static NotificationsFragment newInstance(String param1, String param2) {
-        NotificationsFragment fragment = new NotificationsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    @Nullable @Override
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_notification_list, container, false);
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+    @Override public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(v, savedInstanceState);
+
+        notificationRecyclerView = v.findViewById(R.id.notification_recycler_view);
+        loadingIndicator = v.findViewById(R.id.notification_loading_indicator);
+        emptyState = v.findViewById(R.id.empty_state);
+
+        notificationRecyclerView.setLayoutManager(
+                new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+
+        notificationListAdapter = new NotificationListAdapter(notifications, new NotificationListAdapter.Listener() {
+            @Override public void onItemClick(Notification n, int position) {
+                if (!n.isRead()) {
+                    n.setRead(true);
+                    notificationListAdapter.notifyItemChanged(position);
+                    notificationService.markAsRead(n.getId(), n).enqueue(new Callback<Notification>() {
+                        @Override public void onResponse(Call<Notification> call, Response<Notification> response) { }
+                        @Override public void onFailure(Call<Notification> call, Throwable t) { }
+                    });
+                }
+            }
+
+            @Override public void onDeleteClick(Notification n, int position) {
+                notificationService.delete(n.getId()).enqueue(new Callback<Boolean>() {
+                    @Override public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                        if (response.isSuccessful()) {
+                            notifications.remove(position);
+                            notificationListAdapter.notifyItemRemoved(position);
+                            toggleEmptyState();
+                            Toast.makeText(requireContext(), R.string.deleted, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(requireContext(), R.string.action_failed, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    @Override public void onFailure(Call<Boolean> call, Throwable t) {
+                        Toast.makeText(requireContext(), R.string.network_error, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+        notificationRecyclerView.setAdapter(notificationListAdapter);
+
+        notificationService = RetrofitClient.getClient().create(NotificationService.class);
+
+        fetchNotifications();
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_notifications, container, false);
+    private void fetchNotifications() {
+        showLoading(true);
+
+        UserSession session = new UserSession(requireContext());
+        String userId = session.isValidSession() ? session.getCurrentUserId().toString() : null;
+
+        Call<List<Notification>> call = (userId != null)
+                ? notificationService.getUserNotifications(userId)
+                : notificationService.getAll();
+
+        call.enqueue(new Callback<List<Notification>>() {
+            @Override public void onResponse(Call<List<Notification>> call, Response<List<Notification>> response) {
+                showLoading(false);
+                if (response.isSuccessful() && response.body() != null) {
+                    notifications.clear();
+                    notifications.addAll(response.body());
+                    Collections.sort(notifications, new Comparator<Notification>() {
+                        @Override public int compare(Notification a, Notification b) {
+                            if (a.getCreatedAt() == null && b.getCreatedAt() == null) return 0;
+                            if (a.getCreatedAt() == null) return 1;
+                            if (b.getCreatedAt() == null) return -1;
+                            return b.getCreatedAt().compareTo(a.getCreatedAt());
+                        }
+                    });
+                    notificationListAdapter.notifyDataSetChanged();
+                    toggleEmptyState();
+                } else {
+                    Toast.makeText(requireContext(), R.string.action_failed, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override public void onFailure(Call<List<Notification>> call, Throwable t) {
+                showLoading(false);
+                Toast.makeText(requireContext(), R.string.network_error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void showLoading(boolean show) {
+        loadingIndicator.setVisibility(show ? View.VISIBLE : View.GONE);
+        notificationRecyclerView.setVisibility(show ? View.GONE : View.VISIBLE);
+        if (show) emptyState.setVisibility(View.GONE);
+    }
+
+    private void toggleEmptyState() {
+        boolean empty = notifications.isEmpty();
+        emptyState.setVisibility(empty ? View.VISIBLE : View.GONE);
+        notificationRecyclerView.setVisibility(empty ? View.GONE : View.VISIBLE);
     }
 }
