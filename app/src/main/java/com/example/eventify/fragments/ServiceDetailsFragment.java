@@ -101,12 +101,30 @@ public class ServiceDetailsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         userSession = new UserSession(requireContext());
-        
-        // Get NavigationManager from activity
+
         if (requireActivity() instanceof NavigationManager) {
             navigationManager = (NavigationManager) requireActivity();
         }
+
+        getParentFragmentManager().setFragmentResultListener(
+                BookServiceDialogFragment.TAG, this,
+                (requestKey, bundle) -> {
+                    String reservationId = bundle.getString("reservationId");
+                    String action = bundle.getString("action");
+                    if (reservationId != null) {
+                        Toast.makeText(requireContext(), "Reservation created: " + reservationId, Toast.LENGTH_LONG).show();
+                        // refresh po želji
+                    } else if ("CREATE_EVENT".equals(action)) {
+                        if (navigationManager != null) {
+                            // navigationManager.navigateTo(CreateEventFragment.newInstance());
+                        } else {
+                            Toast.makeText(requireContext(), "Open event creation screen", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+        );
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -394,7 +412,7 @@ public class ServiceDetailsFragment extends Fragment {
             if (showedSolution.isService()) {
                 setService();
                 binding.btnBook.setText("Book service");
-                binding.btnBook.setOnClickListener(null); // No functionality for services
+                binding.btnBook.setOnClickListener(v -> openBookServiceDialog());
             }
             else {
                 setProduct();
@@ -414,7 +432,42 @@ public class ServiceDetailsFragment extends Fragment {
             serviceDetails = true;
             transaction.commit();
         }
+
     }
+
+    private void openBookServiceDialog() {
+        if (!userSession.isValidSession()) {
+            Toast.makeText(requireContext(), "Please log in to book services", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!showedSolution.isAvailability()) {
+            Toast.makeText(requireContext(), "This service is currently unavailable", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (showedService == null) {
+            Toast.makeText(requireContext(), "Loading service…", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (showedSolution.getOwner() == null || showedSolution.getOwner().getId() == null) {
+            Toast.makeText(requireContext(), "Missing provider", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        UUID serviceId  = showedService.getId();
+        UUID providerId = UUID.fromString(showedSolution.getOwner().getId());
+        UUID customerId = userSession.getCurrentUserId();
+
+        BookServiceDialogFragment dialog = BookServiceDialogFragment.newInstance(
+                serviceId,
+                providerId,
+                customerId,
+                null,
+                showedSolution.getName(),
+                showedSolution.getOwner().getName()
+        );
+        dialog.show(getParentFragmentManager(), BookServiceDialogFragment.TAG);
+    }
+
 
     private void reviewPermission() {
         binding.btnBook.setVisibility(isPurchased ? View.GONE:View.VISIBLE);

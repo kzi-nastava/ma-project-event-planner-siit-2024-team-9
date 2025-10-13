@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/headerSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:background="@drawable/card_bg"
+            android:orientation="vertical"
+            android:visibility="gone">
+            <TextView
+                android:id="@+id/serviceName"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/providerName"
+                android:layout_marginTop="4dp"
+                android:textSize="14sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_marginTop="12dp"
+            android:text="Date"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/etDate"
+            android:focusable="false"
+            android:clickable="true"
+            android:hint="Select date"
+            android:inputType="none"
+            android:backgroundTint="@android:color/black"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_marginTop="12dp"
+            android:text="Start time (HH:mm)"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/etStart"
+            android:focusable="false"
+            android:clickable="true"
+            android:hint="HH:mm"
+            android:inputType="none"
+            android:backgroundTint="@android:color/black"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_marginTop="12dp"
+            android:text="End time (HH:mm)"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/etEnd"
+            android:focusable="false"
+            android:clickable="true"
+            android:hint="HH:mm"
+            android:inputType="none"
+            android:backgroundTint="@android:color/black"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_marginTop="12dp"
+            android:text="Event"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <Spinner
+            android:id="@+id/spEvent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tvNoEvents"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="You need at least one event to book a service."
+            android:textColor="#B71C1C"
+            android:visibility="gone"
+            android:layout_marginTop="6dp"/>
+
+        <Button
+            android:id="@+id/btnCreateEvent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create event"
+            android:visibility="gone"
+            android:layout_marginTop="6dp"/>
+
+        <TextView
+            android:layout_marginTop="12dp"
+            android:text="Note (optional)"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/etNote"
+            android:hint="Anything the provider should know?"
+            android:minLines="2"
+            android:gravity="top"
+            android:backgroundTint="@android:color/black"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tvError"
+            android:layout_marginTop="8dp"
+            android:textColor="#B71C1C"
+            android:textStyle="bold"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:layout_marginTop="18dp"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/btnCancel"
+                android:text="Cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Space
+                android:layout_width="12dp"
+                android:layout_height="0dp"/>
+            <Button
+                android:id="@+id/btnBook"
+                android:text="Book"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

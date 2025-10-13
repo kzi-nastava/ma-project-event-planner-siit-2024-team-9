@@ -16,12 +16,18 @@ import android.view.MenuItem;
 import com.example.eventify.fragments.BudgetFragment;
 import com.example.eventify.fragments.CategoriesFragment;
 import com.example.eventify.fragments.DiscoverFragment;
+import com.example.eventify.fragments.NotificationsFragment;
 import com.example.eventify.fragments.PriceListFragment;
+import com.example.eventify.fragments.ProfileFragment;
+import com.example.eventify.fragments.ReportsFragment;
+import com.example.eventify.fragments.ReviewsFragment;
 import com.example.eventify.fragments.ServicesFragment;
 import com.example.eventify.models.events.Event;
 import com.example.eventify.R;
 import com.example.eventify.databinding.ActivityMainBinding;
+import com.example.eventify.services.auth.LoginService;
 import com.example.eventify.services.events.EventService;
+import com.example.eventify.utils.JwtUtils;
 import com.example.eventify.utils.NavigationManager;
 import com.example.eventify.utils.RetrofitClient;
 import com.example.eventify.utils.UserSession;
@@ -56,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements NavigationManager
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        setupNavigationActions();
+//        setupNavigationActions();
         setupBottomNavigation();
         setupBackPressHandler();
 
@@ -66,7 +72,17 @@ public class MainActivity extends AppCompatActivity implements NavigationManager
         }
     }
 
-    private void setupNavigationActions() {
+    private String resolveUserRole() {
+        LoginService ls = new LoginService(this);
+        String token = ls.getToken();
+        if (token == null) return null;
+        JwtUtils.JwtClaims claims = JwtUtils.decodeToken(token);
+        if (claims == null) return null;
+        return claims.getRole();
+    }
+
+    private void setupGuestNavigationActions() {
+        navigationActions.clear();
         navigationActions.put(R.id.discover, () -> navigateToFragment(new DiscoverFragment(), false));
         navigationActions.put(R.id.services, () -> navigateToFragment(new ServicesFragment(), false));
         navigationActions.put(R.id.budget, this::getBudget);
@@ -74,12 +90,77 @@ public class MainActivity extends AppCompatActivity implements NavigationManager
         navigationActions.put(R.id.priceList, () -> navigateToFragment(new PriceListFragment(), false));
     }
 
+    private void setupAuthenticatedUserNavigationActions() {
+        navigationActions.clear();
+        navigationActions.put(R.id.discover, () -> navigateToFragment(new DiscoverFragment(), false));
+        navigationActions.put(R.id.services, () -> navigateToFragment(new ServicesFragment(), false));
+        navigationActions.put(R.id.budget, this::getBudget);
+        navigationActions.put(R.id.categories, () -> navigateToFragment(new CategoriesFragment(), false));
+//        navigationActions.put(R.id.priceList, () -> navigateToFragment(new PriceListFragment(), false));
+        navigationActions.put(R.id.profile, () -> navigateToFragment(new ProfileFragment(), false));
+    }
+
+    private void setupBusinessOwnerNavigationActions() {
+        navigationActions.clear();
+        navigationActions.put(R.id.discover, () -> navigateToFragment(new DiscoverFragment(), false));
+        navigationActions.put(R.id.services, () -> navigateToFragment(new ServicesFragment(), false));
+        navigationActions.put(R.id.budget, this::getBudget);
+        navigationActions.put(R.id.categories, () -> navigateToFragment(new CategoriesFragment(), false));
+//        navigationActions.put(R.id.priceList, () -> navigateToFragment(new PriceListFragment(), false));
+        navigationActions.put(R.id.profile, () -> navigateToFragment(new ProfileFragment(), false));
+    }
+
+    private void setupEventOrganizerNavigationActions() {
+        navigationActions.clear();
+        navigationActions.put(R.id.discover, () -> navigateToFragment(new DiscoverFragment(), false));
+        navigationActions.put(R.id.services, () -> navigateToFragment(new ServicesFragment(), false));
+        navigationActions.put(R.id.budget, this::getBudget);
+        navigationActions.put(R.id.categories, () -> navigateToFragment(new CategoriesFragment(), false));
+//        navigationActions.put(R.id.priceList, () -> navigateToFragment(new PriceListFragment(), false));
+        navigationActions.put(R.id.profile, () -> navigateToFragment(new ProfileFragment(), false));
+    }
+
+    private void setupAdminNavigationActions() {
+        navigationActions.clear();
+        navigationActions.put(R.id.discover, () -> navigateToFragment(new DiscoverFragment(), false));
+        navigationActions.put(R.id.notifications, () -> navigateToFragment(new NotificationsFragment(), false));
+        navigationActions.put(R.id.reviews, () -> navigateToFragment(new ReviewsFragment(), false));
+        navigationActions.put(R.id.reports, () -> navigateToFragment(new ReportsFragment(), false));
+        navigationActions.put(R.id.profile, () -> navigateToFragment(new ProfileFragment(), false));
+    }
+
+//    private void setupBottomNavigation() {
+//        bottomNavigationView = binding.bottomNavigation;
+//        bottomNavigationView.getMenu().clear();
+//        bottomNavigationView.inflateMenu(R.menu.bottom_nav_menu_business_owner);
+//        bottomNavigationView.setOnItemSelectedListener(this::navigationLogic);
+//    }
+
     private void setupBottomNavigation() {
         bottomNavigationView = binding.bottomNavigation;
         bottomNavigationView.getMenu().clear();
-        bottomNavigationView.inflateMenu(R.menu.bottom_nav_menu_business_owner);
+
+        String role = resolveUserRole(); // "ADMIN", "BUSINESS_OWNER", "AUTHENTICATED_USER"
+        if ("ADMIN".equalsIgnoreCase(role)) {
+            bottomNavigationView.inflateMenu(R.menu.bottom_nav_menu_admin);
+            setupAdminNavigationActions();
+        } else if ("BUSINESS_OWNER".equalsIgnoreCase(role)) {
+            bottomNavigationView.inflateMenu(R.menu.bottom_nav_menu_business_owner);
+            setupBusinessOwnerNavigationActions();
+        } else if ("EVENT_ORGANIZER".equalsIgnoreCase(role)) {
+            bottomNavigationView.inflateMenu(R.menu.bottom_nav_menu_event_organizer);
+            setupEventOrganizerNavigationActions();
+        } else if ("AUTHENTICATED_USER".equalsIgnoreCase(role)) {
+            bottomNavigationView.inflateMenu(R.menu.bottom_nav_menu_auth_user);
+            setupAuthenticatedUserNavigationActions();
+        } else {
+            bottomNavigationView.inflateMenu(R.menu.bottom_nav_menu_guest);
+            setupGuestNavigationActions();
+        }
+
         bottomNavigationView.setOnItemSelectedListener(this::navigationLogic);
     }
+
 
     private void setupBackPressHandler() {
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {

@@ -28,17 +28,13 @@
         app:labelVisibilityMode="labeled"
         />
 
-<!--    <item-->
-<!--        android:id="@+id/priceList"-->
-<!--        android:icon="@drawable/prices"-->
-<!--        android:title="@string/prices"-->
-<!--        app:labelVisibilityMode="labeled"-->
-<!--        />-->
-
     <item
-        android:id="@+id/profile"
-        android:icon="@drawable/ic_profile"
-        android:title="@string/profile"
-        app:labelVisibilityMode="labeled" />
+        android:id="@+id/priceList"
+        android:icon="@drawable/prices"
+        android:title="@string/prices"
+        app:labelVisibilityMode="labeled"
+        />
+
+
 
 </menu>
