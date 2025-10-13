@@ -8,11 +8,11 @@
         android:title="@string/home"
         app:labelVisibilityMode="labeled" />
 
-    <item
-        android:id="@+id/notifications"
-        android:icon="@drawable/ic_notifications"
-        android:title="@string/notifications"
-        app:labelVisibilityMode="labeled" />
+<!--    <item-->
+<!--        android:id="@+id/notifications"-->
+<!--        android:icon="@drawable/ic_notifications"-->
+<!--        android:title="@string/notifications"-->
+<!--        app:labelVisibilityMode="labeled" />-->
 
     <item
         android:id="@+id/reviews"
@@ -26,9 +26,9 @@
         android:title="@string/reports"
         app:labelVisibilityMode="labeled" />
 
-    <item
-        android:id="@+id/profile"
-        android:icon="@drawable/ic_profile"
-        android:title="@string/profile"
-        app:labelVisibilityMode="labeled" />
+<!--    <item-->
+<!--        android:id="@+id/profile"-->
+<!--        android:icon="@drawable/ic_profile"-->
+<!--        android:title="@string/profile"-->
+<!--        app:labelVisibilityMode="labeled" />-->
 </menu>

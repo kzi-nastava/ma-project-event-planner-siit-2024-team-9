@@ -2,6 +2,7 @@ package com.example.eventify.activities;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -31,6 +32,7 @@ import com.example.eventify.utils.JwtUtils;
 import com.example.eventify.utils.NavigationManager;
 import com.example.eventify.utils.RetrofitClient;
 import com.example.eventify.utils.UserSession;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -61,6 +63,25 @@ public class MainActivity extends AppCompatActivity implements NavigationManager
         userSession = new UserSession(this);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        MaterialToolbar topBar = findViewById(R.id.top_app_bar);
+
+        // toolbar
+        LoginService ls = new LoginService(this);
+        boolean isLoggedIn = ls.getToken() != null && ls.isTokenValid();
+        topBar.setVisibility(isLoggedIn ? View.VISIBLE : View.GONE);
+
+        topBar.setOnMenuItemClickListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.action_notifications) {
+                navigateToFragment(new NotificationsFragment(), false);
+                return true;
+            } else if (id == R.id.action_profile) {
+                navigateToFragment(new ProfileFragment(), false);
+                return true;
+            }
+            return false;
+        });
 
 //        setupNavigationActions();
         setupBottomNavigation();
@@ -96,8 +117,8 @@ public class MainActivity extends AppCompatActivity implements NavigationManager
         navigationActions.put(R.id.services, () -> navigateToFragment(new ServicesFragment(), false));
         navigationActions.put(R.id.budget, this::getBudget);
         navigationActions.put(R.id.categories, () -> navigateToFragment(new CategoriesFragment(), false));
-//        navigationActions.put(R.id.priceList, () -> navigateToFragment(new PriceListFragment(), false));
-        navigationActions.put(R.id.profile, () -> navigateToFragment(new ProfileFragment(), false));
+        navigationActions.put(R.id.priceList, () -> navigateToFragment(new PriceListFragment(), false));
+//        navigationActions.put(R.id.profile, () -> navigateToFragment(new ProfileFragment(), false));
     }
 
     private void setupBusinessOwnerNavigationActions() {
@@ -106,8 +127,8 @@ public class MainActivity extends AppCompatActivity implements NavigationManager
         navigationActions.put(R.id.services, () -> navigateToFragment(new ServicesFragment(), false));
         navigationActions.put(R.id.budget, this::getBudget);
         navigationActions.put(R.id.categories, () -> navigateToFragment(new CategoriesFragment(), false));
-//        navigationActions.put(R.id.priceList, () -> navigateToFragment(new PriceListFragment(), false));
-        navigationActions.put(R.id.profile, () -> navigateToFragment(new ProfileFragment(), false));
+        navigationActions.put(R.id.priceList, () -> navigateToFragment(new PriceListFragment(), false));
+//        navigationActions.put(R.id.profile, () -> navigateToFragment(new ProfileFragment(), false));
     }
 
     private void setupEventOrganizerNavigationActions() {
@@ -116,17 +137,17 @@ public class MainActivity extends AppCompatActivity implements NavigationManager
         navigationActions.put(R.id.services, () -> navigateToFragment(new ServicesFragment(), false));
         navigationActions.put(R.id.budget, this::getBudget);
         navigationActions.put(R.id.categories, () -> navigateToFragment(new CategoriesFragment(), false));
-//        navigationActions.put(R.id.priceList, () -> navigateToFragment(new PriceListFragment(), false));
-        navigationActions.put(R.id.profile, () -> navigateToFragment(new ProfileFragment(), false));
+        navigationActions.put(R.id.priceList, () -> navigateToFragment(new PriceListFragment(), false));
+//        navigationActions.put(R.id.profile, () -> navigateToFragment(new ProfileFragment(), false));
     }
 
     private void setupAdminNavigationActions() {
         navigationActions.clear();
         navigationActions.put(R.id.discover, () -> navigateToFragment(new DiscoverFragment(), false));
-        navigationActions.put(R.id.notifications, () -> navigateToFragment(new NotificationsFragment(), false));
+//        navigationActions.put(R.id.notifications, () -> navigateToFragment(new NotificationsFragment(), false));
         navigationActions.put(R.id.reviews, () -> navigateToFragment(new ReviewsFragment(), false));
         navigationActions.put(R.id.reports, () -> navigateToFragment(new ReportsFragment(), false));
-        navigationActions.put(R.id.profile, () -> navigateToFragment(new ProfileFragment(), false));
+//        navigationActions.put(R.id.profile, () -> navigateToFragment(new ProfileFragment(), false));
     }
 
 //    private void setupBottomNavigation() {
