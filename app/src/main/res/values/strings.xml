@@ -106,6 +106,7 @@
     <string name="review_approved">Review approved</string>
     <string name="review_deleted">Review deleted</string>
     <string name="no_reviews_pending">No reviews pending</string>
+    <string name="report_user">Report user</string>
 
 
 </resources>

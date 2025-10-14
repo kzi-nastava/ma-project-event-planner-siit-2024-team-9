@@ -1,6 +1,7 @@
 package com.example.eventify.fragments;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -72,9 +73,9 @@ public class ServiceDetailsFragment extends Fragment {
 
     Event[] organizerEvents;
 
-    EventService eventService = RetrofitClient.getClient().create(EventService.class);
-    UserService userService = RetrofitClient.getClient().create(UserService.class);
-    ReviewService reviewService = RetrofitClient.getClient().create(ReviewService.class);
+    private EventService eventService;
+    private UserService userService;
+    private ReviewService reviewService;
     private UserSession userSession;
 
     private boolean serviceDetails = true;
@@ -99,6 +100,12 @@ public class ServiceDetailsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Context appCtx = requireContext().getApplicationContext();
+        eventService  = RetrofitClient.getClient(appCtx).create(EventService.class);
+        userService   = RetrofitClient.getClient(appCtx).create(UserService.class);
+        reviewService = RetrofitClient.getClient(appCtx).create(ReviewService.class);
+
         userSession = new UserSession(requireContext());
 
         if (requireActivity() instanceof NavigationManager) {
@@ -359,7 +366,7 @@ public class ServiceDetailsFragment extends Fragment {
             public void onResponse(Call<Budget> call, Response<Budget> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Budget budget = response.body();
-                    BudgetService budgetService = RetrofitClient.getClient().create(BudgetService.class);
+                    BudgetService budgetService =RetrofitClient.getClient(requireContext()).create(BudgetService.class);
                     budgetService.buy(UUID.fromString(budget.getId()), showedProduct).enqueue(new Callback<Budget>() {
                         @Override
                         public void onResponse(Call<Budget> call, Response<Budget> response) {
@@ -491,7 +498,7 @@ public class ServiceDetailsFragment extends Fragment {
                     Purchase purchase = new Purchase(eventsArray, showedProduct);
                     
                     // Call backend isPurchased endpoint
-                    SolutionService solutionService = RetrofitClient.getClient().create(SolutionService.class);
+                    SolutionService solutionService =RetrofitClient.getClient(requireContext()).create(SolutionService.class);
                     solutionService.isPurchased(purchase).enqueue(new Callback<Boolean>() {
                         @Override
                         public void onResponse(Call<Boolean> call, Response<Boolean> response) {
@@ -585,7 +592,7 @@ public class ServiceDetailsFragment extends Fragment {
     }
 
     private void setService() {
-        ServiceService service = RetrofitClient.getClient().create(ServiceService.class);
+        ServiceService service =RetrofitClient.getClient(requireContext()).create(ServiceService.class);
         service.get(showedSolution.getId()).enqueue(new Callback<Service>() {
             @Override
             public void onResponse(Call<Service> call, Response<Service> response) {
@@ -604,7 +611,7 @@ public class ServiceDetailsFragment extends Fragment {
     }
 
     private void setProduct() {
-        ProductService service = RetrofitClient.getClient().create(ProductService.class);
+        ProductService service =RetrofitClient.getClient(requireContext()).create(ProductService.class);
         service.get(showedSolution.getId()).enqueue(new Callback<Product>() {
             @Override
             public void onResponse(Call<Product> call, Response<Product> response) {

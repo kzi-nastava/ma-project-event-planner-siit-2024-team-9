@@ -53,7 +53,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
     private final OnBudgetUpdatedListener budgetUpdatedListener;
     private Map<Integer, Boolean> editModeMap = new HashMap<>();
     private Budget budget;
-    private BudgetService service = RetrofitClient.getClient().create(BudgetService.class);
+    private BudgetService service;
     private NavigationManager navigationManager;
 
     public ItemListAdapter(Context context, List<BudgetItem> items, FragmentManager fragmentManager, Budget budget, OnBudgetUpdatedListener budgetUpdatedListener) {
@@ -62,6 +62,11 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
         this.fragmentManager = fragmentManager;
         this.budget = budget;
         this.budgetUpdatedListener = budgetUpdatedListener;
+
+        this.service = RetrofitClient
+                .getClient(context.getApplicationContext())
+                .create(BudgetService.class);
+
         if (context instanceof NavigationManager) {
             this.navigationManager = (NavigationManager) context;
         }

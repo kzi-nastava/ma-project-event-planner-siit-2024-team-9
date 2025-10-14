@@ -118,7 +118,7 @@ public class EventListFragment extends Fragment
         eventListAdapter = new EventListAdapter(getContext(), events);
         eventRecyclerView.setAdapter(eventListAdapter);
 
-        eventService = RetrofitClient.getClient().create(EventService.class);
+        eventService =RetrofitClient.getClient(requireContext()).create(EventService.class);
 
 
 

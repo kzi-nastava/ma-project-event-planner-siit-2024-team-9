@@ -37,7 +37,7 @@ import retrofit2.Response;
 
 public class SolutionFilterFragment extends Fragment {
 
-    ServiceService service = RetrofitClient.getClient().create(ServiceService.class);
+    private ServiceService serviceService;
     Collection<Service> filtered;
     Collection<SolutionCategory> categories = new ArrayList<>();
     Collection<EventType> types = new ArrayList<>();
@@ -63,6 +63,7 @@ public class SolutionFilterFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        serviceService = RetrofitClient.getClient(requireContext().getApplicationContext()).create(ServiceService.class);
     }
 
     @Override
@@ -82,7 +83,7 @@ public class SolutionFilterFragment extends Fragment {
     }
 
     public void getCategories() {
-        SolutionCategoryService service = RetrofitClient.getClient().create(SolutionCategoryService.class);
+        SolutionCategoryService service =RetrofitClient.getClient(requireContext()).create(SolutionCategoryService.class);
         service.getActive().enqueue(new Callback<Collection<SolutionCategory>>() {
             @Override
             public void onResponse(Call<Collection<SolutionCategory>> call, Response<Collection<SolutionCategory>> response) {
@@ -106,7 +107,7 @@ public class SolutionFilterFragment extends Fragment {
     }
 
     public void getTypes() {
-        EventTypeService service = RetrofitClient.getClient().create(EventTypeService.class);
+        EventTypeService service =RetrofitClient.getClient(requireContext()).create(EventTypeService.class);
         service.getAll().enqueue(new Callback<Collection<EventType>>() {
             @Override
             public void onResponse(Call<Collection<EventType>> call, Response<Collection<EventType>> response) {
@@ -172,7 +173,7 @@ public class SolutionFilterFragment extends Fragment {
     }
 
     private void filter(String search, String category, String event, Double price, boolean availability) {
-        service.filter(search, category, event, price, availability).enqueue(new Callback<Collection<Service>>() {
+        serviceService.filter(search, category, event, price, availability).enqueue(new Callback<Collection<Service>>() {
             @Override
             public void onResponse(Call<Collection<Service>> call, Response<Collection<Service>> response) {
                 filtered = response.body();

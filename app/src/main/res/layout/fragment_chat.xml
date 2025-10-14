@@ -46,6 +46,14 @@
                 android:text="Connecting..."
                 android:visibility="visible" />
 
+            <ImageButton
+                android:id="@+id/btnReport"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_reports"
+                android:contentDescription="@string/report_user" />
+
         </LinearLayout>
 
         <!-- Messages -->

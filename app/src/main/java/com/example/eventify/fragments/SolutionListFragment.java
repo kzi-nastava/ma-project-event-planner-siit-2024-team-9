@@ -112,7 +112,7 @@ public class SolutionListFragment extends Fragment
         solutionListAdapter = new SolutionListAdapter(requireContext(), solutions, requireActivity().getSupportFragmentManager());
         solutionRecyclerView.setAdapter(solutionListAdapter);
 
-        solutionService = RetrofitClient.getClient().create(SolutionService.class);
+        solutionService =RetrofitClient.getClient(requireContext()).create(SolutionService.class);
 
         fetchSolutions();
         setupScrollListener();

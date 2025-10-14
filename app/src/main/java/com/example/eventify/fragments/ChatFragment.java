@@ -22,6 +22,7 @@ import com.example.eventify.services.others.WebSocketService;
 import com.example.eventify.utils.NavigationManager;
 import com.example.eventify.utils.RetrofitClient;
 import com.example.eventify.utils.UserSession;
+import com.example.eventify.fragments.ReportsFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +65,7 @@ public class ChatFragment extends Fragment implements WebSocketService.WebSocket
         logInfo("onCreate() called");
         
         userSession = new UserSession(requireContext());
-        messageService = RetrofitClient.getClient().create(MessageService.class);
+        messageService = RetrofitClient.getClient(requireContext()).create(MessageService.class);
         
         // Get NavigationManager from activity
         if (requireActivity() instanceof NavigationManager) {
@@ -124,6 +125,13 @@ public class ChatFragment extends Fragment implements WebSocketService.WebSocket
 
     private void setupUI() {
         binding.textPartnerName.setText(chatPartner.getEmail());
+
+        binding.btnReport.setOnClickListener(v -> {
+            // currentUser = prijavljuje; chatPartner = prijavljeni
+            new ReportUserDialogFragment()
+                    .newInstance(currentUser, chatPartner)
+                    .show(getParentFragmentManager(), ReportUserDialogFragment.TAG);
+        });
         
         // Setup back arrow
         binding.backButton.setOnClickListener(v -> {

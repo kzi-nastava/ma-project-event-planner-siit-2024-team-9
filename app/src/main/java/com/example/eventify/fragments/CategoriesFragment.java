@@ -38,7 +38,7 @@ import retrofit2.Response;
  */
 public class CategoriesFragment extends Fragment {
 
-    SolutionCategoryService service = RetrofitClient.getClient().create(SolutionCategoryService.class);
+    SolutionCategoryService service;
 
     boolean isExistingEditMode = false;
     boolean isProposedEditMode = false;
@@ -62,6 +62,7 @@ public class CategoriesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        service = RetrofitClient.getClient(requireContext().getApplicationContext()).create(SolutionCategoryService.class);
     }
 
     @Override

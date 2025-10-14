@@ -52,12 +52,13 @@ public class ServicesFragment extends Fragment implements SolutionFilterFragment
         // Required empty public constructor
     }
 
-    ServiceService service = RetrofitClient.getClient().create(ServiceService.class);
+    ServiceService service;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         userSession = new UserSession(requireContext());
+        service = RetrofitClient.getClient(requireContext().getApplicationContext()).create(ServiceService.class);
     }
 
     @Override

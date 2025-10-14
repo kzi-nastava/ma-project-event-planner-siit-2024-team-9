@@ -45,11 +45,11 @@ public class BudgetFragment extends Fragment implements CategoryListAdapter.OnCa
     FragmentBudgetBinding binding;
     ArrayList<SolutionCategory> categories = new ArrayList<>();
     ArrayList<SolutionCategory> selected = new ArrayList<>();
-    SolutionCategoryService categoryService = RetrofitClient.getClient().create(SolutionCategoryService.class);
+    SolutionCategoryService categoryService;
     ItemListAdapter adapter;
     UserSession userSession;
 
-    BudgetService service = RetrofitClient.getClient().create(BudgetService.class);
+    BudgetService service;
     ArrayList<BudgetItem> items;
 
     public static BudgetFragment newInstance(String eventName) {
@@ -63,6 +63,8 @@ public class BudgetFragment extends Fragment implements CategoryListAdapter.OnCa
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        categoryService = RetrofitClient.getClient(requireContext().getApplicationContext()).create(SolutionCategoryService.class);
+        service = RetrofitClient.getClient(requireContext().getApplicationContext()).create(BudgetService.class);
         userSession = new UserSession(requireContext());
         if (getArguments() != null) {
             eventName = getArguments().getString("eventName");
@@ -89,7 +91,7 @@ public class BudgetFragment extends Fragment implements CategoryListAdapter.OnCa
     }
 
     private void getEventAndBudget() {
-        EventService eventService = RetrofitClient.getClient().create(EventService.class);
+        EventService eventService =RetrofitClient.getClient(requireContext()).create(EventService.class);
         // Get event by name using the backend getByName endpoint
         eventService.getByName(eventName).enqueue(new Callback<Event>() {
             @Override
@@ -156,7 +158,7 @@ public class BudgetFragment extends Fragment implements CategoryListAdapter.OnCa
     }
 
     private void getBudgetByEvent() {
-        EventService service = RetrofitClient.getClient().create(EventService.class);
+        EventService service =RetrofitClient.getClient(requireContext()).create(EventService.class);
         service.getBudget(event.getId()).enqueue(new Callback<Budget>() {
             @Override
             public void onResponse(Call<Budget> call, Response<Budget> response) {
