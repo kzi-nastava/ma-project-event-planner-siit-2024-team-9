@@ -100,6 +100,12 @@
     <string name="action_failed">Action Failed</string>
     <string name="network_error">Network Error</string>
     <string name="delete">Delete</string>
+    <string name="approve">Approve</string>
+    <string name="review">Review</string>
+    <string name="failed_to_load">Failed to load</string>
+    <string name="review_approved">Review approved</string>
+    <string name="review_deleted">Review deleted</string>
+    <string name="no_reviews_pending">No reviews pending</string>
 
 
 </resources>

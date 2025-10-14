@@ -46,4 +46,7 @@ public interface ReviewService {
     // Delete a review by ID
     @DELETE("reviews/{id}")
     Call<Boolean> delete(@Path("id") UUID id);
+
+    @PUT("reviews/approve/{id}")
+    Call<Boolean> approve(@Path("id") UUID id);
 }

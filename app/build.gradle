@@ -72,12 +72,16 @@ dependencies {
     implementation libs.flexbox
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
     implementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.12.0"))
+    implementation("com.squareup.okhttp3:okhttp")
+    implementation("com.squareup.okhttp3:logging-interceptor")
     
     // WebSocket dependencies for chat
-    implementation 'org.java-websocket:Java-WebSocket:1.5.3'
-    implementation 'com.neovisionaries:nv-websocket-client:2.14'
-    implementation 'org.springframework:spring-messaging:5.3.21'
+    implementation libs.java.websocket
+    implementation libs.nv.websocket.client
+//    implementation libs.spring.messaging
+
+    implementation libs.swiperefreshlayout
 
 }
