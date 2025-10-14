@@ -81,7 +81,6 @@ public class ServiceDetailsFragment extends Fragment {
 
     private boolean isPurchased = false;
     private Purchase purchase;
-    private int currentRating = 0;
 
     private NavigationManager navigationManager;
 
@@ -169,16 +168,11 @@ public class ServiceDetailsFragment extends Fragment {
 
         binding.favorite.setOnClickListener(v -> toggleFavorite());
 
-        binding.submitReview.setVisibility(View.GONE);
+//        samo zbog testiranja, da mogu da submit
+//        binding.submitReview.setVisibility(View.GONE);
 
         adapter = new ImageListAdapter(requireContext(), showedSolution.getImages(), getParentFragmentManager());
         binding.recyclerView.setAdapter(adapter);
-
-        binding.star1.setOnClickListener( v -> rate1());
-        binding.star2.setOnClickListener( v -> rate2());
-        binding.star3.setOnClickListener( v -> rate3());
-        binding.star4.setOnClickListener( v -> rate4());
-        binding.star5.setOnClickListener( v -> rate5());
 
         binding.submitReview.setOnClickListener(v -> submitReview());
 
@@ -631,47 +625,16 @@ public class ServiceDetailsFragment extends Fragment {
         });
     }
 
-    private void rate1() {
-        currentRating = 1;
-        updateStarRating();
-    }
-
-    private void rate2() {
-        currentRating = 2;
-        updateStarRating();
-    }
-
-    private void rate3() {
-        currentRating = 3;
-        updateStarRating();
-    }
-
-    private void rate4() {
-        currentRating = 4;
-        updateStarRating();
-    }
-
-    private void rate5() {
-        currentRating = 5;
-        updateStarRating();
-    }
-
-    private void updateStarRating() {
-        binding.star1.setSelected(currentRating >= 1);
-        binding.star2.setSelected(currentRating >= 2);
-        binding.star3.setSelected(currentRating >= 3);
-        binding.star4.setSelected(currentRating >= 4);
-        binding.star5.setSelected(currentRating >= 5);
-    }
-
     private void submitReview() {
         if (!userSession.isValidSession()) {
             Toast.makeText(requireContext(), "Please log in to submit a review", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        int grade = Math.round(binding.rbNewReview.getRating());
         String commentText = binding.descriptionEditText.getText().toString().trim();
-        if (commentText.isEmpty() || currentRating == 0) {
+
+        if (grade <= 0 || commentText.isEmpty()) {
             Toast.makeText(requireContext(), "Please provide a rating and comment", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -679,37 +642,27 @@ public class ServiceDetailsFragment extends Fragment {
         Review review = new Review();
         review.setSolution(showedSolution);
         review.setComment(commentText);
-        review.setGrade(currentRating);
+        review.setGrade(grade);
         review.setStatus("PENDING");
 
         reviewService.add(review).enqueue(new Callback<Review>() {
-            @Override
-            public void onResponse(Call<Review> call, Response<Review> response) {
+            @Override public void onResponse(Call<Review> call, Response<Review> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(requireContext(), "Review submitted successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "Review submitted (pending approval)", Toast.LENGTH_SHORT).show();
                     binding.descriptionEditText.setText("");
-                    currentRating = 0;
-                    updateStarRating();
+                    binding.rbNewReview.setRating(0);
+                    loadSolutionReviews();
                 } else {
                     Toast.makeText(requireContext(), "Failed to submit review", Toast.LENGTH_SHORT).show();
                 }
             }
-
-            @Override
-            public void onFailure(Call<Review> call, Throwable t) {
-                Toast.makeText(requireContext(), "Error submitting review", Toast.LENGTH_SHORT).show();
+            @Override public void onFailure(Call<Review> call, Throwable t) {
+                Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
 
-    private void resetRatings() {
-        binding.star1.setSelected(false);
-        binding.star2.setSelected(false);
-        binding.star3.setSelected(false);
-        binding.star4.setSelected(false);
-        binding.star5.setSelected(false);
-    }
 
     private void openChat() {
         if (!userSession.isValidSession()) {

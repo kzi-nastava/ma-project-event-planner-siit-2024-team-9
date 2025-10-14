@@ -154,62 +154,26 @@
                         android:textSize="20sp"
                         android:layout_marginBottom="15dp"
                         android:layout_marginTop="20dp"
-                        android:hint="Add review"
-                        android:textStyle="bold"
-                        android:textColorHint="@color/black"/>
+                        android:text="Add review"
+                        android:textStyle="bold"/>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <RatingBar
+                        android:id="@+id/rb_new_review"
+                        style="@style/Widget.AppCompat.RatingBar"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
-                        android:orientation="horizontal">
+                        android:numStars="5"
+                        android:stepSize="1"
+                        android:isIndicator="false"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:scaleX="1"
+                        android:scaleY="1"
+                        android:progressTint="@color/rating_filled"
+                        android:secondaryProgressTint="@color/rating_filled"
+                        android:progressBackgroundTint="@color/rating_empty"
+                        android:thumbTint="@color/amber_500" />
 
-                        <ImageButton
-                            android:id="@+id/star1"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_marginEnd="5dp"
-                            android:src="@drawable/check"
-                            android:layout_gravity="end"
-                            android:background="@drawable/rate_press"/>
-
-                        <ImageButton
-                            android:id="@+id/star2"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_marginEnd="5dp"
-                            android:src="@drawable/check"
-                            android:layout_gravity="end"
-                            android:background="@drawable/rate_press"/>
-
-                        <ImageButton
-                            android:id="@+id/star3"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_marginEnd="5dp"
-                            android:src="@drawable/check"
-                            android:layout_gravity="end"
-                            android:background="@drawable/rate_press"/>
-
-                        <ImageButton
-                            android:id="@+id/star4"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_marginEnd="5dp"
-                            android:src="@drawable/check"
-                            android:layout_gravity="end"
-                            android:background="@drawable/rate_press"/>
-
-                        <ImageButton
-                            android:id="@+id/star5"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_marginEnd="5dp"
-                            android:src="@drawable/check"
-                            android:layout_gravity="end"
-                            android:background="@drawable/rate_press"/>
-
-                    </LinearLayout>
 
                     <EditText
                         android:id="@+id/descriptionEditText"
@@ -221,16 +185,10 @@
                         android:minLines="1"
                         android:textColor="@android:color/black"
                         android:backgroundTint="@android:color/black"
+                        android:layout_marginTop="10dp"
                         android:layout_marginBottom="20dp" />
 
-                    <!-- Submit and Delete Buttons -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="70dp">
-
-                                            <com.google.android.material.button.MaterialButton
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/submitReview"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -238,9 +196,8 @@
                         android:backgroundTint="@color/black"
                         android:textColor="@android:color/white"
                         android:layout_marginBottom="20dp" />
-                </LinearLayout>
 
-                <!-- Comments Section -->
+                    <!-- Comments Section -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

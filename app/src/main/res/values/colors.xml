@@ -11,4 +11,6 @@
     <color name="light_gray_card">#E0E0E0</color>
     <color name="gray">#FF888888</color>
     <color name="gray_light">#FFF0F0F0</color>
+    <color name="amber_500">#FFC107</color>
+    <color name="rating_empty">#FFE8B6</color>
 </resources>
