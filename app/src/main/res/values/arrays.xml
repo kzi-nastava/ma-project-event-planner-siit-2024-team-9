@@ -19,4 +19,20 @@
         <item>0</item>
         <item>500</item>
     </array>
+
+    <string-array name="report_reasons_values">
+        <item>SPAM</item>
+        <item>HARASSMENT</item>
+        <item>INAPPROPRIATE</item>
+        <item>FRAUD</item>
+        <item>OTHER</item>
+    </string-array>
+
+    <string-array name="report_reasons_labels">
+        <item>Spam</item>
+        <item>Harassment</item>
+        <item>Inappropriate content</item>
+        <item>Fraud / Scam</item>
+        <item>Other</item>
+    </string-array>
 </resources>

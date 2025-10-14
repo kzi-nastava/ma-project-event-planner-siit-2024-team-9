@@ -57,6 +57,9 @@ public class BookServiceDialogFragment extends DialogFragment {
     private final Calendar selectedDate = Calendar.getInstance();
     private final List<Event> userEvents = new ArrayList<>();
     private ArrayAdapter<String> eventAdapter;
+    private EventService eventService;
+    private ServiceReservationService reservationService;
+    private UserSession userSession;
 
     private final SimpleDateFormat dateFmt = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
@@ -73,6 +76,18 @@ public class BookServiceDialogFragment extends DialogFragment {
         if (providerName != null) b.putString("providerName", providerName);
         f.setArguments(b);
         return f;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // koristimo application context da bude stabilno
+        android.content.Context appCtx = requireContext().getApplicationContext();
+
+        eventService = RetrofitClient.getClient(appCtx).create(EventService.class);
+        reservationService = RetrofitClient.getClient(appCtx).create(ServiceReservationService.class);
+        userSession = new UserSession(requireContext());
     }
 
     @Override
@@ -174,8 +189,8 @@ public class BookServiceDialogFragment extends DialogFragment {
     }
 
     private void loadUserEvents() {
-        EventService eventService = RetrofitClient.getClient().create(EventService.class);
-        UUID currentUserId = new UserSession(requireContext()).getCurrentUserId();
+        EventService eventService =RetrofitClient.getClient(requireContext()).create(EventService.class);
+        UUID currentUserId = userSession.getCurrentUserId();
 
         eventService.getByOwner(currentUserId).enqueue(new Callback<List<Event>>() {
             @Override public void onResponse(@NonNull Call<List<Event>> call, @NonNull Response<List<Event>> resp) {
@@ -247,8 +262,7 @@ public class BookServiceDialogFragment extends DialogFragment {
 
         btnBook.setEnabled(false);
 
-        ServiceReservationService api = RetrofitClient.getClient().create(ServiceReservationService.class);
-        api.create(payload).enqueue(new Callback<ServiceReservation>() {
+        reservationService.create(payload).enqueue(new Callback<ServiceReservation>() {
             @Override public void onResponse(@NonNull Call<ServiceReservation> call,@NonNull Response<ServiceReservation> resp) {
                 btnBook.setEnabled(true);
                 if (resp.isSuccessful() && resp.body() != null) {

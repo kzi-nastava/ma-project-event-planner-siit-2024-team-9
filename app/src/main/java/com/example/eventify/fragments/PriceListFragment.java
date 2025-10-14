@@ -47,7 +47,8 @@ import retrofit2.Response;
 public class PriceListFragment extends Fragment {
 
     private FragmentPriceListBinding binding;
-    private SolutionService service = RetrofitClient.getClient().create(SolutionService.class);
+    private SolutionService service;
+    private PDFService pdfService;
     private List<Solution> solutions = new ArrayList<>();
     private boolean editMode = false;
     private UserSession userSession;
@@ -67,6 +68,8 @@ public class PriceListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         userSession = new UserSession(requireContext());
+        service = RetrofitClient.getClient(requireContext().getApplicationContext()).create(SolutionService.class);
+        pdfService = RetrofitClient.getClient(requireContext().getApplicationContext()).create(PDFService.class);
     }
 
     @Override
@@ -114,8 +117,7 @@ public class PriceListFragment extends Fragment {
         showLoading();
         UUID userId = userSession.getCurrentUserId();
         Log.d("PDFDownload", "Attempting to download PDF for userId: " + userId);
-        PDFService pdfApi = RetrofitClient.getClient().create(PDFService.class);
-        pdfApi.getPriceListPdf(userId).enqueue(new Callback<ResponseBody>() {
+        pdfService.getPriceListPdf(userId).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 hideLoading();

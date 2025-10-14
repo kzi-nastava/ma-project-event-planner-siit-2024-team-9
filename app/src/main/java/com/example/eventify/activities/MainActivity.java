@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements NavigationManager
             return;
         }
 
-        EventService service = RetrofitClient.getClient().create(EventService.class);
+        EventService service = RetrofitClient.getClient(getApplicationContext()).create(EventService.class);
         // Get events by owner and navigate to the first event's budget
         service.getByOwner(userSession.getCurrentUserId()).enqueue(new Callback<List<Event>>() {
             @Override

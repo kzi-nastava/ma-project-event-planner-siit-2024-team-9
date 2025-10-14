@@ -92,7 +92,7 @@ public class NotificationsFragment extends Fragment {
         });
         notificationRecyclerView.setAdapter(notificationListAdapter);
 
-        notificationService = RetrofitClient.getClient().create(NotificationService.class);
+        notificationService =RetrofitClient.getClient(requireContext()).create(NotificationService.class);
 
         fetchNotifications();
     }

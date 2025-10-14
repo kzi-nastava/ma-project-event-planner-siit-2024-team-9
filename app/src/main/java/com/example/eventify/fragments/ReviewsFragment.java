@@ -62,7 +62,7 @@ public class ReviewsFragment extends Fragment {
         });
         rv.setAdapter(adapter);
 
-        reviewService = RetrofitClient.getClient().create(ReviewService.class);
+        reviewService =RetrofitClient.getClient(requireContext()).create(ReviewService.class);
 
         swipe.setOnRefreshListener(this::fetch);
         fetch();

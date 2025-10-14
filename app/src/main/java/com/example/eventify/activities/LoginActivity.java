@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.eventify.fragments.RegisterFragment;
 import com.example.eventify.R;
 import com.example.eventify.databinding.ActivityLoginBinding;
+import com.example.eventify.fragments.SuspendDialogFragment;
 import com.example.eventify.services.auth.LoginService;
 
 import java.util.List;
@@ -123,6 +124,16 @@ public class LoginActivity extends AppCompatActivity {
                 // Re-enable login button
                 binding.loginButton.setEnabled(true);
                 binding.loginButton.setText("LOGIN");
+            }
+
+            @Override
+            public void onSuspended(long remainingMs) {
+                // NE LOGUJ — samo prikaži popup
+                binding.loginButton.setEnabled(true);
+                binding.loginButton.setText("LOGIN");
+
+                SuspendDialogFragment f = SuspendDialogFragment.newInstance(remainingMs);
+                f.show(getSupportFragmentManager(), SuspendDialogFragment.TAG);
             }
         });
     }

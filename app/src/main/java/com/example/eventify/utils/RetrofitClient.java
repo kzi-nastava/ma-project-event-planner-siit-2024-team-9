@@ -1,5 +1,7 @@
 package com.example.eventify.utils;
 
+import android.content.Context;
+
 import com.example.eventify.models.users.User;
 import com.example.eventify.models.users.BusinessOwner;
 import com.google.gson.Gson;
@@ -33,7 +35,7 @@ public class RetrofitClient {
     public static final String BASE_URL = "http://192.168.0.31:8080/api/";
     private static Retrofit retrofit;
 
-    public static Retrofit getClient() {
+    public static Retrofit getClient(Context ctx) {
         if (retrofit == null) {
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -51,6 +53,7 @@ public class RetrofitClient {
                     .create();
 
             OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(new AuthInterceptor(ctx.getApplicationContext()))
                     .addInterceptor(logging)
                     .build();
 

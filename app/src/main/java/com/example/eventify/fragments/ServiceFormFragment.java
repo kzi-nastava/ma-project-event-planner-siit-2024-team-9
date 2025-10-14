@@ -71,13 +71,13 @@ public class ServiceFormFragment extends Fragment {
     }
 
     Service selectedService;
-    ServiceService service = RetrofitClient.getClient().create(ServiceService.class);
+    ServiceService service;
     Collection<SolutionCategory> categories = new ArrayList<>();
     Collection<EventType> types = new ArrayList<>();
     ArrayList<String> categoryNames = new ArrayList<>();
     ArrayList<String> typeNames = new ArrayList<>();
     private ArrayList<String> selectedList = new ArrayList<>();
-    SolutionCategoryService categoryService = RetrofitClient.getClient().create(SolutionCategoryService.class);
+    SolutionCategoryService categoryService;
     BusinessOwner owner;
 
     List<MultipartBody.Part> images = new ArrayList<>();
@@ -94,6 +94,8 @@ public class ServiceFormFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        categoryService = RetrofitClient.getClient(requireContext().getApplicationContext()).create(SolutionCategoryService.class);
+        service = RetrofitClient.getClient(requireContext().getApplicationContext()).create(ServiceService.class);
     }
 
     public void setEdit() {
@@ -171,7 +173,7 @@ public class ServiceFormFragment extends Fragment {
     }
 
     private void getOwner() {
-        BusinessOwnerService businessOwnerService = RetrofitClient.getClient().create(BusinessOwnerService.class);
+        BusinessOwnerService businessOwnerService =RetrofitClient.getClient(requireContext()).create(BusinessOwnerService.class);
         UserSession userSession = new UserSession(requireContext());
         UUID currentUserId = userSession.getCurrentUserId();
         
@@ -548,7 +550,7 @@ public class ServiceFormFragment extends Fragment {
 
 
     public void getTypes() {
-        EventTypeService service = RetrofitClient.getClient().create(EventTypeService.class);
+        EventTypeService service =RetrofitClient.getClient(requireContext()).create(EventTypeService.class);
         service.getAll().enqueue(new Callback<Collection<EventType>>() {
             @Override
             public void onResponse(Call<Collection<EventType>> call, Response<Collection<EventType>> response) {

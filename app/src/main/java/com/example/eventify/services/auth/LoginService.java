@@ -17,7 +17,7 @@ import retrofit2.Response;
 public class LoginService {
 
     private static final String TAG = "LoginService";
-    private ILoginService loginService = RetrofitClient.getClient().create(ILoginService.class);
+    private ILoginService loginService;
 
     private Context context;
     private UserSession userSession;
@@ -28,11 +28,13 @@ public class LoginService {
     public interface LoginCallback {
         void onSuccess(String email, String role);
         void onFailure(String errorMessage);
+        default void onSuspended(long remainingMs) {}
     }
 
     public LoginService(Context context) {
         this.context = context;
         this.userSession = new UserSession(context);
+        this.loginService = RetrofitClient.getClient(this.context).create(ILoginService.class);
     }
 
     public void login(String email, String password, LoginCallback callback) {
@@ -40,44 +42,59 @@ public class LoginService {
             @Override
             public void onResponse(Call<UserTokenState> call, Response<UserTokenState> response) {
                 if (response.isSuccessful()) {
-                    UserTokenState userTokenState = response.body();
-                    if (userTokenState == null) {
+                    UserTokenState uts = response.body();
+                    if (uts == null) {
                         callback.onFailure("Invalid response from server");
                         return;
                     }
-                    
-                    // Extract user information from JWT token
-                    String token = userTokenState.getAccessToken();
+
+                    // 1) prvo proveri suspend
+                    if (Boolean.TRUE.equals(uts.getSuspended())) {
+                        long remaining = uts.getRemainingTime() != null ? uts.getRemainingTime() : 0L;
+                        callback.onSuspended(remaining);
+                        return;
+                    }
+
+                    // 2) pa tek onda token
+                    String token = uts.getAccessToken();
+                    if (token == null || token.isEmpty()) {
+                        callback.onFailure("Invalid response from server");
+                        return;
+                    }
+
                     JwtUtils.JwtClaims claims = JwtUtils.decodeToken(token);
-                    
                     if (claims != null) {
-                        // Save user session with decoded information
                         userSession.saveUserSession(claims.getUserId(), claims.getEmail(), token);
-                        Log.i(TAG, "Login successful for user: " + claims.getEmail() + " with role: " + claims.getRole());
-                        
-                        // Save token for backward compatibility
-                        saveToken(token, userTokenState.getExpiresIn());
-                        
+                        saveToken(token, uts.getExpiresIn());
                         callback.onSuccess(claims.getEmail(), claims.getRole());
                     } else {
-                        Log.e(TAG, "Failed to decode JWT token");
                         callback.onFailure("Failed to process authentication token");
                     }
-                } else {
-                    Log.e(TAG, "Login failed with response code: " + response.code());
-                    String errorMessage = "Login failed";
-                    if (response.code() == 401) {
-                        errorMessage = "Invalid email or password";
-                    } else if (response.code() >= 500) {
-                        errorMessage = "Server error. Please try again later.";
-                    }
-                    callback.onFailure(errorMessage);
+                    return;
                 }
+
+                // ERROR grana (npr. 403 sa {suspended:true})
+                int code = response.code();
+                try {
+                    String raw = response.errorBody() != null ? response.errorBody().string() : null;
+                    if (raw != null && !raw.isEmpty()) {
+                        com.google.gson.JsonObject obj = new com.google.gson.JsonParser().parse(raw).getAsJsonObject();
+                        boolean suspended = obj.has("suspended") && obj.get("suspended").getAsBoolean();
+                        if (suspended) {
+                            long remaining = obj.has("remainingTime") ? obj.get("remainingTime").getAsLong() : 0L;
+                            callback.onSuspended(remaining);
+                            return;
+                        }
+                    }
+                } catch (Exception ignore) {}
+
+                String errorMessage = (code == 401 || code == 403) ? "Invalid email or password"
+                        : (code >= 500 ? "Server error. Please try again later." : "Login failed");
+                callback.onFailure(errorMessage);
             }
 
             @Override
             public void onFailure(Call<UserTokenState> call, Throwable t) {
-                Log.e(TAG, "Login failed: " + t.getMessage());
                 callback.onFailure("Network error: " + t.getMessage());
             }
         });
