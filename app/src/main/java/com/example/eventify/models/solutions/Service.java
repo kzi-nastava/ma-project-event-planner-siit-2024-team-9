@@ -136,7 +136,7 @@ public class Service extends Solution implements Parcelable, Observable {
 
     public void setSpecifity(String specifity) {
         this.specifity = specifity;
-        notifyPropertyChanged(BR.specifity); // Notify when the specifity changes
+        // notifyPropertyChanged(BR.specifity); // Notify when the specifity changes
     }
 
     @Bindable

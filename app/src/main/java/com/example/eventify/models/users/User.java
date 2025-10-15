@@ -32,6 +32,12 @@ public class User implements Parcelable, Observable {
     @Bindable
     private String phoneNumber;
     private String profileImage;
+    @SerializedName("firstName")
+    @Expose
+    private String firstName;
+    @SerializedName("lastName")
+    @Expose
+    private String lastName;
     @SerializedName("role")
     @Expose
     private com.example.eventify.models.users.Role role;
@@ -71,6 +77,27 @@ public class User implements Parcelable, Observable {
         this.activated = false;
     }
 
+    public User(String email,
+                String password,
+                String address,
+                String phoneNumber,
+                String profileImage,
+                String firstName,
+                String lastName) {
+        this.email = email;
+        this.password = password;
+        this.lastPasswordResetDate = new Timestamp(System.currentTimeMillis());
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.role = new Role(UserRole.AUTHENTICATED_USER);
+        this.roleName = UserRole.AUTHENTICATED_USER.name(); // Set role.name for Jackson
+        this.profileImage = profileImage;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.suspended = false;
+        this.activated = false;
+    }
+
     protected User(Parcel in) {
         id = in.readString();
         email = in.readString();
@@ -78,6 +105,8 @@ public class User implements Parcelable, Observable {
         address = in.readString();
         phoneNumber = in.readString();
         profileImage = in.readString();
+        firstName = in.readString();
+        lastName = in.readString();
         suspended = in.readByte() != 0;
         activated = in.readByte() != 0;
         lastPasswordResetDate = (Timestamp) in.readSerializable();
@@ -134,6 +163,22 @@ public class User implements Parcelable, Observable {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getProfileImage() {
@@ -217,6 +262,8 @@ public class User implements Parcelable, Observable {
         parcel.writeString(address);
         parcel.writeString(phoneNumber);
         parcel.writeString(profileImage);
+        parcel.writeString(firstName);
+        parcel.writeString(lastName);
         parcel.writeByte((byte) (suspended ? 1 : 0)); // Convert boolean to byte (1 = true, 0 = false)
         parcel.writeByte((byte) (activated ? 1 : 0)); // Convert boolean to byte
         parcel.writeSerializable(lastPasswordResetDate); // Serialize Timestamp as it implements Serializable

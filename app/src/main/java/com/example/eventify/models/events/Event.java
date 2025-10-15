@@ -9,7 +9,9 @@ import com.example.eventify.models.enums.PrivacyType;
 import com.example.eventify.models.users.User;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
@@ -31,6 +33,7 @@ public class Event implements Parcelable {
     private Set<Invitation> invitations;
     private Set<User> attendees;
     private Budget budget;
+    private List<Activity> activities;
 
     public Event(String id, String name, User organizer, String description, String image, int maxAttendees, PrivacyType privacyType, Date eventStart, Date eventEnd, int attendance, EventType eventType, Location location, Double price, Set<Invitation> invitations, Set<User> attendees, Budget budget) {
         this.id = id;
@@ -49,6 +52,7 @@ public class Event implements Parcelable {
         this.invitations = invitations;
         this.attendees = attendees;
         this.budget = budget;
+        this.activities = new ArrayList<>();
     }
 
     public Event() {}
@@ -70,6 +74,7 @@ public class Event implements Parcelable {
         invitations = (Set<Invitation>) in.readSerializable();
         attendees = (Set<User>) in.readSerializable();
         budget = in.readParcelable(Budget.class.getClassLoader()); // Read budget
+        activities = in.createTypedArrayList(Activity.CREATOR);
     }
 
     public String getId() {
@@ -200,6 +205,14 @@ public class Event implements Parcelable {
         this.budget = budget;
     }
 
+    public List<Activity> getActivities() {
+        return activities;
+    }
+
+    public void setActivities(List<Activity> activities) {
+        this.activities = activities;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -223,6 +236,7 @@ public class Event implements Parcelable {
         dest.writeSerializable((java.io.Serializable) invitations);
         dest.writeSerializable((java.io.Serializable) attendees);
         dest.writeParcelable(budget, flags); // Write budget
+        dest.writeTypedList(activities);
     }
 
     public static final Creator<Event> CREATOR = new Creator<Event>() {

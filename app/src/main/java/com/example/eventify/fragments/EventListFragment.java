@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eventify.R;
 import com.example.eventify.adapters.EventListAdapter;
+import com.example.eventify.adapters.OnEventClickListener;
+import com.example.eventify.fragments.EventDetailsFragment;
 import com.example.eventify.models.events.Event;
 import com.example.eventify.models.events.EventType;
 import com.example.eventify.services.events.EventService;
@@ -32,7 +34,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class EventListFragment extends Fragment
-        implements EventFilterDialogFragment.OnFiltersApplied {
+        implements EventFilterDialogFragment.OnFiltersApplied, OnEventClickListener {
 
     private RecyclerView eventRecyclerView;
     private EventListAdapter eventListAdapter;
@@ -115,7 +117,7 @@ public class EventListFragment extends Fragment
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         eventRecyclerView.setLayoutManager(layoutManager);
-        eventListAdapter = new EventListAdapter(getContext(), events);
+        eventListAdapter = new EventListAdapter(getContext(), events, this);
         eventRecyclerView.setAdapter(eventListAdapter);
 
         eventService =RetrofitClient.getClient(requireContext()).create(EventService.class);
@@ -315,5 +317,14 @@ public class EventListFragment extends Fragment
         restartAndFetch();
     }
 
+    @Override
+    public void onEventClick(Event event) {
+        // Navigate to EventDetailsFragment using the parent activity's fragment manager
+        EventDetailsFragment eventDetailsFragment = EventDetailsFragment.newInstance(event);
+        requireActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.home_container, eventDetailsFragment)
+                .addToBackStack(null)
+                .commit();
+    }
 
 }
