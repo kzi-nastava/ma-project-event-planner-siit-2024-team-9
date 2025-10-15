@@ -8,9 +8,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.eventify.fragments.EventDetailsFragment;
 import com.example.eventify.models.events.Event;
 import com.example.eventify.R;
 
@@ -22,13 +24,14 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
 
     private final Context context;
     private final List<Event> events;
+    private final OnEventClickListener eventClickListener;
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
     private final SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
-    public EventListAdapter(Context context, List<Event> events) {
+    public EventListAdapter(Context context, List<Event> events, OnEventClickListener eventClickListener) {
         this.context = context;
         this.events = events;
-
+        this.eventClickListener = eventClickListener;
     }
 
     @NonNull
@@ -59,6 +62,13 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
                 .placeholder(R.drawable.dummy_event_image)
                 .error(R.drawable.dummy_event_image)
                 .into(holder.eventImage);
+
+        // Set click listener
+        holder.itemView.setOnClickListener(v -> {
+            if (eventClickListener != null) {
+                eventClickListener.onEventClick(event);
+            }
+        });
     }
 
     @Override

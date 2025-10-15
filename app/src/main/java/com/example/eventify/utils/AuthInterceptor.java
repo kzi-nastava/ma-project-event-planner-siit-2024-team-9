@@ -23,8 +23,12 @@ public class AuthInterceptor implements Interceptor {
 
         String token = new UserSession(appContext).getAuthToken();
 
-        Request.Builder b = original.newBuilder()
-                .header("Accept", "application/json");
+        Request.Builder b = original.newBuilder();
+
+        // Only set Accept header if not already set (for PDF requests)
+        if (original.header("Accept") == null) {
+            b.header("Accept", "application/json");
+        }
 
         if (token != null && !token.isEmpty()) {
             b.header("Authorization", "Bearer " + token);

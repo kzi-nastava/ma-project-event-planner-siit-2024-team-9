@@ -83,5 +83,10 @@ dependencies {
 //    implementation libs.spring.messaging
 
     implementation libs.swiperefreshlayout
+    
+    // OpenStreetMap (osmdroid)
+    implementation 'org.osmdroid:osmdroid-android:6.1.17'
+    implementation 'org.osmdroid:osmdroid-wms:6.1.17'
+    implementation 'org.osmdroid:osmdroid-mapsforge:6.1.17'
 
 }
