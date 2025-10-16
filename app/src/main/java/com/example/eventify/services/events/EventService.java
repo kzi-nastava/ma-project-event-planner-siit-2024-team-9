@@ -2,6 +2,7 @@ package com.example.eventify.services.events;
 
 import com.example.eventify.models.events.Budget;
 import com.example.eventify.models.events.Event;
+import com.example.eventify.models.events.EventAttendanceStatsDTO;
 import com.example.eventify.models.filters.EventFilterStatistics;
 import com.example.eventify.models.solutions.Service;
 import com.google.gson.annotations.SerializedName;
@@ -78,8 +79,8 @@ public interface EventService {
     @POST("events/{eventId}/join")
     Call<Boolean> joinEvent(@Path("eventId") String eventId, @Body Map<String, Object> emptyBody);
 
-//    @GET("events/{eventId}/attendance-stats")
-//    Call<EventStatsDTO> getEventStats(@Path("eventId") String eventId);
+    @GET("events/{eventId}/attendance-stats")
+    Call<EventAttendanceStatsDTO> getEventAttendanceStats(@Path("eventId") String eventId);
 
     @GET("events/stats")
     Call<EventFilterStatistics> getFilterStats();

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.eventify.R;
+import com.example.eventify.services.auth.LoginService;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -32,24 +33,13 @@ public class SplashActivity extends AppCompatActivity {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                /*
-                 * Intent je glavna klasa unutar Android-a za pokretanje ili prelazak na druge delove
-                 * vase aplikacije. Da bi pokrenuli drugu aktivnost imamo dve opcije
-                 * Prva opcija je eksplicitan intent, gde moramo da kazemo sa koje aktivnosti prelazimo na koju aktivnost:
-                 * NPR: sa SplashScreenActivity.this prelazimo na HomeActivity.class
-                 * Druga opcija je implicitni intent, gde ne moramo da kažemo gde prelazimo ali moramo
-                 * da kažemo šta planiramo da uradimo.
-                 */
-                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-                /*
-                 * Pozivom startActivity metode, saljemo poruku Android-u da on za nas pokrene drugu aktivnost,
-                 * nakon cega korisnik biva prebacen na novu aktivnost.
-                 **/
+                LoginService loginService = new LoginService(SplashActivity.this);
+                boolean hasValidToken = loginService.getToken() != null && loginService.isTokenValid();
+                Intent intent = new Intent(
+                        SplashActivity.this,
+                        hasValidToken ? MainActivity.class : LoginActivity.class
+                );
                 startActivity(intent);
-                /*
-                 * Da ne bi moglo da se vrati na SplashScreen ako korisnik
-                 * klikne na back dugme
-                 * */
                 finish();
             }
         }, SPLASH_TIME_OUT);

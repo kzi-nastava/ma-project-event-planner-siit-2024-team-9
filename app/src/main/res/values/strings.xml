@@ -108,5 +108,19 @@
     <string name="no_reviews_pending">No reviews pending</string>
     <string name="report_user">Report user</string>
 
-
+    <string name="event_stats_title">Event statistics</string>
+    <string name="event_stats_no_data">No statistics available for this event yet.</string>
+    <string name="event_stats_download_pdf">Download attendance report</string>
+    <string name="event_stats_attendance_format">Attendance: %1$d/%2$d</string>
+    <string name="event_stats_attendance_summary">Attendance: %1$d/%2$d (%3$.1f%%)</string>
+    <string name="event_stats_average_rating">Average rating: %.2f (%d reviews)</string>
+    <string name="event_stats_most_common_grade">Most common grade: %d</string>
+    <string name="event_stats_grade_label">Grade %d</string>
+    <string name="event_stats_no_events">No events found for statistics.</string>
+    <string name="event_stats_events_error">Failed to load events.</string>
+    <string name="event_stats_stats_error">Unable to load statistics right now.</string>
+    <string name="event_stats_login_required">Please sign in to access event statistics.</string>
+    <string name="event_stats_pdf_saved">Report saved to Downloads.</string>
+    <string name="event_stats_pdf_error">Could not save report. Please try again.</string>
+    <string name="event_stats_pdf_downloading">Downloading report...</string>
 </resources>

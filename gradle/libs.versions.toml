@@ -28,6 +28,7 @@ retrofitVersion = "3.0.0"
 shimmer = "0.5.0"
 springMessaging = "6.2.11"
 swiperefreshlayout = "1.1.0"
+mpandroidchart = "3.1.0"
 
 [libraries]
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
@@ -61,7 +62,7 @@ retrofit-v300 = { module = "com.squareup.retrofit2:retrofit", version.ref = "ret
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
 spring-messaging = { module = "org.springframework:spring-messaging", version.ref = "springMessaging" }
 swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
+mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpandroidchart" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-

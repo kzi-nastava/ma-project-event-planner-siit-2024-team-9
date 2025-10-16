@@ -1,6 +1,14 @@
 package com.example.eventify.fragments;
 
+import android.Manifest;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,23 +17,27 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.eventify.R;
 import com.example.eventify.databinding.FragmentEventDetailsBinding;
 import com.example.eventify.models.events.Activity;
 import com.example.eventify.models.events.Event;
-import com.example.eventify.services.events.EventService;
 import com.example.eventify.services.events.EventFavoritesService;
+import com.example.eventify.services.events.EventService;
 import com.example.eventify.services.pdf.PdfService;
 import com.example.eventify.services.users.UserService;
 import com.example.eventify.utils.RetrofitClient;
 import com.example.eventify.utils.UserSession;
-import com.example.eventify.R;
 
 // OpenStreetMap imports
 import org.osmdroid.config.Configuration;
@@ -37,6 +49,8 @@ import org.osmdroid.views.overlay.Marker;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,19 +58,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
-
-import android.content.pm.PackageManager;
-import android.os.Environment;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import android.Manifest;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.activity.result.ActivityResultLauncher;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Environment;
-import androidx.core.content.FileProvider;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -383,11 +384,11 @@ public class EventDetailsFragment extends Fragment {
         // Check storage permission (for Android 10 and below)
         int permissionStatus = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
         Log.d("EventDetails", "Storage permission status: " + permissionStatus + " (GRANTED=" + PackageManager.PERMISSION_GRANTED + ")");
-        Log.d("EventDetails", "Android API level: " + android.os.Build.VERSION.SDK_INT);
+        Log.d("EventDetails", "Android API level: " + Build.VERSION.SDK_INT);
         
         // For Android 11+ (API 30+), WRITE_EXTERNAL_STORAGE is automatically granted
         // For Android 10 and below, we need to request it
-        if (android.os.Build.VERSION.SDK_INT < 30 && permissionStatus != PackageManager.PERMISSION_GRANTED) {
+        if (Build.VERSION.SDK_INT < 30 && permissionStatus != PackageManager.PERMISSION_GRANTED) {
             Log.d("EventDetails", "Android < 30, requesting storage permission");
             try {
                 storagePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -397,7 +398,7 @@ public class EventDetailsFragment extends Fragment {
                 Toast.makeText(requireContext(), "Failed to request permission: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
             return;
-        } else if (android.os.Build.VERSION.SDK_INT >= 30) {
+        } else if (Build.VERSION.SDK_INT >= 30) {
             Log.d("EventDetails", "Android >= 30, storage permission automatically granted");
         }
         
@@ -422,27 +423,16 @@ public class EventDetailsFragment extends Fragment {
             public void onResponse(Call<okhttp3.ResponseBody> call, Response<okhttp3.ResponseBody> response) {
                 Log.d("EventDetails", "PDF response received. Success: " + response.isSuccessful() + ", Code: " + response.code());
                 if (response.isSuccessful() && response.body() != null) {
+                    String fileName = event.getName().replaceAll("[^a-zA-Z0-9]", "_") + "_event_details.pdf";
                     try {
-                        Log.d("EventDetails", "Saving PDF to Downloads folder");
-                        // Save to external Downloads directory (like browser downloads)
-                        File downloadsDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Eventify");
-                        if (!downloadsDir.exists()) {
-                            downloadsDir.mkdirs();
+                        Uri pdfUri = savePdfToStorage(response.body(), fileName);
+                        if (pdfUri != null) {
+                            Log.d("EventDetails", "PDF saved successfully: " + pdfUri);
+                            openPdfUri(pdfUri, fileName);
+                        } else {
+                            Log.e("EventDetails", "PDF URI null after saving");
+                            Toast.makeText(requireContext(), "Failed to save PDF.", Toast.LENGTH_SHORT).show();
                         }
-                        String fileName = event.getName().replaceAll("[^a-zA-Z0-9]", "_") + "_event_details.pdf";
-                        File pdfFile = new File(downloadsDir, fileName);
-
-                        Log.d("EventDetails", "PDF file path: " + pdfFile.getAbsolutePath());
-                        
-                        FileOutputStream fos = new FileOutputStream(pdfFile);
-                        byte[] pdfBytes = response.body().bytes();
-                        Log.d("EventDetails", "PDF bytes received: " + pdfBytes.length);
-                        fos.write(pdfBytes);
-                        fos.close();
-                        
-                        Log.d("EventDetails", "PDF saved successfully");
-                        // Share the PDF file
-                        sharePdfFile(pdfFile, fileName);
                     } catch (IOException e) {
                         Log.e("EventDetails", "Failed to save PDF", e);
                         Toast.makeText(requireContext(), "Failed to save PDF: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -481,6 +471,72 @@ public class EventDetailsFragment extends Fragment {
                 Toast.makeText(requireContext(), "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Nullable
+    private Uri savePdfToStorage(@NonNull okhttp3.ResponseBody body, @NonNull String fileName) throws IOException {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Downloads.DISPLAY_NAME, fileName);
+            values.put(MediaStore.Downloads.MIME_TYPE, "application/pdf");
+            values.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/Eventify");
+
+            Uri uri = requireContext().getContentResolver()
+                    .insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+            if (uri == null) {
+                throw new IOException("Unable to create download entry");
+            }
+
+            try (InputStream inputStream = body.byteStream();
+                 OutputStream outputStream = requireContext().getContentResolver().openOutputStream(uri)) {
+                if (outputStream == null) {
+                    throw new IOException("Unable to open output stream");
+                }
+                byte[] buffer = new byte[4096];
+                int read;
+                while ((read = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, read);
+                }
+                outputStream.flush();
+            }
+            return uri;
+        } else {
+            File downloadsDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Eventify");
+            if (!downloadsDir.exists() && !downloadsDir.mkdirs()) {
+                Log.w("EventDetails", "Failed to create Eventify downloads directory");
+            }
+            File pdfFile = new File(downloadsDir, fileName);
+            try (InputStream inputStream = body.byteStream();
+                 OutputStream outputStream = new FileOutputStream(pdfFile)) {
+                byte[] buffer = new byte[4096];
+                int read;
+                while ((read = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, read);
+                }
+                outputStream.flush();
+            }
+            return FileProvider.getUriForFile(
+                    requireContext(),
+                    requireContext().getPackageName() + ".fileprovider",
+                    pdfFile
+            );
+        }
+    }
+
+    private void openPdfUri(@NonNull Uri pdfUri, @NonNull String fileName) {
+        Intent openIntent = new Intent(Intent.ACTION_VIEW);
+        openIntent.setDataAndType(pdfUri, "application/pdf");
+        openIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        openIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        openIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        try {
+            startActivity(openIntent);
+            Toast.makeText(requireContext(), "PDF opened: " + fileName, Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Log.w("EventDetails", "No PDF viewer found for URI: " + pdfUri, e);
+            Toast.makeText(requireContext(), "PDF saved to Downloads: " + fileName, Toast.LENGTH_LONG).show();
+        }
     }
 
     private void openChat() {
@@ -572,57 +628,6 @@ public class EventDetailsFragment extends Fragment {
             eventMarker.setTitle(event.getName());
             eventMarker.setSnippet(event.getLocation().getAddress());
             mapView.getOverlays().add(eventMarker);
-        }
-    }
-
-    private void sharePdfFile(File pdfFile, String fileName) {
-        try {
-            Log.d("EventDetails", "Attempting to open PDF: " + pdfFile.getAbsolutePath());
-            Log.d("EventDetails", "File exists: " + pdfFile.exists() + ", Size: " + pdfFile.length());
-            
-            // Use FileProvider for proper URI handling on all Android versions
-            Uri fileUri = FileProvider.getUriForFile(
-                requireContext(),
-                requireContext().getPackageName() + ".fileprovider",
-                pdfFile
-            );
-            
-            Log.d("EventDetails", "File URI: " + fileUri);
-
-            // Create intent to open PDF (like file manager does)
-            Intent openIntent = new Intent(Intent.ACTION_VIEW);
-            openIntent.setDataAndType(fileUri, "application/pdf");
-            openIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            openIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            openIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-            // Try to launch the intent directly first
-            try {
-                Log.d("EventDetails", "Attempting to launch PDF viewer directly");
-                startActivity(openIntent);
-                Toast.makeText(requireContext(), "PDF opened: " + fileName, Toast.LENGTH_SHORT).show();
-                return;
-            } catch (Exception e) {
-                Log.d("EventDetails", "Direct launch failed, trying chooser: " + e.getMessage());
-            }
-
-            // If direct launch fails, try with chooser
-            try {
-                Intent chooserIntent = Intent.createChooser(openIntent, "Open PDF with:");
-                chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                chooserIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                
-                Log.d("EventDetails", "Launching PDF chooser");
-                startActivity(chooserIntent);
-                Toast.makeText(requireContext(), "PDF downloaded and opening: " + fileName, Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                Log.e("EventDetails", "Both direct and chooser launch failed", e);
-                Toast.makeText(requireContext(), "PDF downloaded to Downloads: " + fileName, Toast.LENGTH_LONG).show();
-                Log.d("EventDetails", "PDF downloaded to: " + pdfFile.getAbsolutePath());
-            }
-        } catch (Exception e) {
-            Log.e("EventDetails", "Failed to open PDF", e);
-            Toast.makeText(requireContext(), "PDF downloaded but couldn't open: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
