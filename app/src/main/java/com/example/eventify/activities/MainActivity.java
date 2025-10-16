@@ -16,6 +16,8 @@ import android.view.MenuItem;
 
 import com.example.eventify.fragments.BudgetFragment;
 import com.example.eventify.fragments.CategoriesFragment;
+import com.example.eventify.fragments.EventStatsFragment;
+import com.example.eventify.fragments.EventListFragment;
 import com.example.eventify.fragments.DiscoverFragment;
 import com.example.eventify.fragments.NotificationsFragment;
 import com.example.eventify.fragments.PriceListFragment;
@@ -136,6 +138,8 @@ public class MainActivity extends AppCompatActivity implements NavigationManager
         navigationActions.put(R.id.discover, () -> navigateToFragment(new DiscoverFragment(), false));
         navigationActions.put(R.id.services, () -> navigateToFragment(new ServicesFragment(), false));
         navigationActions.put(R.id.budget, this::getBudget);
+        navigationActions.put(R.id.event_stats, () -> navigateToFragment(new EventStatsFragment(), false));
+        navigationActions.put(R.id.events, () -> navigateToFragment(new EventListFragment(), false));
         navigationActions.put(R.id.categories, () -> navigateToFragment(new CategoriesFragment(), false));
         navigationActions.put(R.id.priceList, () -> navigateToFragment(new PriceListFragment(), false));
 //        navigationActions.put(R.id.profile, () -> navigateToFragment(new ProfileFragment(), false));
@@ -146,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements NavigationManager
         navigationActions.put(R.id.discover, () -> navigateToFragment(new DiscoverFragment(), false));
 //        navigationActions.put(R.id.notifications, () -> navigateToFragment(new NotificationsFragment(), false));
         navigationActions.put(R.id.reviews, () -> navigateToFragment(new ReviewsFragment(), false));
+        navigationActions.put(R.id.event_stats, () -> navigateToFragment(new EventStatsFragment(), false));
         navigationActions.put(R.id.reports, () -> navigateToFragment(new ReportsFragment(), false));
 //        navigationActions.put(R.id.profile, () -> navigateToFragment(new ProfileFragment(), false));
     }
