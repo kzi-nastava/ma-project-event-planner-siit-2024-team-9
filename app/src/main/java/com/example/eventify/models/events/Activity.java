@@ -11,17 +11,19 @@ public class Activity implements Parcelable {
     private String description;
     private String startDate;
     private String startTime;
+    private String endDate;
     private String endTime;
     private Location location;
 
     public Activity() {}
 
-    public Activity(String id, String name, String description, String startDate, String startTime, String endTime, Location location) {
+    public Activity(String id, String name, String description, String startDate, String startTime, String endDate, String endTime, Location location) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.startDate = startDate;
         this.startTime = startTime;
+        this.endDate = endDate;
         this.endTime = endTime;
         this.location = location;
     }
@@ -32,6 +34,7 @@ public class Activity implements Parcelable {
         description = in.readString();
         startDate = in.readString();
         startTime = in.readString();
+        endDate = in.readString();
         endTime = in.readString();
         location = in.readParcelable(Location.class.getClassLoader());
     }
@@ -88,6 +91,14 @@ public class Activity implements Parcelable {
         this.startTime = startTime;
     }
 
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
+
     public String getEndTime() {
         return endTime;
     }
@@ -116,6 +127,7 @@ public class Activity implements Parcelable {
         dest.writeString(description);
         dest.writeString(startDate);
         dest.writeString(startTime);
+        dest.writeString(endDate);
         dest.writeString(endTime);
         dest.writeParcelable(location, flags);
     }

@@ -17,12 +17,14 @@ import com.example.eventify.R;
 import com.example.eventify.adapters.EventListAdapter;
 import com.example.eventify.adapters.OnEventClickListener;
 import com.example.eventify.fragments.EventDetailsFragment;
+import com.example.eventify.fragments.EventCreationFragment;
 import com.example.eventify.models.events.Event;
 import com.example.eventify.models.events.EventType;
 import com.example.eventify.services.events.EventService;
 import com.example.eventify.utils.RetrofitClient;
 import android.widget.ImageButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.example.eventify.models.filters.EventFilterOptions;
 import com.example.eventify.models.filters.EventFilterStatistics;
 
@@ -39,6 +41,7 @@ public class EventListFragment extends Fragment
     private RecyclerView eventRecyclerView;
     private EventListAdapter eventListAdapter;
     private ProgressBar loadingIndicator;
+    private FloatingActionButton fabCreateEvent;
 
     private EventService eventService;
     private List<Event> events = new ArrayList<>();
@@ -47,6 +50,7 @@ public class EventListFragment extends Fragment
     private int currentPage = 0;
     private boolean isLoading = false;
     private boolean showTop;
+    private boolean showFab;
 
     private View topActionsContainer;
     private ImageButton btnFilter, btnSort;
@@ -62,9 +66,14 @@ public class EventListFragment extends Fragment
     private EventFilterStatistics cachedStats = null;
 
     public static EventListFragment newInstance(boolean showTop) {
+        return newInstance(showTop, false);
+    }
+    
+    public static EventListFragment newInstance(boolean showTop, boolean showFab) {
         EventListFragment fragment = new EventListFragment();
         Bundle args = new Bundle();
         args.putBoolean("showTop", showTop);
+        args.putBoolean("showFab", showFab);
         fragment.setArguments(args);
         return fragment;
     }
@@ -76,10 +85,12 @@ public class EventListFragment extends Fragment
 
         if (getArguments() != null) {
             showTop = getArguments().getBoolean("showTop");
+            showFab = getArguments().getBoolean("showFab");
         }
 
         eventRecyclerView = view.findViewById(R.id.event_recycler_view);
         loadingIndicator = view.findViewById(R.id.event_loading_indicator);
+        fabCreateEvent = view.findViewById(R.id.fab_create_event);
 
         topActionsContainer = view.findViewById(R.id.top_actions_container);
         searchInput = view.findViewById(R.id.search_input);
@@ -122,7 +133,21 @@ public class EventListFragment extends Fragment
 
         eventService =RetrofitClient.getClient(requireContext()).create(EventService.class);
 
-
+        // Setup FAB click listener - only show FAB when explicitly requested
+        if (showFab) {
+            fabCreateEvent.setVisibility(View.VISIBLE);
+            fabCreateEvent.setOnClickListener(v -> {
+                // Navigate to EventCreationFragment
+                EventCreationFragment eventCreationFragment = new EventCreationFragment();
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.home_container, eventCreationFragment)
+                        .addToBackStack(null)
+                        .commit();
+            });
+        } else {
+            fabCreateEvent.setVisibility(View.GONE);
+        }
 
         fetchEvents();
         setupScrollListener();

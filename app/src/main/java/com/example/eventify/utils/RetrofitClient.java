@@ -146,7 +146,10 @@ public class RetrofitClient {
 
         @Override
         public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
-            return new JsonPrimitive(dateFormats[0].format(src));
+            // Use ISO 8601 format for better backend compatibility
+            SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            isoFormat.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+            return new JsonPrimitive(isoFormat.format(src));
         }
 
         @Override
