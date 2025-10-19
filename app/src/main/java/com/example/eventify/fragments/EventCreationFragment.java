@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import java.util.Calendar;
+import java.util.Collection;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -54,7 +55,7 @@ public class EventCreationFragment extends Fragment {
     private UserSession userSession;
     private UUID userId;
     private User organizer;
-    private List<EventType> eventTypes = new ArrayList<>();
+    private Collection<EventType> eventTypes = new ArrayList<>();
     private List<Activity> activities = new ArrayList<>();
     private ActivityCreationAdapter activityAdapter;
     
@@ -128,9 +129,9 @@ public class EventCreationFragment extends Fragment {
     }
 
     private void loadEventTypes() {
-        eventTypeService.getAllEventTypes().enqueue(new Callback<List<EventType>>() {
+        eventTypeService.getAll().enqueue(new Callback<Collection<EventType>>() {
             @Override
-            public void onResponse(Call<List<EventType>> call, Response<List<EventType>> response) {
+            public void onResponse(Call<Collection<EventType>> call, Response<Collection<EventType>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     eventTypes = response.body();
                     setupEventTypeSpinner();
@@ -138,23 +139,15 @@ public class EventCreationFragment extends Fragment {
                     Log.e("EventCreation", "Failed to load event types: " + response.code());
                     // Fallback to hardcoded types if API fails
                     eventTypes = new ArrayList<>();
-                    EventType testType1 = new EventType("1", "Conference", "Professional conference", true, new Object[]{});
-                    EventType testType2 = new EventType("2", "Workshop", "Educational workshop", true, new Object[]{});
-                    eventTypes.add(testType1);
-                    eventTypes.add(testType2);
                     setupEventTypeSpinner();
                 }
             }
 
             @Override
-            public void onFailure(Call<List<EventType>> call, Throwable t) {
+            public void onFailure(Call<Collection<EventType>> call, Throwable t) {
                 Log.e("EventCreation", "Error loading event types", t);
                 // Fallback to hardcoded types if API fails
                 eventTypes = new ArrayList<>();
-                EventType testType1 = new EventType("1", "Conference", "Professional conference", true, new Object[]{});
-                EventType testType2 = new EventType("2", "Workshop", "Educational workshop", true, new Object[]{});
-                eventTypes.add(testType1);
-                eventTypes.add(testType2);
                 setupEventTypeSpinner();
             }
         });
@@ -177,7 +170,7 @@ public class EventCreationFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position > 0) { // Skip "Select Event Type" option
-                    selectedEventType = eventTypes.get(position - 1);
+                    selectedEventType = new ArrayList<>(eventTypes).get(position - 1);
                     Log.d("EventCreation", "Selected event type: " + selectedEventType.getName());
                 } else {
                     selectedEventType = null;
@@ -387,7 +380,7 @@ public class EventCreationFragment extends Fragment {
         // Get selected event type
         int selectedPosition = binding.spinnerEventType.getSelectedItemPosition();
         if (selectedPosition > 0) {
-            selectedEventType = eventTypes.get(selectedPosition - 1);
+            selectedEventType = new ArrayList<>(eventTypes).get(selectedPosition - 1);
         }
     }
 
