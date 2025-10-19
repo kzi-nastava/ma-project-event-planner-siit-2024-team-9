@@ -6,16 +6,18 @@ public class Review {
     private String comment;
     private int grade;
     private String status;
+    private String authorId;
 
     public Review() {
     }
 
-    public Review(String id, Solution solution, String comment, int grade, String status) {
+    public Review(String id, Solution solution, String comment, int grade, String status, String authorId) {
         this.id = id;
         this.solution = solution;
         this.comment = comment;
         this.grade = grade;
         this.status = status;
+        this.authorId = authorId;
     }
 
     public String getId() {
@@ -56,6 +58,14 @@ public class Review {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
     }
 }
 

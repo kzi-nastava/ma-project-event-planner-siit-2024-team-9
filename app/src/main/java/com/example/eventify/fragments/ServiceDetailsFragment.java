@@ -651,6 +651,7 @@ public class ServiceDetailsFragment extends Fragment {
         review.setComment(commentText);
         review.setGrade(grade);
         review.setStatus("PENDING");
+        review.setAuthorId(userSession.getCurrentUserId().toString());
 
         reviewService.add(review).enqueue(new Callback<Review>() {
             @Override public void onResponse(Call<Review> call, Response<Review> response) {

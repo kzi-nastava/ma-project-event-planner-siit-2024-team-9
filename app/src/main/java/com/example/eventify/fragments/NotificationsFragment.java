@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -16,9 +17,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.eventify.R;
 import com.example.eventify.adapters.NotificationListAdapter;
 import com.example.eventify.models.others.Notification;
+import com.example.eventify.services.auth.LoginService;
 import com.example.eventify.services.others.NotificationService;
 import com.example.eventify.utils.RetrofitClient;
 import com.example.eventify.utils.UserSession;
+import com.google.android.material.materialswitch.MaterialSwitch;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,6 +59,19 @@ public class NotificationsFragment extends Fragment {
         notificationRecyclerView = v.findViewById(R.id.notification_recycler_view);
         loadingIndicator = v.findViewById(R.id.notification_loading_indicator);
         emptyState = v.findViewById(R.id.empty_state);
+
+
+        MaterialSwitch muteSwitch = v.findViewById(R.id.switch_mute_notifications);
+        LoginService loginService = new LoginService(requireContext());
+        muteSwitch.setChecked(loginService.isNotificationsMuted());
+
+        muteSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            loginService.setNotificationsMuted(isChecked);
+            Toast.makeText(requireContext(),
+                    isChecked ? "Notifications muted" : "Notifications unmuted",
+                    Toast.LENGTH_SHORT).show();
+        });
+
 
         notificationRecyclerView.setLayoutManager(
                 new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
