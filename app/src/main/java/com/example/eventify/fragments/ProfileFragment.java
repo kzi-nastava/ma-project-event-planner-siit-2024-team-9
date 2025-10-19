@@ -104,6 +104,7 @@ public class ProfileFragment extends Fragment {
         setupCalendar();
         loadUserData();
         setupLogoutButton();
+        setupDeactivateAccountButton();
         setupProfileEditing();
         setupFieldVisibility();
     }
@@ -598,8 +599,10 @@ public class ProfileFragment extends Fragment {
             // Hide edit button for admins
             if (isAdmin) {
                 binding.btnEditProfile.setVisibility(View.GONE);
+                binding.btnDeactivateAccount.setVisibility(View.GONE);
             } else {
                 binding.btnEditProfile.setVisibility(View.VISIBLE);
+                binding.btnDeactivateAccount.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -817,6 +820,62 @@ public class ProfileFragment extends Fragment {
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(i);
         });
+    }
+
+    private void setupDeactivateAccountButton() {
+        binding.btnDeactivateAccount.setOnClickListener(view -> {
+            showDeactivateConfirmationDialog();
+        });
+    }
+
+    private void showDeactivateConfirmationDialog() {
+        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("Deactivate Account")
+                .setMessage("Are you sure you want to deactivate your account? This action cannot be undone and you will lose access to all your data.")
+                .setPositiveButton("Deactivate", (dialog, which) -> {
+                    deactivateAccount();
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .setCancelable(true)
+                .show();
+    }
+
+    private void deactivateAccount() {
+        UserSession userSession = new UserSession(requireContext());
+        String userId = userSession.getCurrentUserId() != null ? userSession.getCurrentUserId().toString() : null;
+        
+        if (userId != null) {
+            userService.deactivateAccount(userId).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        // Account deactivated successfully
+                        Toast.makeText(requireContext(), "Account deactivated successfully", Toast.LENGTH_LONG).show();
+                        
+                        // Logout and redirect to login
+                        LoginService loginService = new LoginService(requireContext());
+                        loginService.logout();
+                        
+                        Intent i = new Intent(requireContext(), LoginActivity.class);
+                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(i);
+                    } else {
+                        Log.e(TAG, "Failed to deactivate account: " + response.code());
+                        Toast.makeText(requireContext(), "Failed to deactivate account: " + response.code(), Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Log.e(TAG, "Error deactivating account", t);
+                    Toast.makeText(requireContext(), "Error deactivating account: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+        } else {
+            Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
