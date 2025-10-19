@@ -91,12 +91,22 @@ public class MainActivity extends AppCompatActivity implements NavigationManager
             if (id == R.id.action_notifications) {
                 navigateToFragment(new NotificationsFragment(), false);
                 return true;
+            } else if (id == R.id.action_categories) {
+                navigateToFragment(new CategoriesFragment(), false);
+                return true;
             } else if (id == R.id.action_profile) {
                 navigateToFragment(new ProfileFragment(), false);
                 return true;
             }
             return false;
         });
+
+        // Show categories button only for admins
+        String role = resolveUserRole();
+        MenuItem categoriesItem = topBar.getMenu().findItem(R.id.action_categories);
+        if (categoriesItem != null) {
+            categoriesItem.setVisible("ADMIN".equalsIgnoreCase(role));
+        }
 
         try {
             LoginService logins = new LoginService(this);
@@ -179,7 +189,6 @@ public class MainActivity extends AppCompatActivity implements NavigationManager
         navigationActions.put(R.id.discover, () -> navigateToFragment(new DiscoverFragment(), false));
         navigationActions.put(R.id.services, () -> navigateToFragment(new ServicesFragment(), false));
         navigationActions.put(R.id.products, () -> navigateToFragment(new ProductsFragment(), false));
-        navigationActions.put(R.id.categories, () -> navigateToFragment(new CategoriesFragment(), false));
         navigationActions.put(R.id.priceList, () -> navigateToFragment(new PriceListFragment(), false));
 //        navigationActions.put(R.id.profile, () -> navigateToFragment(new ProfileFragment(), false));
     }

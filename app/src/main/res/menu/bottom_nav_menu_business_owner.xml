@@ -22,13 +22,6 @@
         />
 
     <item
-        android:id="@+id/categories"
-        android:icon="@drawable/categories"
-        android:title="@string/categories"
-        app:labelVisibilityMode="labeled"
-        />
-
-    <item
         android:id="@+id/priceList"
         android:icon="@drawable/prices"
         android:title="@string/prices"
