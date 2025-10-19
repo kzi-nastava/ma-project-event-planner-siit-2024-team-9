@@ -3,9 +3,9 @@ package com.example.eventify.models.users;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.UUID;
+import java.util.List;
 
-public class EventOrganizerDTO {
+public class BusinessOwnerDTO {
     @SerializedName("id")
     @Expose
     private String id;
@@ -46,18 +46,22 @@ public class EventOrganizerDTO {
     @Expose
     private boolean activated;
     
-    @SerializedName("firstName")
+    @SerializedName("name")
     @Expose
-    private String firstName;
+    private String name;
     
-    @SerializedName("lastName")
+    @SerializedName("description")
     @Expose
-    private String lastName;
+    private String description;
+    
+    @SerializedName("images")
+    @Expose
+    private java.util.Set<String> images;
 
     // Constructors
-    public EventOrganizerDTO() {}
+    public BusinessOwnerDTO() {}
 
-    public EventOrganizerDTO(User user) {
+    public BusinessOwnerDTO(User user) {
         this.id = user.getId();
         this.email = user.getEmail();
         this.password = user.getPassword();
@@ -66,8 +70,9 @@ public class EventOrganizerDTO {
         this.profileImage = user.getProfileImage();
         this.suspended = user.isSuspended();
         this.activated = user.isActivated();
-        this.firstName = user.getFirstName();
-        this.lastName = user.getLastName();
+        this.name = user.getName(); // Business name
+        this.description = user.getDescription();
+        this.images = user.getImages();
         
         // Create role DTO
         this.role = new RoleDTO();
@@ -107,9 +112,12 @@ public class EventOrganizerDTO {
     public boolean isActivated() { return activated; }
     public void setActivated(boolean activated) { this.activated = activated; }
 
-    public String getFirstName() { return firstName; }
-    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getLastName() { return lastName; }
-    public void setLastName(String lastName) { this.lastName = lastName; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public java.util.Set<String> getImages() { return images; }
+    public void setImages(java.util.Set<String> images) { this.images = images; }
 }
