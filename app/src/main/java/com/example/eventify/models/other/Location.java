@@ -1,15 +1,30 @@
-package com.example.eventify.models.others;
+package com.example.eventify.models.other;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Location implements Parcelable {
+    @SerializedName("name")
     private String name;
+    
+    @SerializedName("address")
     private String address;
+    
+    @SerializedName("city")
     private String city;
+    
+    @SerializedName("country")
     private String country;
+    
+    @SerializedName("longitude")
     private double longitude;
+    
+    @SerializedName("latitude")
     private double latitude;
+
+    public Location() {}
 
     public Location(String name, String address, String city, String country, double longitude, double latitude) {
         this.name = name;
@@ -20,17 +35,7 @@ public class Location implements Parcelable {
         this.latitude = latitude;
     }
 
-    public Location() {}
-
-    protected Location(Parcel in) {
-        name = in.readString();
-        address = in.readString();
-        city = in.readString();
-        country = in.readString();
-        longitude = in.readDouble();
-        latitude = in.readDouble();
-    }
-
+    // Getters and Setters
     public String getName() {
         return name;
     }
@@ -79,6 +84,28 @@ public class Location implements Parcelable {
         this.latitude = latitude;
     }
 
+    // Parcelable implementation
+    protected Location(Parcel in) {
+        name = in.readString();
+        address = in.readString();
+        city = in.readString();
+        country = in.readString();
+        longitude = in.readDouble();
+        latitude = in.readDouble();
+    }
+
+    public static final Creator<Location> CREATOR = new Creator<Location>() {
+        @Override
+        public Location createFromParcel(Parcel in) {
+            return new Location(in);
+        }
+
+        @Override
+        public Location[] newArray(int size) {
+            return new Location[size];
+        }
+    };
+
     @Override
     public int describeContents() {
         return 0;
@@ -93,16 +120,4 @@ public class Location implements Parcelable {
         dest.writeDouble(longitude);
         dest.writeDouble(latitude);
     }
-
-    public static final Creator<Location> CREATOR = new Creator<Location>() {
-        @Override
-        public Location createFromParcel(Parcel in) {
-            return new Location(in);
-        }
-
-        @Override
-        public Location[] newArray(int size) {
-            return new Location[size];
-        }
-    };
 }

@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public class EventType implements Parcelable {
-
+    @SerializedName("id")
     private String id;
     
     @SerializedName("name")
@@ -47,7 +47,6 @@ public class EventType implements Parcelable {
         this.isActive = isActive;
         this.suggestedCategories = suggestedCategories != null ? suggestedCategories : new HashSet<>();
     }
-
     // Getters and Setters
     public String getId() {
         return id;
@@ -99,20 +98,6 @@ public class EventType implements Parcelable {
         suggestedCategories = new HashSet<>(categoryList);
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
-        dest.writeString(name);
-        dest.writeString(description);
-        dest.writeByte((byte) (isActive ? 1 : 0));
-        dest.writeTypedList(new ArrayList<>(suggestedCategories));
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
     public static final Creator<EventType> CREATOR = new Creator<EventType>() {
         @Override
         public EventType createFromParcel(Parcel in) {
@@ -124,4 +109,18 @@ public class EventType implements Parcelable {
             return new EventType[size];
         }
     };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeString(description);
+        dest.writeByte((byte) (isActive ? 1 : 0));
+        dest.writeTypedList(new ArrayList<>(suggestedCategories));
+    }
 }

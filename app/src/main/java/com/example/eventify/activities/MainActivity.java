@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements NavigationManager
         navigationActions.put(R.id.services, () -> navigateToFragment(new ServicesFragment(), false));
         navigationActions.put(R.id.budget, this::getBudget);
         navigationActions.put(R.id.event_stats, () -> navigateToFragment(new EventStatsFragment(), false));
-        navigationActions.put(R.id.events, () -> navigateToFragment(new EventListFragment(), false));
+        navigationActions.put(R.id.events, () -> navigateToFragment(EventListFragment.newInstance(false, true), false));
         navigationActions.put(R.id.categories, () -> navigateToFragment(new CategoriesFragment(), false));
         navigationActions.put(R.id.priceList, () -> navigateToFragment(new PriceListFragment(), false));
 //        navigationActions.put(R.id.profile, () -> navigateToFragment(new ProfileFragment(), false));

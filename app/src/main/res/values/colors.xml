@@ -13,4 +13,8 @@
     <color name="gray_light">#FFF0F0F0</color>
     <color name="amber_500">#FFC107</color>
     <color name="rating_empty">#FFE8B6</color>
+    <color name="primary_color">#FF2196F3</color>
+    <color name="gray_medium">#FF9E9E9E</color>
+    <color name="red_light">#FFFF5252</color>
+    <color name="step_indicator_line">#FFE0E0E0</color>
 </resources>

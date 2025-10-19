@@ -127,6 +127,7 @@
     <string name="no_reviews_pending">No reviews pending</string>
     <string name="report_user">Report user</string>
 
+    <string name="create_event">Create Event</string>
     <string name="event_stats_title">Event statistics</string>
     <string name="event_stats_no_data">No statistics available for this event yet.</string>
     <string name="event_stats_download_pdf">Download attendance report</string>
