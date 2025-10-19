@@ -180,7 +180,7 @@ public class ChatFragment extends Fragment implements WebSocketService.WebSocket
 
     private void setupWebSocket() {
         try {
-            webSocketService = new WebSocketService(currentUser);
+            webSocketService = new WebSocketService(requireContext(), currentUser);
             webSocketService.setListener(this);
             webSocketService.connect();
             logInfo("WebSocket setup initiated");

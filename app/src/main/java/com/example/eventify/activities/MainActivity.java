@@ -30,8 +30,10 @@ import com.example.eventify.fragments.ServicesFragment;
 import com.example.eventify.models.events.Event;
 import com.example.eventify.R;
 import com.example.eventify.databinding.ActivityMainBinding;
+import com.example.eventify.models.users.User;
 import com.example.eventify.services.auth.LoginService;
 import com.example.eventify.services.events.EventService;
+import com.example.eventify.services.others.WebSocketService;
 import com.example.eventify.utils.JwtUtils;
 import com.example.eventify.utils.NavigationManager;
 import com.example.eventify.utils.RetrofitClient;
@@ -57,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements NavigationManager
     private static final String TAG = "MainActivity";
     private static final String HOME_FRAGMENT = "HOME_FRAGMENT";
 
+    private WebSocketService ws;
+
     HashMap<Integer, Runnable> navigationActions = new HashMap<>();
 
     @Override
@@ -67,6 +71,13 @@ public class MainActivity extends AppCompatActivity implements NavigationManager
         userSession = new UserSession(this);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        if (android.os.Build.VERSION.SDK_INT >= 33) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                    != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1001);
+            }
+        }
 
         MaterialToolbar topBar = findViewById(R.id.top_app_bar);
 
@@ -87,6 +98,35 @@ public class MainActivity extends AppCompatActivity implements NavigationManager
             return false;
         });
 
+        try {
+            LoginService logins = new LoginService(this);
+            String token = logins.getToken();
+            if (token != null && logins.isTokenValid()) {
+                JwtUtils.JwtClaims claims = JwtUtils.decodeToken(token);
+                if (claims != null && claims.getUserId() != null) {
+                    // Avoid double-connect if Activity is recreated
+                    if (ws == null || !ws.isConnected()) {
+                        User u = new com.example.eventify.models.users.User();
+                        u.setId(claims.getUserId().toString());
+                        u.setEmail(claims.getEmail());
+
+                        ws = new com.example.eventify.services.others.WebSocketService(getApplicationContext(), u);
+                        ws.setListener(new com.example.eventify.services.others.WebSocketService.WebSocketListener() {
+                            @Override public void onMessageReceived(com.example.eventify.models.others.Message m) {
+                                // (opciono) osveži UI neke liste ako je trenutno otvorena
+                            }
+                            @Override public void onConnectionEstablished() { /* noop */ }
+                            @Override public void onConnectionClosed() { /* noop */ }
+                            @Override public void onError(String error) { /* noop */ }
+                        });
+                        ws.connect();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            android.util.Log.e("MainActivity", "WS init failed", e);
+        }
+
 //        setupNavigationActions();
         setupBottomNavigation();
         setupBackPressHandler();
@@ -94,6 +134,15 @@ public class MainActivity extends AppCompatActivity implements NavigationManager
         // Load initial fragment if no saved state
         if (savedInstanceState == null) {
             navigateToFragment(new DiscoverFragment(), false);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (ws != null) {
+            try { ws.disconnect(); } catch (Exception ignore) {}
+            ws = null;
         }
     }
 

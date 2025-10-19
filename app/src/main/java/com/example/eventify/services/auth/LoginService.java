@@ -157,4 +157,18 @@ public class LoginService {
         // Clear user session as well
         userSession.clearSession();
     }
+
+    private static final String MUTE_KEY = "notifications_muted";
+
+    public boolean isNotificationsMuted() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean(MUTE_KEY, false);
+    }
+
+    public void setNotificationsMuted(boolean muted) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(MUTE_KEY, muted);
+        editor.apply();
+    }
 }
