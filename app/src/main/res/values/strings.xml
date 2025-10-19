@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">Eventify</string>
     <string name="services_panel">Your services</string>
+    <string name="products_panel">Your products</string>
     <string name="edit_details">Edit details</string>
     <string name="services">Services</string>
+    <string name="products">Products</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_splash">SplashActivity</string>
@@ -58,7 +60,26 @@
     <string name="end_date">End Date</string>
     <string name="max_attendees">Max Attendees</string>
     <string name="attendance">Attendance</string>
-    <string name="event_types">Event Type</string>
+    <string name="event_types">Event Types</string>
+    <string name="existing_event_types">Existing Event Types</string>
+    <string name="proposed_event_types">Proposed Event Types</string>
+    <string name="suggested_categories">Suggested Categories</string>
+    <string name="select_categories">Select Categories</string>
+    <string name="delete_event_type">Delete Event Type</string>
+    <string name="delete_confirmation">Are you sure you want to delete "%1$s"? This action cannot be undone.</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="add_new">Add New</string>
+    <string name="save_all">Save All</string>
+    <string name="new_event_type_added">New event type added. Fill in the details and save.</string>
+    <string name="event_type_created_success">Event type created successfully</string>
+    <string name="event_type_updated_success">Event type updated successfully</string>
+    <string name="event_type_name_required">Event type name cannot be empty</string>
+    <string name="event_type_description_required">Event type description cannot be empty</string>
+    <string name="network_error_try_again">Network error. Please try again.</string>
+    <string name="failed_to_create_event_type">Failed to create event type</string>
+    <string name="failed_to_update_event_type">Failed to update event type</string>
+    <string name="error_loading_event_types">Error loading event types</string>
     <string name="locations">Location</string>
     <string name="max_price">Max Price</string>
     <string name="search_events">Search events</string>
@@ -66,7 +87,6 @@
     <string name="filter">Filter</string>
     <string name="sort">Sort</string>
     <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
     <string name="apply">Apply</string>
     <string name="reset">Reset</string>
     <string name="invalid_price">Invalid price</string>
@@ -99,7 +119,6 @@
     <string name="deleted">Deleted</string>
     <string name="action_failed">Action Failed</string>
     <string name="network_error">Network Error</string>
-    <string name="delete">Delete</string>
     <string name="approve">Approve</string>
     <string name="review">Review</string>
     <string name="failed_to_load">Failed to load</string>
@@ -113,7 +132,7 @@
     <string name="event_stats_download_pdf">Download attendance report</string>
     <string name="event_stats_attendance_format">Attendance: %1$d/%2$d</string>
     <string name="event_stats_attendance_summary">Attendance: %1$d/%2$d (%3$.1f%%)</string>
-    <string name="event_stats_average_rating">Average rating: %.2f (%d reviews)</string>
+    <string name="event_stats_average_rating" formatted="false">Average rating: %.2f (%d reviews)</string>
     <string name="event_stats_most_common_grade">Most common grade: %d</string>
     <string name="event_stats_grade_label">Grade %d</string>
     <string name="event_stats_no_events">No events found for statistics.</string>

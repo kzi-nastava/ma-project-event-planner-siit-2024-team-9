@@ -23,6 +23,7 @@ import com.example.eventify.models.solutions.Service;
 import com.example.eventify.fragments.ServiceFormFragment;
 import com.example.eventify.databinding.FragmentCardBinding;
 import com.example.eventify.utils.RetrofitClient;
+import com.example.eventify.utils.ImageUrlUtils;
 import com.example.eventify.utils.NavigationManager;
 
 import java.util.ArrayList;
@@ -82,11 +83,8 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
         if (service != null) {
             // Load image with proper URL construction
             if (service.getImages() != null && !service.getImages().isEmpty()) {
-                String imageItem = service.getImages().get(0); // Get first image
-                
-                // Construct the full URL for the image
-                String baseUrl = RetrofitClient.BASE_URL.replace("api/", "");
-                String imageUrl = baseUrl + "images/service/" + imageItem;
+                String filename = service.getImages().get(0); // Get first image
+                String imageUrl = ImageUrlUtils.getImageUrl(filename, "service");
                 
                 Log.d("ServiceListAdapter", "Loading image from: " + imageUrl);
                 

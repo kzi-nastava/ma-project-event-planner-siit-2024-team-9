@@ -8,9 +8,9 @@
         app:labelVisibilityMode="labeled"
         />
     <item
-        android:id="@+id/budget"
-        android:icon="@drawable/budget"
-        android:title="@string/budget"
+        android:id="@+id/products"
+        android:icon="@drawable/product_icon"
+        android:title="@string/products"
         app:labelVisibilityMode="labeled"
         />
 

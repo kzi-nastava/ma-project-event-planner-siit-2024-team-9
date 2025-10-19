@@ -3,38 +3,58 @@ package com.example.eventify.models.events;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.eventify.models.solutions.SolutionCategory;
+import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class EventType implements Parcelable {
 
-    private UUID id;
+    private String id;
+    
+    @SerializedName("name")
     private String name;
+    
+    @SerializedName("description")
     private String description;
+    
+    @SerializedName("isActive")
     private boolean isActive;
+    
+    @SerializedName("suggestedCategories")
+    private Set<SolutionCategory> suggestedCategories;
 
-    public EventType(String name, String description, boolean isActive) {
+    public EventType() {
+        this.suggestedCategories = new HashSet<>();
+    }
+
+    public EventType(String id, String name, String description, boolean isActive) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.isActive = isActive;
+        this.suggestedCategories = new HashSet<>();
     }
 
-    public UUID getId() {
+    public EventType(String id, String name, String description, boolean isActive, Set<SolutionCategory> suggestedCategories) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.isActive = isActive;
+        this.suggestedCategories = suggestedCategories != null ? suggestedCategories : new HashSet<>();
+    }
+
+    // Getters and Setters
+    public String getId() {
         return id;
     }
-    public boolean isActive() {
-        return isActive;
-    }
 
-    public void setActive(boolean active) {
-        isActive = active;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -45,24 +65,47 @@ public class EventType implements Parcelable {
         this.name = name;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public Set<SolutionCategory> getSuggestedCategories() {
+        return suggestedCategories;
+    }
+
+    public void setSuggestedCategories(Set<SolutionCategory> suggestedCategories) {
+        this.suggestedCategories = suggestedCategories != null ? suggestedCategories : new HashSet<>();
     }
 
     // Parcelable implementation
     protected EventType(Parcel in) {
-        id = (UUID) in.readSerializable(); // UUID is serialized
+        id = in.readString();
         name = in.readString();
         description = in.readString();
         isActive = in.readByte() != 0;
+        List<SolutionCategory> categoryList = in.createTypedArrayList(SolutionCategory.CREATOR);
+        suggestedCategories = new HashSet<>(categoryList);
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeSerializable(id); // UUID is serialized
+        dest.writeString(id);
         dest.writeString(name);
         dest.writeString(description);
         dest.writeByte((byte) (isActive ? 1 : 0));
+        dest.writeTypedList(new ArrayList<>(suggestedCategories));
     }
 
     @Override
