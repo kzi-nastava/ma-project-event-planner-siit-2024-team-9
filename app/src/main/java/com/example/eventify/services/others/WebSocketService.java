@@ -24,7 +24,7 @@ import java.util.UUID;
 
 public class WebSocketService {
     private static final String TAG = "WebSocketService";
-    private static final String WS_URL = "ws://192.168.0.31:8080/ws-native";
+    private static final String WS_URL = "ws://192.168.0.27:8080/ws-native";
     
     private WebSocket webSocket;
     
