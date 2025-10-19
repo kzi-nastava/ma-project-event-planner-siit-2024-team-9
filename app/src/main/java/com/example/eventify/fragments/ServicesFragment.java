@@ -33,7 +33,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ServicesFragment extends Fragment implements SolutionFilterFragment.OnFilterAppliedListener {
+public class ServicesFragment extends Fragment implements ServiceFilterFragment.OnFilterAppliedListener {
 
     private static final String ARG_PARAM = "param";
 
@@ -133,12 +133,18 @@ public class ServicesFragment extends Fragment implements SolutionFilterFragment
         service.search(searchItem).enqueue(new Callback<Collection<Service>>() {
             @Override
             public void onResponse(Call<Collection<Service>> call, Response<Collection<Service>> response) {
-                setServices(response);
+                if (response.isSuccessful() && response.body() != null) {
+                    setServices(response);
+                } else {
+                    Toast.makeText(requireContext(), "Search failed", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onFailure(Call<Collection<Service>> call, Throwable t) {
-
+                Toast.makeText(requireContext(), "Network error during search", Toast.LENGTH_SHORT).show();
+                Log.e("ServiceSearch", "Search error: " + t.getMessage());
+                t.printStackTrace();
             }
         });
     }
@@ -160,7 +166,7 @@ public class ServicesFragment extends Fragment implements SolutionFilterFragment
             if (getChildFragmentManager().findFragmentById(servicesBinding.filter.getId()) == null) {
                 FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
                 String search = servicesBinding.search.getText().toString();
-                transaction.add(servicesBinding.filter.getId(), SolutionFilterFragment.newInstance(search));
+                transaction.add(servicesBinding.filter.getId(), ServiceFilterFragment.newInstance(search));
                 transaction.addToBackStack("services");
                 transaction.commit();
             }

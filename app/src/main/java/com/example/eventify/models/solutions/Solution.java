@@ -10,7 +10,7 @@ import com.example.eventify.BR;
 import com.example.eventify.models.enums.SolutionType;
 import com.example.eventify.models.enums.Status;
 import com.example.eventify.models.events.EventType;
-import com.example.eventify.models.users.BusinessOwner;
+import com.example.eventify.models.users.User;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -41,7 +41,7 @@ public class Solution implements Parcelable, Observable {
     private boolean visibility;
     @Bindable
     private boolean availability;
-    private BusinessOwner owner;
+    private User owner;
 
     private Set<Review> reviews;
 
@@ -88,7 +88,7 @@ public class Solution implements Parcelable, Observable {
         category = in.readParcelable(SolutionCategory.class.getClassLoader());
         type = new HashSet<>(in.createTypedArrayList(EventType.CREATOR));
         images = new ArrayList<>(in.createStringArrayList());
-        owner = in.readParcelable(BusinessOwner.class.getClassLoader());
+        owner = in.readParcelable(User.class.getClassLoader());
     }
 
     // Getters and Setters
@@ -196,11 +196,11 @@ public class Solution implements Parcelable, Observable {
         notifyPropertyChanged(BR.availability);
     }
 
-    public BusinessOwner getOwner() {
+    public User getOwner() {
         return owner;
     }
 
-    public void setOwner(BusinessOwner owner) {
+    public void setOwner(User owner) {
         this.owner = owner;
         notifyPropertyChanged(BR.owner);
     }

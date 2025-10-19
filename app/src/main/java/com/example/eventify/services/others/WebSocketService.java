@@ -8,6 +8,7 @@ import com.example.eventify.models.others.NotificationPayload;
 import com.example.eventify.models.users.User;
 import com.example.eventify.services.auth.LoginService;
 import com.example.eventify.utils.NotifHelper;
+import com.example.eventify.utils.UserSession;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -28,7 +29,7 @@ import java.util.UUID;
 
 public class WebSocketService {
     private static final String TAG = "WebSocketService";
-    private static final String WS_URL = "ws://192.168.0.27:8080/ws-native";
+    private static final String WS_URL = "ws://192.168.0.100:8080/ws-native";
 
     private final Context appContext;
     private WebSocket webSocket;
@@ -61,6 +62,7 @@ public class WebSocketService {
             
     private WebSocketListener listener;
     private User currentUser;
+    private UserSession userSession;
     private boolean isConnected = false;
     private boolean isSubscribed = false;
 
@@ -74,6 +76,7 @@ public class WebSocketService {
     public WebSocketService(Context context, User currentUser) {
         this.appContext = context.getApplicationContext();
         this.currentUser = currentUser;
+        this.userSession = new UserSession(context);
     }
 
     public void setListener(WebSocketListener listener) {
@@ -90,10 +93,18 @@ public class WebSocketService {
             
             webSocket = factory.createSocket(WS_URL);
             
+            // Add authentication headers if available
+            String authToken = userSession.getAuthToken();
+            if (authToken != null && !authToken.isEmpty()) {
+                webSocket.addHeader("Authorization", "Bearer " + authToken);
+                Log.d(TAG, "Added authentication header");
+            }
+            
             webSocket.addListener(new WebSocketAdapter() {
                 @Override
                 public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
                     Log.d(TAG, "WebSocket connected successfully");
+                    Log.d(TAG, "Connection headers: " + headers);
                     isConnected = true;
                     
                     // Send STOMP CONNECT frame
@@ -128,7 +139,11 @@ public class WebSocketService {
                     isConnected = false;
                     isSubscribed = false;
                     if (listener != null) {
-                        listener.onError("Connection failed: " + cause.getMessage());
+                        String errorMessage = "Connection failed";
+                        if (cause.getMessage() != null) {
+                            errorMessage += ": " + cause.getMessage();
+                        }
+                        listener.onError(errorMessage);
                     }
                 }
                 
@@ -139,7 +154,11 @@ public class WebSocketService {
                     isConnected = false;
                     isSubscribed = false;
                     if (listener != null) {
-                        listener.onError("Failed to connect: " + exception.getMessage());
+                        String errorMessage = "Failed to connect";
+                        if (exception.getMessage() != null) {
+                            errorMessage += ": " + exception.getMessage();
+                        }
+                        listener.onError(errorMessage);
                     }
                 }
             });
@@ -292,5 +311,16 @@ public class WebSocketService {
 
     public boolean isConnected() {
         return isConnected;
+    }
+    
+    public void reconnect() {
+        Log.d(TAG, "Attempting to reconnect...");
+        disconnect();
+        try {
+            Thread.sleep(1000); // Wait 1 second before reconnecting
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        connect();
     }
 } 

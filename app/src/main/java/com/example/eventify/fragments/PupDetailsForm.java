@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import com.example.eventify.R;
 import com.example.eventify.databinding.FragmentPupDetailsFormBinding;
-import com.example.eventify.models.users.BusinessOwner;
+import com.example.eventify.models.users.User;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,7 +26,7 @@ public class PupDetailsForm extends Fragment {
         // Required empty public constructor
     }
 
-    public static PupDetailsForm newInstance(BusinessOwner owner) {
+    public static PupDetailsForm newInstance(User owner) {
         PupDetailsForm fragment = new PupDetailsForm();
         Bundle args = new Bundle();
         args.putParcelable("owner", owner);

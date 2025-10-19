@@ -39,8 +39,11 @@ import com.example.eventify.services.solutions.SolutionService;
 import com.example.eventify.services.users.UserService;
 import com.example.eventify.utils.RetrofitClient;
 import com.example.eventify.utils.UserSession;
+import com.example.eventify.utils.JwtUtils;
 import com.example.eventify.activities.MainActivity;
 import com.example.eventify.utils.NavigationManager;
+import com.example.eventify.models.enums.UserRole;
+import com.example.eventify.models.users.Role;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,6 +84,7 @@ public class ServiceDetailsFragment extends Fragment {
     private boolean serviceDetails = true;
 
     private boolean isPurchased = false;
+    private boolean isReserved = false;
     private Purchase purchase;
 
     private NavigationManager navigationManager;
@@ -119,7 +123,9 @@ public class ServiceDetailsFragment extends Fragment {
                     String action = bundle.getString("action");
                     if (reservationId != null) {
                         Toast.makeText(requireContext(), "Reservation created: " + reservationId, Toast.LENGTH_LONG).show();
-                        // refresh po želji
+                        // Mark service as reserved and enable review functionality
+                        isReserved = true;
+                        reviewPermission();
                     } else if ("CREATE_EVENT".equals(action)) {
                         if (navigationManager != null) {
                             // navigationManager.navigateTo(CreateEventFragment.newInstance());
@@ -167,8 +173,6 @@ public class ServiceDetailsFragment extends Fragment {
         // Check if solution is already favorited
         checkFavoriteStatus();
 
-        loadReviewsByOwner();
-
         detailsBtnHandler();
         binding.right.setOnClickListener(v -> detailsBtnHandler());
         binding.left.setOnClickListener(v -> openChat());
@@ -185,6 +189,9 @@ public class ServiceDetailsFragment extends Fragment {
 
         setupCommentsSection();
         loadSolutionReviews();
+        
+        // Initialize review permission (will be updated when purchase/reservation status is checked)
+        reviewPermission();
 
         return binding.getRoot();
     }
@@ -420,6 +427,8 @@ public class ServiceDetailsFragment extends Fragment {
                 binding.btnBook.setText("Buy Product");
                 binding.btnBook.setOnClickListener(v -> buyProductWithEventSelection());
             }
+            // Load solution-specific comments when showing solution details
+            loadSolutionReviews();
         } else {
             params.height = (int) TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP,
@@ -432,6 +441,8 @@ public class ServiceDetailsFragment extends Fragment {
             transaction.add(binding.details.getId(), PupDetailsForm.newInstance(showedSolution.getOwner()));
             serviceDetails = true;
             transaction.commit();
+            // Load business owner comments when showing about us
+            loadReviewsByOwner();
         }
 
     }
@@ -471,8 +482,21 @@ public class ServiceDetailsFragment extends Fragment {
 
 
     private void reviewPermission() {
-        binding.btnBook.setVisibility(isPurchased ? View.GONE:View.VISIBLE);
-        binding.submitReview.setVisibility(isPurchased ? View.VISIBLE:View.GONE);
+        boolean canReview = isPurchased || isReserved;
+        binding.btnBook.setVisibility(canReview ? View.GONE:View.VISIBLE);
+        binding.submitReview.setVisibility(canReview ? View.VISIBLE:View.GONE);
+        
+        // Disable rating bar and comment field if user cannot review
+        binding.rbNewReview.setEnabled(canReview);
+        binding.descriptionEditText.setEnabled(canReview);
+        
+        if (!canReview) {
+            binding.rbNewReview.setRating(0);
+            binding.descriptionEditText.setText("");
+            binding.descriptionEditText.setHint("Purchase or reserve this solution to leave a review");
+        } else {
+            binding.descriptionEditText.setHint("Leave a comment");
+        }
     }
 
     private void checkIfProductAlreadyPurchased() {
@@ -531,7 +555,22 @@ public class ServiceDetailsFragment extends Fragment {
         });
     }
 
+    private void checkIfServiceAlreadyReserved() {
+        if (!userSession.isValidSession() || showedService == null) {
+            isReserved = false;
+            reviewPermission();
+            return;
+        }
+
+        // For services, we need to check if the user has any reservations for this service
+        // This would typically involve calling a service to check reservations
+        // For now, we'll set it to false and let the user reserve first
+        isReserved = false;
+        reviewPermission();
+    }
+
     private void loadReviewsByOwner() {
+        // This method is now used for the "About Us" section to show all business owner reviews
         if (showedSolution != null && showedSolution.getOwner() != null) {
             reviewService.getByOwner(UUID.fromString(showedSolution.getOwner().getId())).enqueue(new Callback<Collection<Review>>() {
                 @Override
@@ -554,11 +593,14 @@ public class ServiceDetailsFragment extends Fragment {
 
     private void displayOwnerReviews(List<Review> reviews) {
         if (reviews.isEmpty()) {
-            Toast.makeText(requireContext(), "No reviews found for this owner", Toast.LENGTH_SHORT).show();
+            // Show empty state for business owner reviews in about us section
+            List<Review> emptyReviews = new ArrayList<>();
+            ReviewAdapter ownerReviewAdapter = new ReviewAdapter(requireContext(), emptyReviews);
+            binding.commentsRecyclerView.setAdapter(ownerReviewAdapter);
             return;
         }
 
-        // Display reviews in the RecyclerView below Reviews & Comments
+        // Display all business owner reviews in the RecyclerView below Reviews & Comments
         ReviewAdapter ownerReviewAdapter = new ReviewAdapter(requireContext(), reviews);
         binding.commentsRecyclerView.setAdapter(ownerReviewAdapter);
     }
@@ -580,12 +622,21 @@ public class ServiceDetailsFragment extends Fragment {
                         List<Review> reviews = new ArrayList<>(response.body());
                         ReviewAdapter reviewAdapter = new ReviewAdapter(requireContext(), reviews);
                         binding.commentsRecyclerView.setAdapter(reviewAdapter);
+                    } else {
+                        // Show empty state for solution-specific reviews
+                        List<Review> emptyReviews = new ArrayList<>();
+                        ReviewAdapter reviewAdapter = new ReviewAdapter(requireContext(), emptyReviews);
+                        binding.commentsRecyclerView.setAdapter(reviewAdapter);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<Collection<Review>> call, Throwable t) {
-                    Toast.makeText(requireContext(), "Failed to load reviews", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "Failed to load solution reviews", Toast.LENGTH_SHORT).show();
+                    // Show empty state on failure
+                    List<Review> emptyReviews = new ArrayList<>();
+                    ReviewAdapter reviewAdapter = new ReviewAdapter(requireContext(), emptyReviews);
+                    binding.commentsRecyclerView.setAdapter(reviewAdapter);
                 }
             });
         }
@@ -601,6 +652,9 @@ public class ServiceDetailsFragment extends Fragment {
                 FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
                 transaction.add(binding.details.getId(), ServiceDetailsForm.newInstance(showedService));
                 transaction.commit();
+                
+                // Check if service is already reserved
+                checkIfServiceAlreadyReserved();
             }
 
             @Override
@@ -635,6 +689,12 @@ public class ServiceDetailsFragment extends Fragment {
     private void submitReview() {
         if (!userSession.isValidSession()) {
             Toast.makeText(requireContext(), "Please log in to submit a review", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Check if user has purchased or reserved the solution
+        if (!isPurchased && !isReserved) {
+            Toast.makeText(requireContext(), "You must purchase or reserve this solution before leaving a review", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -683,29 +743,53 @@ public class ServiceDetailsFragment extends Fragment {
             return;
         }
 
-        // Get current user
-        UUID currentUserId = userSession.getCurrentUserId();
-        userService.get(currentUserId.toString()).enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    User currentUser = response.body();
-                    User chatPartner = showedSolution.getOwner();
-                    
-                    FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-                    transaction.replace(binding.rootContainer.getId(), ChatFragment.newInstance(currentUser, chatPartner));
-                    transaction.addToBackStack("chat");
-                    transaction.commit();
-                } else {
-                    Toast.makeText(requireContext(), "Failed to get user information", Toast.LENGTH_SHORT).show();
-                }
+        // Create current user from JWT token information instead of making backend call
+        try {
+            String authToken = userSession.getAuthToken();
+            if (authToken == null || authToken.isEmpty()) {
+                Toast.makeText(requireContext(), "Authentication token not found", Toast.LENGTH_SHORT).show();
+                return;
             }
 
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Toast.makeText(requireContext(), "Error getting user information", Toast.LENGTH_SHORT).show();
+            JwtUtils.JwtClaims claims = JwtUtils.decodeToken(authToken);
+            if (claims == null) {
+                Toast.makeText(requireContext(), "Failed to decode authentication token", Toast.LENGTH_SHORT).show();
+                return;
             }
-        });
+
+            // Create User object from JWT claims
+            User currentUser = new User();
+            currentUser.setId(claims.getUserId().toString());
+            currentUser.setEmail(claims.getEmail());
+            
+            // Set role if available
+            if (claims.getRole() != null) {
+                try {
+                    UserRole userRole = UserRole.valueOf(claims.getRole());
+                    Role role = new Role(userRole);
+                    currentUser.setRole(role);
+                } catch (IllegalArgumentException e) {
+                    // If role parsing fails, use default role
+                    Role role = new Role(UserRole.AUTHENTICATED_USER);
+                    currentUser.setRole(role);
+                }
+            } else {
+                // Default role if not specified
+                Role role = new Role(UserRole.AUTHENTICATED_USER);
+                currentUser.setRole(role);
+            }
+
+            User chatPartner = showedSolution.getOwner();
+            
+            FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+            transaction.replace(binding.rootContainer.getId(), ChatFragment.newInstance(currentUser, chatPartner));
+            transaction.addToBackStack("chat");
+            transaction.commit();
+            
+        } catch (Exception e) {
+            android.util.Log.e("ServiceDetails", "Error creating user from JWT: " + e.getMessage(), e);
+            Toast.makeText(requireContext(), "Error initializing chat", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
