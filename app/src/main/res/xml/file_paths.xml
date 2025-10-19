@@ -2,5 +2,6 @@
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
     <files-path name="files" path="." />
     <files-path name="downloads" path="Downloads/" />
+    <cache-path name="cache" path="." />
     <external-path name="external_downloads" path="Download/Eventify/" />
 </paths>

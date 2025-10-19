@@ -21,6 +21,12 @@
         app:labelVisibilityMode="labeled" />
 
     <item
+        android:id="@+id/event_types"
+        android:icon="@drawable/ic_event_types"
+        android:title="@string/event_types"
+        app:labelVisibilityMode="labeled" />
+
+    <item
         android:id="@+id/event_stats"
         android:icon="@drawable/ic_event_stats"
         android:title="@string/event_stats_title"
