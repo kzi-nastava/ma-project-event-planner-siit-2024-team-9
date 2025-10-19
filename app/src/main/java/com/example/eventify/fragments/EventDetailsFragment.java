@@ -38,6 +38,12 @@ import com.example.eventify.services.pdf.PdfService;
 import com.example.eventify.services.users.UserService;
 import com.example.eventify.utils.RetrofitClient;
 import com.example.eventify.utils.UserSession;
+import com.example.eventify.utils.JwtUtils;
+import com.example.eventify.utils.NavigationManager;
+import com.example.eventify.models.users.Role;
+import com.example.eventify.models.users.User;
+import com.example.eventify.models.enums.UserRole;
+import com.example.eventify.fragments.ChatFragment;
 
 // OpenStreetMap imports
 import org.osmdroid.config.Configuration;
@@ -76,6 +82,7 @@ public class EventDetailsFragment extends Fragment {
     private UserSession userSession;
     private ActivityAdapter activityAdapter;
     private List<Activity> activities = new ArrayList<>();
+    private NavigationManager navigationManager;
     
     // Permission launcher for storage access
     private ActivityResultLauncher<String> storagePermissionLauncher;
@@ -105,6 +112,11 @@ public class EventDetailsFragment extends Fragment {
         eventFavoritesService = RetrofitClient.getClient(requireContext()).create(EventFavoritesService.class);
         pdfService = RetrofitClient.getClient(requireContext()).create(PdfService.class);
         userSession = new UserSession(requireContext());
+        
+        // Get NavigationManager from activity
+        if (requireActivity() instanceof NavigationManager) {
+            navigationManager = (NavigationManager) requireActivity();
+        }
         
         // Initialize permission launcher
         storagePermissionLauncher = registerForActivityResult(
@@ -596,8 +608,63 @@ public class EventDetailsFragment extends Fragment {
     }
 
     private void openChat() {
-        // TODO: Implement chat functionality
-        Toast.makeText(requireContext(), "Chat feature coming soon", Toast.LENGTH_SHORT).show();
+        if (!userSession.isValidSession()) {
+            Toast.makeText(requireContext(), "Please log in to start chatting", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (event == null || event.getOrganizer() == null) {
+            Toast.makeText(requireContext(), "Unable to start chat", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Create current user from JWT token information instead of making backend call
+        try {
+            String authToken = userSession.getAuthToken();
+            if (authToken == null || authToken.isEmpty()) {
+                Toast.makeText(requireContext(), "Authentication token not found", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            JwtUtils.JwtClaims claims = JwtUtils.decodeToken(authToken);
+            if (claims == null) {
+                Toast.makeText(requireContext(), "Failed to decode authentication token", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Create User object from JWT claims
+            User currentUser = new User();
+            currentUser.setId(claims.getUserId().toString());
+            currentUser.setEmail(claims.getEmail());
+            
+            // Set role if available
+            if (claims.getRole() != null) {
+                try {
+                    UserRole userRole = UserRole.valueOf(claims.getRole());
+                    Role role = new Role(userRole);
+                    currentUser.setRole(role);
+                } catch (IllegalArgumentException e) {
+                    // If role parsing fails, use default role
+                    Role role = new Role(UserRole.AUTHENTICATED_USER);
+                    currentUser.setRole(role);
+                }
+            } else {
+                // Default role if not specified
+                Role role = new Role(UserRole.AUTHENTICATED_USER);
+                currentUser.setRole(role);
+            }
+
+            User chatPartner = event.getOrganizer();
+            
+            androidx.fragment.app.FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+            transaction.replace(binding.rootContainer.getId(), ChatFragment.newInstance(currentUser, chatPartner));
+            transaction.addToBackStack("chat");
+            transaction.commit();
+            
+        } catch (Exception e) {
+            android.util.Log.e("EventDetails", "Error creating user from JWT: " + e.getMessage(), e);
+            Toast.makeText(requireContext(), "Error initializing chat", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void sortActivities() {

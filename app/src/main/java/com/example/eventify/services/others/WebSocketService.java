@@ -8,6 +8,7 @@ import com.example.eventify.models.others.NotificationPayload;
 import com.example.eventify.models.users.User;
 import com.example.eventify.services.auth.LoginService;
 import com.example.eventify.utils.NotifHelper;
+import com.example.eventify.utils.UserSession;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -28,7 +29,7 @@ import java.util.UUID;
 
 public class WebSocketService {
     private static final String TAG = "WebSocketService";
-    private static final String WS_URL = "ws://192.168.0.27:8080/ws-native";
+    private static final String WS_URL = "ws://192.168.0.100:8080/ws-native";
 
     private final Context appContext;
     private WebSocket webSocket;
