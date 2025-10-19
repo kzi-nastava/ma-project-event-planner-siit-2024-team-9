@@ -1,6 +1,7 @@
 package com.example.eventify.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +59,7 @@ public class DiscoverFragment extends Fragment {
     }
 
     private void initRecyclerViews() {
-        // Top 5 Events FragmentloadChildFragment
+        // Top 5 Events Fragment
         getChildFragmentManager().beginTransaction()
                 .replace(binding.topEventsContainer.getId(), EventListFragment.newInstance(true))
                 .commit();

@@ -551,9 +551,9 @@ public class ServiceFormFragment extends Fragment {
 
     public void getTypes() {
         EventTypeService service =RetrofitClient.getClient(requireContext()).create(EventTypeService.class);
-        service.getAll().enqueue(new Callback<Collection<EventType>>() {
+        service.getAll().enqueue(new Callback<List<EventType>>() {
             @Override
-            public void onResponse(Call<Collection<EventType>> call, Response<Collection<EventType>> response) {
+            public void onResponse(Call<List<EventType>> call, Response<List<EventType>> response) {
                 if (!response.isSuccessful() || response.body() == null) {
                     showError("Failed to load event types. Please try again.");
                     return;
@@ -571,7 +571,7 @@ public class ServiceFormFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<Collection<EventType>> call, Throwable t) {
+            public void onFailure(Call<List<EventType>> call, Throwable t) {
                 showError("Network error while loading event types. Please check your connection.");
                 t.printStackTrace();
             }
