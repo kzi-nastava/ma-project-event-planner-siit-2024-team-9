@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".BudgetActivity">
 
@@ -13,23 +14,34 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="15dp"
+        android:padding="8dp"
         android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/event_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Event Name"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:textSize="16sp"
+            android:textColor="@color/primary_color"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Budget details"
-            android:layout_marginVertical="30dp"
-            android:textSize="23sp"
+            android:layout_marginBottom="12dp"
+            android:textSize="18sp"
             android:theme="@style/header_text"
             android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="25dp"
+            android:layout_marginBottom="12dp"
             android:orientation="horizontal">
 
             <TextView
@@ -37,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@{`Current: `+ budget.actualValue +'$'}"
-                android:textSize="18sp"
+                android:textSize="14sp"
                 android:textColor="@color/black"/>
 
             <TextView
@@ -45,36 +57,80 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@{`Planned: `+ budget.plannedValue +'$'}"
-                android:textSize="18sp"
+                android:textSize="14sp"
                 android:textColor="@color/black"/>
         </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Recommended categories"
-            android:textSize="18sp"
-            android:layout_marginBottom="20dp"
-            android:textColor="@color/black"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/categories_recycler"
+        <!-- Selected items section (moved above recommended categories) -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="25dp"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Selected items"
+                android:textSize="14sp"
+                android:textColor="@color/black"/>
+
+            <!-- Global Edit/Save Buttons (like Angular) -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/global_save_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="4dp"
+                    android:text="Save All"
+                    android:textSize="12sp"
+                    android:minWidth="0dp"
+                    android:paddingHorizontal="12dp"
+                    app:cornerRadius="16dp"
+                    app:backgroundTint="@color/primary_color"
+                    android:textColor="@android:color/white"
+                    android:visibility="gone" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/global_edit_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:text="Edit All"
+                    android:textSize="12sp"
+                    android:minWidth="0dp"
+                    android:paddingHorizontal="12dp"
+                    app:cornerRadius="16dp"
+                    app:backgroundTint="@color/light_gray"
+                    android:textColor="@color/black"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/budget_items_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
             android:nestedScrollingEnabled="false"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Selected items"
-            android:textSize="18sp"
-            android:layout_marginBottom="20dp"
+            android:text="Recommended categories"
+            android:textSize="14sp"
+            android:layout_marginBottom="8dp"
             android:textColor="@color/black"/>
 
-
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/budget_items_recycler"
+            android:id="@+id/categories_recycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:nestedScrollingEnabled="false"/>

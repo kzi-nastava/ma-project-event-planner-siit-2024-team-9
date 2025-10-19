@@ -64,14 +64,20 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        android.util.Log.d("MessageAdapter", "onBindViewHolder() called for position: " + position);
+        
         if (messages == null || position < 0 || position >= messages.size()) {
+            android.util.Log.w("MessageAdapter", "Invalid position or null messages: " + position);
             return; // Safety check
         }
         
         Message message = messages.get(position);
         if (message == null) {
+            android.util.Log.w("MessageAdapter", "Message is null at position: " + position);
             return; // Safety check
         }
+        
+        android.util.Log.d("MessageAdapter", "Binding message: " + message.getContent() + " from " + (message.getSender() != null ? message.getSender().getEmail() : "null"));
         
         if (holder instanceof SentMessageViewHolder) {
             ((SentMessageViewHolder) holder).bind(message);
@@ -82,7 +88,9 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemCount() {
-        return messages != null ? messages.size() : 0;
+        int count = messages != null ? messages.size() : 0;
+        android.util.Log.d("MessageAdapter", "getItemCount() called, returning: " + count);
+        return count;
     }
 
     public void addMessage(Message message) {

@@ -45,6 +45,7 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
     public void onBindViewHolder(@NonNull CategoryViewHolder holder, int position) {
         SolutionCategory category = categories.get(position);
         holder.categoryName.setText(category.getName());
+        holder.categoryDescription.setText(category.getDescription() != null ? category.getDescription() : "");
 
         holder.itemView.setOnClickListener(v -> {
             listener.onCategoryClick(category);
@@ -58,10 +59,12 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
 
     static class CategoryViewHolder extends RecyclerView.ViewHolder {
         TextView categoryName;
+        TextView categoryDescription;
 
         public CategoryViewHolder(@NonNull View itemView) {
             super(itemView);
             categoryName = itemView.findViewById(R.id.category_name);
+            categoryDescription = itemView.findViewById(R.id.category_description);
         }
     }
 }

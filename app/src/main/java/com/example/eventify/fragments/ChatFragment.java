@@ -176,11 +176,13 @@ public class ChatFragment extends Fragment implements WebSocketService.WebSocket
         layoutManager.setStackFromEnd(true);
         binding.recyclerMessages.setLayoutManager(layoutManager);
         binding.recyclerMessages.setAdapter(messageAdapter);
+        
+        logInfo("RecyclerView setup completed with adapter: " + (messageAdapter != null ? "OK" : "NULL"));
     }
 
     private void setupWebSocket() {
         try {
-            webSocketService = new WebSocketService(currentUser);
+            webSocketService = new WebSocketService(currentUser, requireContext());
             webSocketService.setListener(this);
             webSocketService.connect();
             logInfo("WebSocket setup initiated");
@@ -202,7 +204,7 @@ public class ChatFragment extends Fragment implements WebSocketService.WebSocket
         try {
             senderId = UUID.fromString(currentUser.getId());
             recipientId = UUID.fromString(chatPartner.getId());
-            logInfo("UUIDs parsed successfully");
+            logInfo("UUIDs parsed successfully - Sender: " + senderId + ", Recipient: " + recipientId);
         } catch (IllegalArgumentException e) {
             logError("UUID parsing failed", e);
             binding.progressBar.setVisibility(View.GONE);
@@ -211,6 +213,7 @@ public class ChatFragment extends Fragment implements WebSocketService.WebSocket
         }
         
         // Add timeout to prevent blocking
+        logInfo("Making API call to get messages between " + senderId + " and " + recipientId);
         messageService.getMessages(senderId, recipientId)
                 .enqueue(new Callback<List<Message>>() {
                     @Override
@@ -236,6 +239,7 @@ public class ChatFragment extends Fragment implements WebSocketService.WebSocket
                                         // Add messages directly (no conversion needed)
                                         for (Message message : response.body()) {
                                             messages.add(message);
+                                            logInfo("Added message: " + message.getContent() + " from " + message.getSender().getEmail());
                                         }
                                         
                                         logInfo("Messages processed: " + messages.size());
@@ -250,6 +254,8 @@ public class ChatFragment extends Fragment implements WebSocketService.WebSocket
                                         
                                         if (messageAdapter != null) {
                                             messageAdapter.notifyDataSetChanged();
+                                        } else {
+                                            logError("MessageAdapter is NULL!");
                                         }
                                         
                                         scrollToBottom();
@@ -418,6 +424,7 @@ public class ChatFragment extends Fragment implements WebSocketService.WebSocket
             if (binding != null) {
                 binding.textConnectionStatus.setText("Connected");
                 binding.textConnectionStatus.setVisibility(View.GONE);
+                binding.textConnectionStatus.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
             }
         });
     }
@@ -435,6 +442,7 @@ public class ChatFragment extends Fragment implements WebSocketService.WebSocket
             if (binding != null) {
                 binding.textConnectionStatus.setText("Disconnected");
                 binding.textConnectionStatus.setVisibility(View.VISIBLE);
+                binding.textConnectionStatus.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
             }
         });
     }
@@ -450,8 +458,12 @@ public class ChatFragment extends Fragment implements WebSocketService.WebSocket
         
         requireActivity().runOnUiThread(() -> {
             if (binding != null) {
-                binding.textConnectionStatus.setText("Connection Error");
+                binding.textConnectionStatus.setText("Connection Error: " + error);
                 binding.textConnectionStatus.setVisibility(View.VISIBLE);
+                binding.textConnectionStatus.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+                
+                // Show a toast with the error for better user feedback
+                Toast.makeText(requireContext(), "Chat connection error: " + error, Toast.LENGTH_LONG).show();
             }
         });
     }
