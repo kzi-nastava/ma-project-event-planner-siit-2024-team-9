@@ -1,6 +1,7 @@
 package com.example.eventify.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +59,10 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
 
     @Override
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
-        Event event = events.get(position);
+        try {
+            Log.d("EventListAdapter", "onBindViewHolder called for position: " + position);
+            Event event = events.get(position);
+            Log.d("EventListAdapter", "Event name: " + event.getName());
 
         holder.eventTitle.setText(event.getName());
         String eventTime = dateFormatter.format(event.getEventStart()) + " | " +
@@ -91,6 +95,62 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
                 budgetClickListener.onBudgetClick(event);
             }
         });
+            holder.eventTitle.setText(event.getName());
+            Log.d("EventListAdapter", "Set event title");
+            
+            // Handle null dates safely
+            String eventTime2 = "Date not available";
+            Log.d("EventListAdapter", "EventStart is null: " + (event.getEventStart() == null));
+            Log.d("EventListAdapter", "EventEnd is null: " + (event.getEventEnd() == null));
+            
+            if (event.getEventStart() != null && event.getEventEnd() != null) {
+                eventTime = dateFormatter.format(event.getEventStart()) + " | " +
+                        timeFormatter.format(event.getEventStart()) + " - " +
+                        timeFormatter.format(event.getEventEnd());
+            } else if (event.getEventStart() != null) {
+                eventTime = dateFormatter.format(event.getEventStart()) + " | " +
+                        timeFormatter.format(event.getEventStart());
+            }
+            holder.eventDateTime.setText(eventTime);
+            Log.d("EventListAdapter", "Set event date time");
+            
+            holder.eventDescription.setText(event.getDescription());
+            Log.d("EventListAdapter", "Set event description");
+            
+            Log.d("EventListAdapter", "Location is null: " + (event.getLocation() == null));
+            holder.eventLocation.setText(event.getLocation() != null ? event.getLocation().getName() : "Location not available");
+            Log.d("EventListAdapter", "Set event location");
+            
+            if (event.getPrice() == null || event.getPrice() == 0) {
+                holder.eventPrice.setText(R.string.free);
+            } else {
+                holder.eventPrice.setText(context.getString(R.string.dollar_sign) + event.getPrice());
+            }
+            Log.d("EventListAdapter", "Set event price");
+            
+            Glide.with(context)
+                    .load(event.getImage())
+                    .placeholder(R.drawable.dummy_event_image)
+                    .error(R.drawable.dummy_event_image)
+                    .into(holder.eventImage);
+            Log.d("EventListAdapter", "Set event image");
+
+            // Set click listener
+            holder.itemView.setOnClickListener(v -> {
+                Log.d("EventListAdapter", "Event card clicked for: " + event.getName());
+                if (eventClickListener != null) {
+                    Log.d("EventListAdapter", "Calling eventClickListener.onEventClick");
+                    eventClickListener.onEventClick(event);
+                } else {
+                    Log.e("EventListAdapter", "eventClickListener is null!");
+                }
+            });
+            Log.d("EventListAdapter", "Set click listener");
+            Log.d("EventListAdapter", "onBindViewHolder completed successfully for position: " + position);
+        } catch (Exception e) {
+            Log.e("EventListAdapter", "Error in onBindViewHolder for position: " + position, e);
+            e.printStackTrace();
+        }
     }
 
     @Override

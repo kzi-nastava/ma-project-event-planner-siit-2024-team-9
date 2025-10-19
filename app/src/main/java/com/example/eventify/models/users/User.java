@@ -53,11 +53,26 @@ public class User implements Parcelable, Observable {
     private boolean activated;
     private Set<Solution> favorites;
     private Set<Event> attendingEvents;
+    private Set<Event> favoriteEvents;
+    
+    // Business Owner specific fields
+    @SerializedName("name")
+    @Expose
+    private String name; // Business name
+    
+    @SerializedName("description")
+    @Expose
+    private String description;
+    
+    @SerializedName("images")
+    @Expose
+    private java.util.Set<String> images;
 
     public User() {
         // Initialize collections to prevent null pointer exceptions
         this.favorites = new java.util.HashSet<>();
         this.attendingEvents = new java.util.HashSet<>();
+        this.favoriteEvents = new java.util.HashSet<>();
     }
 
     public User(String email,
@@ -185,6 +200,31 @@ public class User implements Parcelable, Observable {
         this.lastName = lastName;
     }
 
+    // Business Owner specific getters and setters
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public java.util.Set<String> getImages() {
+        return images;
+    }
+
+    public void setImages(java.util.Set<String> images) {
+        this.images = images;
+    }
+
     public String getProfileImage() {
         return profileImage;
     }
@@ -253,6 +293,14 @@ public class User implements Parcelable, Observable {
         this.attendingEvents = attendingEvents;
     }
 
+    public Set<Event> getFavoriteEvents() {
+        return favoriteEvents;
+    }
+
+    public void setFavoriteEvents(Set<Event> favoriteEvents) {
+        this.favoriteEvents = favoriteEvents;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -274,8 +322,9 @@ public class User implements Parcelable, Observable {
         parcel.writeSerializable(suspensionEndDate); // Serialize Date as it implements Serializable
         parcel.writeParcelable(role, i); // Add role to parcel
         parcel.writeString(roleName); // Add roleName to parcel
-        parcel.writeTypedList(favorites == null ? new ArrayList<>() : new ArrayList<>(favorites));
-        parcel.writeTypedList(attendingEvents == null ? new ArrayList<>() : new ArrayList<>(attendingEvents));
+        parcel.writeTypedList(favorites != null ? new ArrayList<>(favorites) : new ArrayList<>()); // Convert Set to List for parceling
+        parcel.writeTypedList(attendingEvents != null ? new ArrayList<>(attendingEvents) : new ArrayList<>()); // Convert Set to List for parceling
+        parcel.writeTypedList(favoriteEvents != null ? new ArrayList<>(favoriteEvents) : new ArrayList<>()); // Convert Set to List for parceling
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
