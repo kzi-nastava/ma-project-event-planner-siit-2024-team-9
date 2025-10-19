@@ -185,9 +185,7 @@ public class CategoriesFragment extends Fragment {
                 }
             });
 
-            // Set the description text
-            String desc = category.getDescription();
-            descCell.setText(desc != null && !desc.isEmpty() ? desc : "");
+            descCell.setText(category.getDescription());
             descCell.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -323,9 +321,7 @@ public class CategoriesFragment extends Fragment {
                 }
             });
 
-            // Set the description text
-            String desc = category.getDescription();
-            descCell.setText(desc != null && !desc.isEmpty() ? desc : "");
+            descCell.setText(category.getDescription());
             descCell.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {

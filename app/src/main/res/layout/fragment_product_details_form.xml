@@ -82,18 +82,7 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/black"
                         android:text="@={service.category.name}"
-                        android:textSize="14sp"
-                        android:textStyle="bold">
-
-                    </TextView>
-                    <TextView
-                        android:id="@+id/categoryDescription"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/black"
-                        android:text="@={service.category.categoryDescription}"
-                        android:textSize="12sp"
-                        android:layout_marginTop="4dp">
+                        android:textSize="14sp">
 
                     </TextView>
                 </LinearLayout>

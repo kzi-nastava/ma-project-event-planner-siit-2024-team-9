@@ -51,7 +51,6 @@ public class BudgetFragment extends Fragment implements CategoryListAdapter.OnCa
 
     BudgetService service;
     ArrayList<BudgetItem> items;
-    boolean isEditMode = false;
 
     public static BudgetFragment newInstance(String eventName) {
         BudgetFragment fragment = new BudgetFragment();
@@ -85,11 +84,6 @@ public class BudgetFragment extends Fragment implements CategoryListAdapter.OnCa
                              Bundle savedInstanceState) {
 
         binding = FragmentBudgetBinding.inflate(inflater, container, false);
-        
-        // Set up global edit/save button click listeners (like Angular)
-        binding.globalEditButton.setOnClickListener(v -> editMode());
-        binding.globalSaveButton.setOnClickListener(v -> save());
-        
         if (eventName != null) {
             getEventAndBudget();
         }
@@ -147,18 +141,7 @@ public class BudgetFragment extends Fragment implements CategoryListAdapter.OnCa
     private void getItems() {
         binding.budgetItemsRecycler.setLayoutManager(new LinearLayoutManager(requireContext()));
         items = new ArrayList<>(budget.getItems());
-        
-        // Ensure all items have proper IDs and unsaved state (like Angular app)
-        for (BudgetItem item : items) {
-            if (item.getId() == null) {
-                // Set empty string for items without ID (like Angular app does)
-                item.setId("");
-            }
-            // Mark existing items as saved (unsaved = false) like Angular
-            item.setUnsaved(false);
-        }
-        
-        adapter = new ItemListAdapter(requireContext(), items, getParentFragmentManager(), budget, BudgetFragment.this, isEditMode);
+        adapter = new ItemListAdapter(requireContext(), items, getParentFragmentManager(), budget, BudgetFragment.this);
         binding.budgetItemsRecycler.setAdapter(adapter);
     }
 
@@ -167,17 +150,10 @@ public class BudgetFragment extends Fragment implements CategoryListAdapter.OnCa
         if (!selected.contains(category))
             selected.add(category);
         getCategories(selected);
-        
-        // Enter edit mode when adding new category (like Angular app)
-        isEditMode = true;
-        
-        // Create new budget item with empty string ID and unsaved=true (like Angular app)
-        BudgetItem item = new BudgetItem("", category, 0, new HashSet<>());
-        item.setUnsaved(true); // New items are unsaved by default
+        BudgetItem item = new BudgetItem("",category,0, new HashSet<>());
         items.add(item);
-        
         binding.budgetItemsRecycler.setLayoutManager(new LinearLayoutManager(requireContext()));
-        adapter = new ItemListAdapter(requireContext(), items, requireActivity().getSupportFragmentManager(), budget, BudgetFragment.this, isEditMode);
+        ItemListAdapter adapter = new ItemListAdapter(requireContext(), items, requireActivity().getSupportFragmentManager(), budget, BudgetFragment.this);
         binding.budgetItemsRecycler.setAdapter(adapter);
     }
 
@@ -199,14 +175,6 @@ public class BudgetFragment extends Fragment implements CategoryListAdapter.OnCa
 
     private void categoriesReset(boolean deletedItem) {
         binding.setBudget(budget);
-        
-        // Set event name
-        if (event != null && event.getName() != null) {
-            binding.eventName.setText(event.getName());
-        } else if (eventName != null) {
-            binding.eventName.setText(eventName);
-        }
-        
         categories.clear();
         for (BudgetItem item: budget.getItems()) {
             categories.add(item.getCategory());
@@ -215,7 +183,6 @@ public class BudgetFragment extends Fragment implements CategoryListAdapter.OnCa
         }
         getCategories(categories);
         getItems();
-        updateButtonVisibility();
     }
 
     private void getBudget(boolean deletedItem) {
@@ -236,166 +203,5 @@ public class BudgetFragment extends Fragment implements CategoryListAdapter.OnCa
     @Override
     public void onBudgetUpdated(boolean deletedItem) {
         getBudget(deletedItem);
-    }
-
-    // Add methods to match Angular behavior
-    public void save() {
-        try {
-            // Mark all unsaved items as saved
-            if (items != null) {
-                for (BudgetItem item : items) {
-                    if (item != null && item.isUnsaved()) {
-                        item.setUnsaved(false);
-                    }
-                }
-            }
-            
-            isEditMode = false;
-            updateBudget();
-            updateButtonVisibility();
-            
-            // Update adapter to reflect the changes
-            if (adapter != null) {
-                adapter.setEditMode(isEditMode);
-            }
-        } catch (Exception e) {
-            android.util.Log.e("BudgetFragment", "Error in save method", e);
-            if (getContext() != null) {
-                android.widget.Toast.makeText(getContext(), "Error saving budget", android.widget.Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    public void editMode() {
-        isEditMode = true;
-        // Mark all items as unsaved (like Angular)
-        for (BudgetItem item : items) {
-            item.setUnsaved(true);
-        }
-        if (adapter != null) {
-            adapter.setEditMode(isEditMode);
-        }
-        updateButtonVisibility();
-    }
-
-    private void updateButtonVisibility() {
-        if (isEditMode) {
-            binding.globalSaveButton.setVisibility(View.VISIBLE);
-            binding.globalEditButton.setVisibility(View.GONE);
-        } else {
-            binding.globalSaveButton.setVisibility(View.GONE);
-            binding.globalEditButton.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private void updateBudget() {
-        try {
-            // Update budget with current items (like Angular updateBudget method)
-            if (budget != null && items != null) {
-                budget.setItems(new HashSet<>(items));
-                service.update(UUID.fromString(budget.getId()), budget).enqueue(new Callback<Budget>() {
-            @Override
-            public void onResponse(Call<Budget> call, Response<Budget> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    budget = response.body();
-                    // Update the UI with the saved budget
-                    binding.setBudget(budget);
-                    
-                    // Update the items list with the saved budget items
-                    items.clear();
-                    items.addAll(budget.getItems());
-                    
-                    // Mark all items as saved (unsaved = false)
-                    for (BudgetItem item : items) {
-                        item.setUnsaved(false);
-                    }
-                    
-                    // Update the adapter on the main thread
-                    if (getActivity() != null) {
-                        getActivity().runOnUiThread(() -> {
-                            if (adapter != null) {
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
-                    }
-                    
-                    // Show success message
-                    if (getContext() != null) {
-                        android.widget.Toast.makeText(getContext(), "Budget saved successfully", android.widget.Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    // Handle error response
-                    if (getContext() != null) {
-                        android.widget.Toast.makeText(getContext(), "Failed to save budget", android.widget.Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Budget> call, Throwable t) {
-                // Handle network error
-                if (getContext() != null) {
-                    android.widget.Toast.makeText(getContext(), "Network error while saving budget", android.widget.Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-            } else {
-                if (getContext() != null) {
-                    android.widget.Toast.makeText(getContext(), "Budget or items are null", android.widget.Toast.LENGTH_SHORT).show();
-                }
-            }
-        } catch (Exception e) {
-            android.util.Log.e("BudgetFragment", "Error in updateBudget method", e);
-            if (getContext() != null) {
-                android.widget.Toast.makeText(getContext(), "Error updating budget", android.widget.Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private void refreshBudget() {
-        service.get(UUID.fromString(budget.getId())).enqueue(new Callback<Budget>() {
-            @Override
-            public void onResponse(Call<Budget> call, Response<Budget> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    budget = response.body();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Budget> call, Throwable t) {
-                // Handle error
-            }
-        });
-    }
-
-    private void refreshItems() {
-        service.getItems(UUID.fromString(budget.getId())).enqueue(new Callback<List<BudgetItem>>() {
-            @Override
-            public void onResponse(Call<List<BudgetItem>> call, Response<List<BudgetItem>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    // Update the items list with fresh data from backend
-                    items.clear();
-                    items.addAll(response.body());
-                    
-                    // Mark all items as saved (unsaved = false)
-                    for (BudgetItem item : items) {
-                        item.setUnsaved(false);
-                    }
-                    
-                    // Update the adapter with fresh data
-                    if (adapter != null) {
-                        adapter.notifyDataSetChanged();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<BudgetItem>> call, Throwable t) {
-                // Handle error
-                if (getContext() != null) {
-                    android.widget.Toast.makeText(getContext(), "Error refreshing budget items", android.widget.Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
     }
 }

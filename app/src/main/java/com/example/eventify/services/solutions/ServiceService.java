@@ -35,9 +35,9 @@ public interface ServiceService {
 
     @GET("services/filter")
     Call<Collection<Service>> filter(
-            @Query("keyword") String keyword,
+            @Query("search") String search,
             @Query("category") String category,
-            @Query("eventType") String eventType,
+            @Query("type") String type,
             @Query("price") Double price,
             @Query("availability") Boolean availability);
 

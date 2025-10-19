@@ -299,73 +299,44 @@ public class PriceListFragment extends Fragment {
         final int[] errorCount = {0};
 
         for (Solution solution : solutions) {
-            // Update both price and discount independently
-            updatePriceAndDiscount(solution, totalSolutions, savedCount, errorCount);
+            // First update price
+            service.updatePrice(solution.getId().toString(), new Price(solution.getPrice()))
+                .enqueue(new Callback<Boolean>() {
+                    @Override
+                    public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                        if (response.isSuccessful() && Boolean.TRUE.equals(response.body())) {
+                            // If price update successful, update discount
+                            service.updateDiscount(solution.getId().toString(), new Discount(solution.getDiscount()))
+                                .enqueue(new Callback<Boolean>() {
+                                    @Override
+                                    public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                                        if (response.isSuccessful() && Boolean.TRUE.equals(response.body())) {
+                                            savedCount[0]++;
+                                        } else {
+                                            errorCount[0]++;
+                                        }
+                                        checkSaveCompletion(totalSolutions, savedCount[0], errorCount[0]);
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<Boolean> call, Throwable t) {
+                                        errorCount[0]++;
+                                        checkSaveCompletion(totalSolutions, savedCount[0], errorCount[0]);
+                                    }
+                                });
+                        } else {
+                            errorCount[0]++;
+                            checkSaveCompletion(totalSolutions, savedCount[0], errorCount[0]);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Boolean> call, Throwable t) {
+                        errorCount[0]++;
+                        checkSaveCompletion(totalSolutions, savedCount[0], errorCount[0]);
+                    }
+                });
         }
-    }
-
-    private void updatePriceAndDiscount(Solution solution, int totalSolutions, int[] savedCount, int[] errorCount) {
-        // Update price
-        service.updatePrice(solution.getId().toString(), new Price(solution.getPrice()))
-            .enqueue(new Callback<Boolean>() {
-                @Override
-                public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                    boolean priceSuccess = response.isSuccessful() && Boolean.TRUE.equals(response.body());
-                    
-                    // Update discount regardless of price update result
-                    Log.d("PriceListFragment", "Updating discount for solution " + solution.getId() + " to " + solution.getDiscount());
-                    service.updateDiscount(solution.getId().toString(), new Discount(solution.getDiscount()))
-                        .enqueue(new Callback<Boolean>() {
-                            @Override
-                            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                                boolean discountSuccess = response.isSuccessful() && Boolean.TRUE.equals(response.body());
-                                Log.d("PriceListFragment", "Discount update response - Success: " + response.isSuccessful() + ", Body: " + response.body());
-                                
-                                if (priceSuccess && discountSuccess) {
-                                    savedCount[0]++;
-                                } else {
-                                    errorCount[0]++;
-                                    Log.e("PriceListFragment", "Update failed - Price: " + priceSuccess + ", Discount: " + discountSuccess);
-                                }
-                                checkSaveCompletion(totalSolutions, savedCount[0], errorCount[0]);
-                            }
-
-                            @Override
-                            public void onFailure(Call<Boolean> call, Throwable t) {
-                                errorCount[0]++;
-                                Log.e("PriceListFragment", "Discount update failed: " + t.getMessage());
-                                checkSaveCompletion(totalSolutions, savedCount[0], errorCount[0]);
-                            }
-                        });
-                }
-
-                @Override
-                public void onFailure(Call<Boolean> call, Throwable t) {
-                    // Even if price update fails, try discount update
-                    Log.d("PriceListFragment", "Price update failed, trying discount update for solution " + solution.getId());
-                    service.updateDiscount(solution.getId().toString(), new Discount(solution.getDiscount()))
-                        .enqueue(new Callback<Boolean>() {
-                            @Override
-                            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                                boolean discountSuccess = response.isSuccessful() && Boolean.TRUE.equals(response.body());
-                                Log.d("PriceListFragment", "Fallback discount update response - Success: " + response.isSuccessful() + ", Body: " + response.body());
-                                if (discountSuccess) {
-                                    savedCount[0]++;
-                                } else {
-                                    errorCount[0]++;
-                                }
-                                checkSaveCompletion(totalSolutions, savedCount[0], errorCount[0]);
-                            }
-
-                            @Override
-                            public void onFailure(Call<Boolean> call, Throwable t) {
-                                errorCount[0]++;
-                                Log.e("PriceListFragment", "Both price and discount updates failed");
-                                checkSaveCompletion(totalSolutions, savedCount[0], errorCount[0]);
-                            }
-                        });
-                }
-            });
     }
 
     private void checkSaveCompletion(int total, int saved, int errors) {

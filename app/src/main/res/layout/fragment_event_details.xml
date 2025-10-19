@@ -8,15 +8,10 @@
             type="com.example.eventify.models.events.Event" />
     </data>
     
-    <FrameLayout
-        android:id="@+id/root_container"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/background_gradient">
+        android:layout_height="match_parent"
+        android:background="@drawable/background_gradient">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -441,6 +436,5 @@
             </com.google.android.material.card.MaterialCardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-        </ScrollView>
-    </FrameLayout>
+    </ScrollView>
 </layout>

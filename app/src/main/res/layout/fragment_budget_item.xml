@@ -1,139 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="4dp"
-    app:cardBackgroundColor="@android:color/white">
+    android:layout_marginBottom="30dp"
+    android:orientation="horizontal">
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="8dp">
+        android:background="@color/white">
 
-        <!-- Header with category name, input, and action buttons -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="6dp">
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/item_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Category Name"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:fontFamily="@font/montserrat_bold" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                app:boxBackgroundMode="outline"
-                app:boxCornerRadiusTopStart="6dp"
-                app:boxCornerRadiusTopEnd="6dp"
-                app:boxCornerRadiusBottomStart="6dp"
-                app:boxCornerRadiusBottomEnd="6dp"
-                app:boxStrokeColor="@color/primary_color"
-                app:hintTextColor="@color/primary_color">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/item_value"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:imeOptions="actionDone"
-                    android:textSize="12sp"
-                    android:textColor="@color/black"
-                    android:hint="0.00"
-                    android:enabled="false" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Action Buttons -->
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
                 android:orientation="horizontal">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/saveItem"
-                    android:layout_width="wrap_content"
-                    android:layout_height="28dp"
-                    android:layout_marginEnd="2dp"
-                    android:text="Save"
-                    android:textSize="10sp"
-                    android:minWidth="0dp"
-                    android:paddingHorizontal="8dp"
-                    app:cornerRadius="14dp"
-                    app:backgroundTint="@color/primary_color"
-                    android:textColor="@android:color/white"
-                    android:visibility="gone" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/editItem"
-                    android:layout_width="wrap_content"
-                    android:layout_height="28dp"
-                    android:layout_marginEnd="2dp"
-                    android:text="Edit"
-                    android:textSize="10sp"
-                    android:minWidth="0dp"
-                    android:paddingHorizontal="8dp"
-                    app:cornerRadius="14dp"
-                    app:backgroundTint="@color/light_gray"
+                <TextView
+                    android:id="@+id/item_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1.5"
                     android:textColor="@color/black"
-                    android:visibility="visible" />
+                    android:textSize="18sp" />
 
-                <com.google.android.material.button.MaterialButton
+                <EditText
+                    android:id="@+id/item_value"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/black"
+                    android:inputType="numberDecimal"
+                    android:imeOptions="actionDone"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:textSize="18sp"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:windowSoftInputMode="adjustResize"
+                    android:saveEnabled="true" />
+
+                <ImageButton
                     android:id="@+id/deleteItem"
                     android:layout_width="wrap_content"
-                    android:layout_height="28dp"
-                    android:text="Delete"
-                    android:textSize="10sp"
-                    android:minWidth="0dp"
-                    android:paddingHorizontal="8dp"
-                    app:cornerRadius="14dp"
-                    app:backgroundTint="@android:color/holo_red_dark"
-                    android:textColor="@android:color/white"
-                    android:visibility="visible" />
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/white_favorite"
+                    android:src="@drawable/delete" />
 
+                <ImageButton
+                    android:id="@+id/editItem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:background="@drawable/white_favorite"
+                    android:src="@drawable/edit" />
+
+                <ImageButton
+                    android:id="@+id/saveItem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:background="@drawable/white_favorite"
+                    android:src="@drawable/save" />
             </LinearLayout>
 
-        </LinearLayout>
-
-        <!-- Solutions Table -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@android:color/white"
-            android:padding="6dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Selected Solutions"
-                android:textColor="@color/black"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="4dp" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/solutions_recycler"
+            <TableLayout
+                android:layout_marginTop="5dp"
+                android:id="@+id/items"
                 android:layout_width="match_parent"
+                android:background="@drawable/card"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false" />
+                android:stretchColumns="0,1,2"
+                android:paddingTop="8dp">
+
+
+            </TableLayout>
+
 
         </LinearLayout>
 
     </LinearLayout>
 
-</com.google.android.material.card.MaterialCardView>
+</LinearLayout>

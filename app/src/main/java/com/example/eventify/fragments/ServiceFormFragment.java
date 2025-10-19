@@ -36,7 +36,6 @@ import com.example.eventify.models.enums.Status;
 import com.example.eventify.models.events.EventType;
 import com.example.eventify.models.solutions.SolutionCategory;
 import com.example.eventify.models.users.BusinessOwner;
-import com.example.eventify.models.users.User;
 import com.example.eventify.services.events.EventTypeService;
 import com.example.eventify.services.solutions.SolutionCategoryService;
 import com.example.eventify.services.users.BusinessOwnerService;
@@ -79,7 +78,7 @@ public class ServiceFormFragment extends Fragment {
     ArrayList<String> typeNames = new ArrayList<>();
     private ArrayList<String> selectedList = new ArrayList<>();
     SolutionCategoryService categoryService;
-    User owner;
+    BusinessOwner owner;
 
     List<MultipartBody.Part> images = new ArrayList<>();
 
@@ -163,19 +162,11 @@ public class ServiceFormFragment extends Fragment {
         if (getArguments() != null) {
             selectedService = getArguments().getParcelable("service");
             binding.setService(selectedService);
-            if (selectedService.getId() != null) {
+            if (selectedService.getId() != null)
                 setEdit();
-                loadExistingServiceImage(view);
-            }
         } else {
             selectedService = new Service();
             binding.setService(selectedService);
-        }
-        
-        // Manually populate price and discount fields since data binding is not working properly
-        if (selectedService != null) {
-            binding.priceEditText.setText(String.valueOf(selectedService.getPrice()));
-            binding.discountEditText.setText(String.valueOf(selectedService.getDiscount()));
         }
 
         return binding.getRoot();
@@ -191,9 +182,9 @@ public class ServiceFormFragment extends Fragment {
             return;
         }
         
-        businessOwnerService.get(currentUserId.toString()).enqueue(new Callback<User>() {
+        businessOwnerService.get(currentUserId.toString()).enqueue(new Callback<BusinessOwner>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
+            public void onResponse(Call<BusinessOwner> call, Response<BusinessOwner> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     owner = response.body();
                 } else {
@@ -203,7 +194,7 @@ public class ServiceFormFragment extends Fragment {
             }
             
             @Override
-            public void onFailure(Call<User> call, Throwable t) {  
+            public void onFailure(Call<BusinessOwner> call, Throwable t) {  
                 showError("Network error while getting owner information. Please check your connection.");
                 t.printStackTrace();
             }
@@ -221,50 +212,34 @@ public class ServiceFormFragment extends Fragment {
                         if (data != null) {
                             ArrayList<Uri> imageUris = new ArrayList<>();
 
-                            try {
-                                if (data.getClipData() != null) {
-                                    int count = data.getClipData().getItemCount();
-                                    for (int i = 0; i < count; i++) {
-                                        Uri imageUri = data.getClipData().getItemAt(i).getUri();
-                                        if (imageUri != null) {
-                                            imageUris.add(imageUri);
-                                        }
-                                    }
-                                } else if (data.getData() != null) {
-                                    imageUris.add(data.getData());
+                            if (data.getClipData() != null) {
+                                int count = data.getClipData().getItemCount();
+                                for (int i = 0; i < count; i++) {
+                                    Uri imageUri = data.getClipData().getItemAt(i).getUri();
+                                    imageUris.add(imageUri);
                                 }
-
-                                if (!imageUris.isEmpty()) {
-                                    ImageView serviceImage = view.findViewById(R.id.serviceImage);
-                                    serviceImage.setImageURI(imageUris.get(0)); // Show first image
-                                    
-                                    // Prepare files for upload
-                                    images = FileUtils.prepareMultipleFiles(imageUris, requireContext());
-                                } else {
-                                    showError("No images were selected.");
-                                }
-                            } catch (Exception e) {
-                                showError("Error processing selected images: " + e.getMessage());
-                                e.printStackTrace();
+                            } else if (data.getData() != null) {
+                                imageUris.add(data.getData());
                             }
-                        } else {
-                            showError("No data received from image picker.");
+
+                            Uri[] imageArray = imageUris.toArray(new Uri[0]);
+
+                            if (!imageUris.isEmpty()) {
+                                ImageView serviceImage = view.findViewById(R.id.serviceImage);
+                                serviceImage.setImageURI(imageUris.get(0)); // Show first image
+                            }
+
+                            try {
+                                images = FileUtils.prepareMultipleFiles(imageUris, requireContext());
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
                         }
-                    } else if (result.getResultCode() == Activity.RESULT_CANCELED) {
-                        // User cancelled, do nothing
-                    } else {
-                        showError("Image selection failed. Please try again.");
                     }
                 }
         );
     }
 
-    private void loadExistingServiceImage(View view) {
-        // Don't load existing web images - only show the default placeholder
-        // The ImageButton should only show newly selected file images
-        ImageView serviceImage = view.findViewById(R.id.serviceImage);
-        serviceImage.setImageResource(R.drawable.add);
-    }
 
     private void setupDeleteButton(View view) {
         Button deleteBtn = view.findViewById(R.id.deleteBtn);
@@ -338,23 +313,6 @@ public class ServiceFormFragment extends Fragment {
         selectedService.setVisibility(binding.visibility.isChecked());
         selectedService.setAvailability(binding.availability.isChecked());
         selectedService.setReservationDeadline(binding.automatic.isChecked() ? 0 : 1);
-        
-        // Update price and discount from form inputs
-        try {
-            double price = Double.parseDouble(binding.priceEditText.getText().toString().trim());
-            selectedService.setPrice(price);
-        } catch (NumberFormatException e) {
-            showError("Please enter a valid price");
-            return;
-        }
-        
-        try {
-            double discount = Double.parseDouble(binding.discountEditText.getText().toString().trim());
-            selectedService.setDiscount(discount);
-        } catch (NumberFormatException e) {
-            showError("Please enter a valid discount");
-            return;
-        }
 
         // If this is an existing service (has ID)
         if (selectedService.getId() != null) {
@@ -364,34 +322,28 @@ public class ServiceFormFragment extends Fragment {
             }
 
             // Create service part and update with images
-            try {
-                service.update(
-                    selectedService.getId(), 
-                    FileUtils.createPartFromObject(selectedService), 
-                    images
-                ).enqueue(new Callback<Service>() {
-                    @Override
-                    public void onResponse(Call<Service> call, Response<Service> response) {
-                        if (response.isSuccessful() && response.body() != null) {
-                            Toast.makeText(requireContext(), "Service updated successfully", Toast.LENGTH_SHORT).show();
-                            goBack();
-                        } else {
-                            Toast.makeText(requireContext(), "Update failed with code: " + response.code(), Toast.LENGTH_LONG).show();
-                            showError("Failed to update service. Please try again.");
-                        }
+            service.update(
+                selectedService.getId(), 
+                FileUtils.createPartFromObject(selectedService), 
+                images
+            ).enqueue(new Callback<Service>() {
+                @Override
+                public void onResponse(Call<Service> call, Response<Service> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        goBack();
+                    } else {
+                        Toast.makeText(requireContext(), "Update failed with code: " + response.code(), Toast.LENGTH_LONG).show();
+                        showError("Failed to update service. Please try again.");
                     }
+                }
 
-                    @Override
-                    public void onFailure(Call<Service> call, Throwable t) {
-                        Toast.makeText(requireContext(), "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-                        showError("Network error. Please check your connection.");
-                        t.printStackTrace();
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-                showError("Error updating service: " + e.getMessage());
-            }
+                @Override
+                public void onFailure(Call<Service> call, Throwable t) {
+                    Toast.makeText(requireContext(), "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                    showError("Network error. Please check your connection.");
+                    t.printStackTrace();
+                }
+            });
         } else {
             // This is a new service
             setTypes();
@@ -420,39 +372,33 @@ public class ServiceFormFragment extends Fragment {
             }
 
             // Create service
-            try {
-                service.add(
-                    FileUtils.createPartFromObject(selectedService), 
-                    images
-                ).enqueue(new Callback<Service>() {
-                    @Override
-                    public void onResponse(Call<Service> call, Response<Service> response) {
-                        if (response.isSuccessful() && response.body() != null) {
-                            Toast.makeText(requireContext(), "Service created successfully", Toast.LENGTH_SHORT).show();
-                            goBack();
-                        } else {
-                            Toast.makeText(requireContext(), "Creation failed with code: " + response.code(), Toast.LENGTH_LONG).show();
-                            try {
-                                String errorBody = response.errorBody().string();
-                                Toast.makeText(requireContext(), "Error: " + errorBody, Toast.LENGTH_LONG).show();
-                            } catch (Exception e) {
-                                Toast.makeText(requireContext(), "Could not read error details", Toast.LENGTH_SHORT).show();
-                            }
-                            showError("Failed to create service. Please try again.");
+            service.add(
+                FileUtils.createPartFromObject(selectedService), 
+                images
+            ).enqueue(new Callback<Service>() {
+                @Override
+                public void onResponse(Call<Service> call, Response<Service> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        goBack();
+                    } else {
+                        Toast.makeText(requireContext(), "Creation failed with code: " + response.code(), Toast.LENGTH_LONG).show();
+                        try {
+                            String errorBody = response.errorBody().string();
+                            Toast.makeText(requireContext(), "Error: " + errorBody, Toast.LENGTH_LONG).show();
+                        } catch (Exception e) {
+                            Toast.makeText(requireContext(), "Could not read error details", Toast.LENGTH_SHORT).show();
                         }
+                        showError("Failed to create service. Please try again.");
                     }
+                }
 
-                    @Override
-                    public void onFailure(Call<Service> call, Throwable t) {
-                        Toast.makeText(requireContext(), "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-                        showError("Network error. Please check your connection.");
-                        t.printStackTrace();
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-                showError("Error creating service: " + e.getMessage());
-            }
+                @Override
+                public void onFailure(Call<Service> call, Throwable t) {
+                    Toast.makeText(requireContext(), "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                    showError("Network error. Please check your connection.");
+                    t.printStackTrace();
+                }
+            });
         }
     }
 
@@ -464,7 +410,7 @@ public class ServiceFormFragment extends Fragment {
         }
 
         // Validate image
-        if (images == null || images.isEmpty()) {
+        if (images.isEmpty()) {
             showError("Please select at least one image");
             return false;
         }
@@ -484,18 +430,6 @@ public class ServiceFormFragment extends Fragment {
             }
         } catch (NumberFormatException e) {
             showError("Please enter a valid price");
-            return false;
-        }
-        
-        // Validate discount
-        try {
-            double discount = Double.parseDouble(binding.discountEditText.getText().toString().trim());
-            if (discount < 0) {
-                showError("Please enter a valid discount (cannot be negative)");
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            showError("Please enter a valid discount");
             return false;
         }
 
@@ -555,29 +489,10 @@ public class ServiceFormFragment extends Fragment {
 
 
     private void openImagePicker() {
-        // Create a chooser intent to let user choose between gallery and file manager
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK);
-        galleryIntent.setType("image/*");
-        galleryIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        
-        Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        fileIntent.setType("image/*");
-        fileIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        
-        Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Image Source");
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{fileIntent});
-        
-        try {
-            imagePickerLauncher.launch(chooserIntent);
-        } catch (Exception e) {
-            // Fallback to simple gallery intent if chooser fails
-            try {
-                imagePickerLauncher.launch(galleryIntent);
-            } catch (Exception e2) {
-                showError("Unable to open image picker. Please check your gallery app.");
-                e2.printStackTrace();
-            }
-        }
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        imagePickerLauncher.launch(intent);
     }
 
     public void getCategories() {

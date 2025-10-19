@@ -18,7 +18,6 @@ import com.example.eventify.adapters.EventListAdapter;
 import com.example.eventify.adapters.OnEventClickListener;
 import com.example.eventify.fragments.EventDetailsFragment;
 import com.example.eventify.fragments.EventCreationFragment;
-import com.example.eventify.fragments.BudgetFragment;
 import com.example.eventify.models.events.Event;
 import com.example.eventify.models.events.EventType;
 import com.example.eventify.services.events.EventService;
@@ -37,7 +36,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class EventListFragment extends Fragment
-        implements EventFilterDialogFragment.OnFiltersApplied, OnEventClickListener, EventListAdapter.OnBudgetClickListener {
+        implements EventFilterDialogFragment.OnFiltersApplied, OnEventClickListener {
 
     private RecyclerView eventRecyclerView;
     private EventListAdapter eventListAdapter;
@@ -129,7 +128,7 @@ public class EventListFragment extends Fragment
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         eventRecyclerView.setLayoutManager(layoutManager);
-        eventListAdapter = new EventListAdapter(getContext(), events, this, this);
+        eventListAdapter = new EventListAdapter(getContext(), events, this);
         eventRecyclerView.setAdapter(eventListAdapter);
 
         eventService =RetrofitClient.getClient(requireContext()).create(EventService.class);
@@ -349,16 +348,6 @@ public class EventListFragment extends Fragment
         EventDetailsFragment eventDetailsFragment = EventDetailsFragment.newInstance(event);
         requireActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.home_container, eventDetailsFragment)
-                .addToBackStack(null)
-                .commit();
-    }
-
-    @Override
-    public void onBudgetClick(Event event) {
-        // Navigate to BudgetFragment using the parent activity's fragment manager
-        BudgetFragment budgetFragment = BudgetFragment.newInstance(event.getName());
-        requireActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.home_container, budgetFragment)
                 .addToBackStack(null)
                 .commit();
     }

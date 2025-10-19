@@ -3,7 +3,7 @@
     <data>
         <variable
             name="owner"
-            type="com.example.eventify.models.users.User" />
+            type="com.example.eventify.models.users.BusinessOwner" />
     </data>
     <ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"

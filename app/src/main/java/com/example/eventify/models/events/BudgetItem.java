@@ -18,7 +18,6 @@ public class BudgetItem implements Parcelable {
     private SolutionCategory category;
     private double plannedValue;
     private Set<Solution> selectedSolutions;
-    private boolean unsaved = true;
 
     public BudgetItem() {
     }
@@ -28,7 +27,6 @@ public class BudgetItem implements Parcelable {
         this.category = category;
         this.plannedValue = plannedValue;
         this.selectedSolutions = selectedSolutions;
-        this.unsaved = true;
     }
 
     protected BudgetItem(Parcel in) {
@@ -37,7 +35,6 @@ public class BudgetItem implements Parcelable {
         plannedValue = in.readDouble();
         selectedSolutions = new HashSet<>();
         in.readList(new ArrayList(selectedSolutions), Solution.class.getClassLoader());
-        unsaved = in.readByte() != 0;
     }
 
     public static final Creator<BudgetItem> CREATOR = new Creator<BudgetItem>() {
@@ -63,7 +60,6 @@ public class BudgetItem implements Parcelable {
         dest.writeSerializable((Serializable) category);
         dest.writeDouble(plannedValue);
         dest.writeList(new ArrayList<>(selectedSolutions));
-        dest.writeByte((byte) (unsaved ? 1 : 0));
     }
 
     public String getId() {
@@ -96,13 +92,5 @@ public class BudgetItem implements Parcelable {
 
     public void setSelectedSolutions(Set<Solution> selectedSolutions) {
         this.selectedSolutions = selectedSolutions;
-    }
-
-    public boolean isUnsaved() {
-        return unsaved;
-    }
-
-    public void setUnsaved(boolean unsaved) {
-        this.unsaved = unsaved;
     }
 }
