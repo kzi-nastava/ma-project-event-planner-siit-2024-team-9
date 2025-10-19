@@ -3,7 +3,7 @@ package com.example.eventify.utils;
 public class ImageUrlUtils {
     
     // Base URL for images (without /api/ since images are served directly)
-    private static final String IMAGE_BASE_URL = "http://192.168.0.100:8080";
+    private static final String IMAGE_BASE_URL = "http://192.168.0.27:8080";
     
     /**
      * Construct the full image URL from a filename for products
