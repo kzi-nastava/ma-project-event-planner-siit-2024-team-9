@@ -17,6 +17,8 @@ import com.example.eventify.R;
 import com.example.eventify.databinding.ActivityLoginBinding;
 import com.example.eventify.fragments.SuspendDialogFragment;
 import com.example.eventify.services.auth.LoginService;
+import com.example.eventify.utils.DeepLinkPayload;
+import com.example.eventify.utils.DeepLinkStorage;
 
 import java.util.List;
 
@@ -84,7 +86,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void continueAsGuest(){
+        // Ako smo došli klikom na eventify:// link, preuzmi pending payload
+        DeepLinkPayload pending = DeepLinkStorage.pop(this);
+
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        if (pending != null) pending.putInto(intent);
         startActivity(intent);
         //finish();
     }
@@ -110,8 +116,11 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(String userEmail, String userRole) {
                 Log.i("Login", "Login successful for: " + userEmail + " (Role: " + userRole + ")");
                 Toast.makeText(LoginActivity.this, "Welcome, " + userEmail + "!", Toast.LENGTH_SHORT).show();
+
+                DeepLinkPayload pending = DeepLinkStorage.pop(LoginActivity.this);
                 
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                if (pending != null) pending.putInto(intent);
                 startActivity(intent);
                 finish(); // Close login activity
             }

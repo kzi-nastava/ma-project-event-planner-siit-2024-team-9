@@ -3,7 +3,14 @@ package com.example.eventify.models.events;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.eventify.models.solutions.SolutionCategory;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 public class EventType implements Parcelable {
     @SerializedName("id")
@@ -19,18 +26,27 @@ public class EventType implements Parcelable {
     private boolean isActive;
     
     @SerializedName("suggestedCategories")
-    private Object[] suggestedCategories; // We'll ignore this for now
+    private Set<SolutionCategory> suggestedCategories;
 
-    public EventType() {}
+    public EventType() {
+        this.suggestedCategories = new HashSet<>();
+    }
 
-    public EventType(String id, String name, String description, boolean isActive, Object[] suggestedCategories) {
+    public EventType(String id, String name, String description, boolean isActive) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.isActive = isActive;
-        this.suggestedCategories = suggestedCategories;
+        this.suggestedCategories = new HashSet<>();
     }
 
+    public EventType(String id, String name, String description, boolean isActive, Set<SolutionCategory> suggestedCategories) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.isActive = isActive;
+        this.suggestedCategories = suggestedCategories != null ? suggestedCategories : new HashSet<>();
+    }
     // Getters and Setters
     public String getId() {
         return id;
@@ -64,12 +80,12 @@ public class EventType implements Parcelable {
         isActive = active;
     }
 
-    public Object[] getSuggestedCategories() {
+    public Set<SolutionCategory> getSuggestedCategories() {
         return suggestedCategories;
     }
 
-    public void setSuggestedCategories(Object[] suggestedCategories) {
-        this.suggestedCategories = suggestedCategories;
+    public void setSuggestedCategories(Set<SolutionCategory> suggestedCategories) {
+        this.suggestedCategories = suggestedCategories != null ? suggestedCategories : new HashSet<>();
     }
 
     // Parcelable implementation
@@ -78,7 +94,8 @@ public class EventType implements Parcelable {
         name = in.readString();
         description = in.readString();
         isActive = in.readByte() != 0;
-        // Skip suggestedCategories for now as it's complex to serialize
+        List<SolutionCategory> categoryList = in.createTypedArrayList(SolutionCategory.CREATOR);
+        suggestedCategories = new HashSet<>(categoryList);
     }
 
     public static final Creator<EventType> CREATOR = new Creator<EventType>() {
@@ -104,6 +121,6 @@ public class EventType implements Parcelable {
         dest.writeString(name);
         dest.writeString(description);
         dest.writeByte((byte) (isActive ? 1 : 0));
-        // Skip suggestedCategories for now as it's complex to serialize
+        dest.writeTypedList(new ArrayList<>(suggestedCategories));
     }
 }

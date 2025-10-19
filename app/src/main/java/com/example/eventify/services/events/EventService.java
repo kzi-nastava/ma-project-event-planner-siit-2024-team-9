@@ -78,7 +78,7 @@ public interface EventService {
     Call<EventAllResponse> getAll();
 
     @POST("events/{eventId}/invite")
-    Call<Void> sendInvitations(@Path("eventId") String eventId, @Body List<String> emails);
+    Call<Boolean> sendInvitations(@Path("eventId") String eventId, @Body List<String> emails);
 
     @POST("events/{eventId}/join")
     Call<Boolean> joinEvent(@Path("eventId") String eventId, @Body Map<String, Object> emptyBody);

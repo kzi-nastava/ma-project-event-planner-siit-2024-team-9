@@ -110,9 +110,9 @@ public class SolutionFilterFragment extends Fragment {
 
     public void getTypes() {
         EventTypeService service =RetrofitClient.getClient(requireContext()).create(EventTypeService.class);
-        service.getAll().enqueue(new Callback<List<EventType>>() {
+        service.getAll().enqueue(new Callback<Collection<EventType>>() {
             @Override
-            public void onResponse(Call<List<EventType>> call, Response<List<EventType>> response) {
+            public void onResponse(Call<Collection<EventType>> call, Response<Collection<EventType>> response) {
                 types = response.body();
                 typeNames.clear();
                 typeNames.add("Select a type");
@@ -123,7 +123,7 @@ public class SolutionFilterFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<List<EventType>> call, Throwable t) {
+            public void onFailure(Call<Collection<EventType>> call, Throwable t) {
 
             }
         });

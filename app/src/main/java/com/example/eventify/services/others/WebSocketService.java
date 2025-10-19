@@ -1,9 +1,13 @@
 package com.example.eventify.services.others;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.example.eventify.models.others.Message;
+import com.example.eventify.models.others.NotificationPayload;
 import com.example.eventify.models.users.User;
+import com.example.eventify.services.auth.LoginService;
+import com.example.eventify.utils.NotifHelper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -24,8 +28,9 @@ import java.util.UUID;
 
 public class WebSocketService {
     private static final String TAG = "WebSocketService";
-    private static final String WS_URL = "ws://192.168.1.70:8080/ws-native"; // For physical device
-    
+    private static final String WS_URL = "ws://192.168.0.27:8080/ws-native";
+
+    private final Context appContext;
     private WebSocket webSocket;
     
     // Create custom LocalDateTime TypeAdapter
@@ -66,7 +71,8 @@ public class WebSocketService {
         void onError(String error);
     }
 
-    public WebSocketService(User currentUser) {
+    public WebSocketService(Context context, User currentUser) {
+        this.appContext = context.getApplicationContext();
         this.currentUser = currentUser;
     }
 
@@ -167,16 +173,17 @@ public class WebSocketService {
 
     private void subscribeToUserQueue() {
         if (!isSubscribed && currentUser != null) {
+            String dest = "/topic/user/" + currentUser.getId() + "/notifications";
             String subscribeFrame = "SUBSCRIBE\n" +
-                "id:sub-" + currentUser.getId().toString() + "\n" +
-                "destination:/user/queue/messages\n" +
-                "\n" +
-                "\0";
+                    "id:sub-" + currentUser.getId() + "\n" +
+                    "destination:" + dest + "\n\n" +
+                    "\0";
             webSocket.sendText(subscribeFrame);
             isSubscribed = true;
-            Log.d(TAG, "Subscribed to user queue");
+            Log.d(TAG, "Subscribed to " + dest);
         }
     }
+
 
     private void handleStompMessage(String message) {
         try {
@@ -185,32 +192,50 @@ public class WebSocketService {
                 subscribeToUserQueue();
                 return;
             }
-            
+
             if (message.startsWith("MESSAGE")) {
-                // Parse STOMP MESSAGE frame
-                String[] lines = message.split("\n");
-                String body = "";
-                boolean bodyStarted = false;
-                
-                for (String line : lines) {
-                    if (bodyStarted) {
-                        body += line;
-                    } else if (line.isEmpty()) {
-                        bodyStarted = true;
-                    }
-                }
-                
-                if (!body.isEmpty() && !body.equals("\0")) {
-                    // Remove null terminator
-                    body = body.replace("\0", "");
-                    
-                    JsonObject jsonMessage = gson.fromJson(body, JsonObject.class);
-                    if (jsonMessage.has("content") && jsonMessage.has("sender")) {
-                        Message chatMessage = gson.fromJson(body, Message.class);
-                        if (listener != null) {
-                            listener.onMessageReceived(chatMessage);
+                try {
+                    // ====== Izvlačenje JSON tela iz STOMP poruke ======
+                    String[] lines = message.split("\n");
+                    StringBuilder bodyBuilder = new StringBuilder();
+                    boolean isBody = false;
+
+                    for (String line : lines) {
+                        if (isBody) {
+                            bodyBuilder.append(line).append("\n");
+                        }
+                        if (line.trim().isEmpty()) {
+                            isBody = true; // telo počinje posle prazne linije
                         }
                     }
+
+                    String body = bodyBuilder.toString().replace("\u0000", "").trim();
+                    if (body.isEmpty()) {
+                        Log.w(TAG, "STOMP MESSAGE body is empty");
+                        return;
+                    }
+
+                    // ====== Parsiranje payload-a ======
+                    NotificationPayload payload = gson.fromJson(body, NotificationPayload.class);
+                    Log.d(TAG, "Primljena notifikacija: " + payload.title + " → " + payload.message);
+
+                    // ====== Provera da li je 'mute' uključeno ======
+                    LoginService loginService = new LoginService(appContext);
+                    boolean isMuted = loginService.isNotificationsMuted();
+
+                    if (!isMuted) {
+                        NotifHelper.show(appContext, payload.title, payload.message, /* deepLink */ null);
+                    } else {
+                        Log.d(TAG, "Notifikacija utišana - nije prikazana korisniku");
+                    }
+
+                    // ====== Callback za UI refresh (opciono) ======
+                    if (listener != null) {
+                        listener.onMessageReceived(null); // možeš i payload da pošalješ
+                    }
+
+                } catch (Exception ex) {
+                    Log.e(TAG, "Greška pri parsiranju STOMP MESSAGE: " + ex.getMessage(), ex);
                 }
             }
         } catch (Exception e) {

@@ -21,6 +21,7 @@ import com.example.eventify.models.solutions.Service;
 import com.example.eventify.models.solutions.Solution;
 import com.example.eventify.R;
 import com.example.eventify.utils.RetrofitClient;
+import com.example.eventify.utils.ImageUrlUtils;
 import com.google.android.flexbox.FlexboxLayout;
 import com.example.eventify.utils.NavigationManager;
 
@@ -72,13 +73,11 @@ public class SolutionListAdapter extends RecyclerView.Adapter<SolutionListAdapte
 
         // Load image with proper URL construction
         if (solution.getImages() != null && !solution.getImages().isEmpty()) {
-            String imageItem = solution.getImages().get(0); // Get first image
+            String filename = solution.getImages().get(0); // Get first image
             
-            // Construct the full URL for the image
             // Determine folder based on solution type (service or product)
-            String imageFolder = solution.isService() ? "service" : "product";
-            String baseUrl = RetrofitClient.BASE_URL.replace("api/", "");
-            String imageUrl = baseUrl + "images/" + imageFolder + "/" + imageItem;
+            String imageType = solution.isService() ? "service" : "product";
+            String imageUrl = ImageUrlUtils.getImageUrl(filename, imageType);
             
             Log.d("SolutionListAdapter", "Loading image from: " + imageUrl);
             

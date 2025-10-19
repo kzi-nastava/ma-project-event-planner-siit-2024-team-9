@@ -9,6 +9,8 @@ import android.os.Bundle;
 
 import com.example.eventify.R;
 import com.example.eventify.services.auth.LoginService;
+import com.example.eventify.utils.DeepLinkPayload;
+import com.example.eventify.utils.DeepLinkStorage;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -25,6 +27,8 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.medium_gray));
+
+        DeepLinkPayload payload = DeepLinkPayload.fromIntent(getIntent());
         
         /*
          * Ovom opcijom je sakriven toolbar unutar ove aktivnosti
@@ -35,10 +39,22 @@ public class SplashActivity extends AppCompatActivity {
             public void run() {
                 LoginService loginService = new LoginService(SplashActivity.this);
                 boolean hasValidToken = loginService.getToken() != null && loginService.isTokenValid();
+
+                if (!hasValidToken && payload != null) {
+                    // Sačuvaj pending deep link da se izvrši posle logina
+                    DeepLinkStorage.save(SplashActivity.this, payload);
+                }
+
                 Intent intent = new Intent(
                         SplashActivity.this,
                         hasValidToken ? MainActivity.class : LoginActivity.class
                 );
+
+                // Ako je korisnik ulogovan, odmah prosledi payload dalje (Main-u)
+                if (hasValidToken && payload != null) {
+                    payload.putInto(intent);
+                }
+
                 startActivity(intent);
                 finish();
             }

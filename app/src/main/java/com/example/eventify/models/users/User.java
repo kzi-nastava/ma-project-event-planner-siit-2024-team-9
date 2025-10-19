@@ -128,8 +128,12 @@ public class User implements Parcelable, Observable {
         suspensionEndDate = (Date) in.readSerializable();
         role = in.readParcelable(Role.class.getClassLoader());
         roleName = in.readString(); // Add roleName to parcel
-        favorites = new java.util.HashSet<>(in.createTypedArrayList(Solution.CREATOR));
-        attendingEvents = new java.util.HashSet<>(in.createTypedArrayList(Event.CREATOR));
+        ArrayList<Solution> favList = in.createTypedArrayList(Solution.CREATOR);
+        this.favorites = favList == null ? new java.util.HashSet<>() : new java.util.HashSet<>(favList);
+
+        ArrayList<Event> evtList = in.createTypedArrayList(Event.CREATOR);
+        this.attendingEvents = evtList == null ? new java.util.HashSet<>() : new java.util.HashSet<>(evtList);
+
     }
 
     public String getId() {
