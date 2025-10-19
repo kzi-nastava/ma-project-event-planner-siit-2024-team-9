@@ -42,6 +42,28 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!-- Deep link: JOIN -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="eventify"
+                    android:host="app"
+                    android:pathPrefix="/event/join" />
+            </intent-filter>
+
+            <!-- Deep link: REGISTER -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="eventify"
+                    android:host="app"
+                    android:pathPrefix="/register" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".activities.MainActivity"

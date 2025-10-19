@@ -120,6 +120,27 @@ public class EventDetailsFragment extends Fragment {
                 }
             }
         );
+
+        getParentFragmentManager().setFragmentResultListener(
+                InvitationDialogFragment.TAG, this,
+                (requestKey, bundle) -> {
+                    ArrayList<String> emails = bundle.getStringArrayList("emails");
+                    if (emails == null || emails.isEmpty() || event == null || event.getId() == null) return;
+
+                    eventService.sendInvitations(event.getId(), emails).enqueue(new Callback<Boolean>() {
+                        @Override public void onResponse(Call<Boolean> call, Response<Boolean> resp) {
+                            if (resp.isSuccessful()) {
+                                Toast.makeText(requireContext(), "Invitations sent.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(requireContext(), "Failed to send invitations.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        @Override public void onFailure(Call<Boolean> call, Throwable t) {
+                            Toast.makeText(requireContext(), "Network error.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+        );
     }
 
     @Override
@@ -133,6 +154,26 @@ public class EventDetailsFragment extends Fragment {
         loadEventDetails();
         checkFavoriteStatus();
         initializeMap();
+
+        getChildFragmentManager().setFragmentResultListener(
+                InvitationDialogFragment.TAG,
+                getViewLifecycleOwner(),
+                (requestKey, bundle) -> {
+                    ArrayList<String> emails = bundle.getStringArrayList("emails");
+                    if (emails == null || emails.isEmpty() || event == null || event.getId() == null) return;
+
+                    eventService.sendInvitations(event.getId(), emails).enqueue(new retrofit2.Callback<Boolean>() {
+                        @Override public void onResponse(retrofit2.Call<Boolean> call, retrofit2.Response<Boolean> resp) {
+                            // uspeh = HTTP 2xx I body == true
+                            boolean ok = resp.isSuccessful() && Boolean.TRUE.equals(resp.body());
+                            showToast(ok ? "Invitations sent." : "Failed to send invitations.");
+                        }
+                        @Override public void onFailure(retrofit2.Call<Boolean> call, Throwable t) {
+                            showToast("Network error.");
+                        }
+                    });
+                }
+        );
         
         return binding.getRoot();
     }
@@ -362,9 +403,24 @@ public class EventDetailsFragment extends Fragment {
     }
 
     private void openInvitationDialog() {
-        // TODO: Implement invitation dialog
-        Toast.makeText(requireContext(), "Invitation feature coming soon", Toast.LENGTH_SHORT).show();
+        if (event == null || event.getId() == null) {
+            showToast("Event not found");
+            return;
+        }
+        int remaining = Math.max(0, event.getMaxAttendees() - event.getAttendance());
+        if (remaining == 0) {
+            showToast("Event is full. No invitations available.");
+            return;
+        }
+        InvitationDialogFragment dialog = InvitationDialogFragment.newInstance(remaining);
+        dialog.show(getChildFragmentManager(), InvitationDialogFragment.TAG);
     }
+
+    private void showToast(@NonNull String msg) {
+        if (!isAdded()) return;
+        Toast.makeText(requireContext().getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+    }
+
 
     private void exportEvent() {
         Log.d("EventDetails", "Export button clicked");

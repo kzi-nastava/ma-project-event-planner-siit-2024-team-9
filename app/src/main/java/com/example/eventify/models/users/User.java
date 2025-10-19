@@ -113,8 +113,12 @@ public class User implements Parcelable, Observable {
         suspensionEndDate = (Date) in.readSerializable();
         role = in.readParcelable(Role.class.getClassLoader());
         roleName = in.readString(); // Add roleName to parcel
-        favorites = new java.util.HashSet<>(in.createTypedArrayList(Solution.CREATOR));
-        attendingEvents = new java.util.HashSet<>(in.createTypedArrayList(Event.CREATOR));
+        ArrayList<Solution> favList = in.createTypedArrayList(Solution.CREATOR);
+        this.favorites = favList == null ? new java.util.HashSet<>() : new java.util.HashSet<>(favList);
+
+        ArrayList<Event> evtList = in.createTypedArrayList(Event.CREATOR);
+        this.attendingEvents = evtList == null ? new java.util.HashSet<>() : new java.util.HashSet<>(evtList);
+
     }
 
     public String getId() {
@@ -270,8 +274,8 @@ public class User implements Parcelable, Observable {
         parcel.writeSerializable(suspensionEndDate); // Serialize Date as it implements Serializable
         parcel.writeParcelable(role, i); // Add role to parcel
         parcel.writeString(roleName); // Add roleName to parcel
-        parcel.writeTypedList(new ArrayList<>(favorites)); // Convert Set to List for parceling
-        parcel.writeTypedList(new ArrayList<>(attendingEvents)); // Convert Set to List for parceling
+        parcel.writeTypedList(favorites == null ? new ArrayList<>() : new ArrayList<>(favorites));
+        parcel.writeTypedList(attendingEvents == null ? new ArrayList<>() : new ArrayList<>(attendingEvents));
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
