@@ -36,6 +36,7 @@ import com.example.eventify.models.enums.Status;
 import com.example.eventify.models.events.EventType;
 import com.example.eventify.models.solutions.SolutionCategory;
 import com.example.eventify.models.users.BusinessOwner;
+import com.example.eventify.models.users.User;
 import com.example.eventify.services.events.EventTypeService;
 import com.example.eventify.services.solutions.SolutionCategoryService;
 import com.example.eventify.services.users.BusinessOwnerService;
@@ -78,7 +79,7 @@ public class ServiceFormFragment extends Fragment {
     ArrayList<String> typeNames = new ArrayList<>();
     private ArrayList<String> selectedList = new ArrayList<>();
     SolutionCategoryService categoryService;
-    BusinessOwner owner;
+    User owner;
 
     List<MultipartBody.Part> images = new ArrayList<>();
 
@@ -190,9 +191,9 @@ public class ServiceFormFragment extends Fragment {
             return;
         }
         
-        businessOwnerService.get(currentUserId.toString()).enqueue(new Callback<BusinessOwner>() {
+        businessOwnerService.get(currentUserId.toString()).enqueue(new Callback<User>() {
             @Override
-            public void onResponse(Call<BusinessOwner> call, Response<BusinessOwner> response) {
+            public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     owner = response.body();
                 } else {
@@ -202,7 +203,7 @@ public class ServiceFormFragment extends Fragment {
             }
             
             @Override
-            public void onFailure(Call<BusinessOwner> call, Throwable t) {  
+            public void onFailure(Call<User> call, Throwable t) {  
                 showError("Network error while getting owner information. Please check your connection.");
                 t.printStackTrace();
             }
