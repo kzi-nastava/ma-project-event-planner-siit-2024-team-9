@@ -4,15 +4,19 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -31,7 +35,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.eventify.databinding.FragmentServiceFormBinding;
+import com.example.eventify.databinding.FragmentProductFormBinding;
 import com.example.eventify.models.enums.Status;
 import com.example.eventify.models.events.EventType;
 import com.example.eventify.models.solutions.SolutionCategory;
@@ -40,9 +44,9 @@ import com.example.eventify.services.events.EventTypeService;
 import com.example.eventify.services.solutions.SolutionCategoryService;
 import com.example.eventify.services.users.BusinessOwnerService;
 import com.example.eventify.utils.ComponentsSetup;
-import com.example.eventify.models.solutions.Service;
+import com.example.eventify.models.solutions.Product;
 import com.example.eventify.R;
-import com.example.eventify.services.solutions.ServiceService;
+import com.example.eventify.services.solutions.ProductService;
 import com.example.eventify.utils.FileUtils;
 import com.example.eventify.utils.RetrofitClient;
 import com.example.eventify.utils.UserSession;
@@ -61,17 +65,17 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ServiceFormFragment extends Fragment {
+public class ProductFormFragment extends Fragment {
 
     private ActivityResultLauncher<Intent> imagePickerLauncher;
-    private FragmentServiceFormBinding binding;
+    private FragmentProductFormBinding binding;
 
-    public ServiceFormFragment() {
+    public ProductFormFragment() {
         // Required empty public constructor
     }
 
-    Service selectedService;
-    ServiceService service;
+    Product selectedProduct;
+    ProductService productService;
     Collection<SolutionCategory> categories = new ArrayList<>();
     Collection<EventType> types = new ArrayList<>();
     ArrayList<String> categoryNames = new ArrayList<>();
@@ -83,10 +87,10 @@ public class ServiceFormFragment extends Fragment {
     List<MultipartBody.Part> images = new ArrayList<>();
 
 
-    public static ServiceFormFragment newInstance(Service service) {
-        ServiceFormFragment fragment = new ServiceFormFragment();
+    public static ProductFormFragment newInstance(Product product) {
+        ProductFormFragment fragment = new ProductFormFragment();
         Bundle args = new Bundle();
-        args.putParcelable("service", service);
+        args.putParcelable("product", product);
         fragment.setArguments(args);
         return fragment;
     }
@@ -95,22 +99,12 @@ public class ServiceFormFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         categoryService = RetrofitClient.getClient(requireContext().getApplicationContext()).create(SolutionCategoryService.class);
-        service = RetrofitClient.getClient(requireContext().getApplicationContext()).create(ServiceService.class);
+        productService = RetrofitClient.getClient(requireContext().getApplicationContext()).create(ProductService.class);
     }
 
     public void setEdit() {
         setFormHeading();
         disableCategories();
-        if (selectedService.getDuration()==0) {
-            binding.duration.setVisibility(View.GONE);
-            binding.durationInfo.setVisibility(View.GONE);
-        }
-        else {
-            binding.min.setVisibility(View.GONE);
-            binding.minInfo.setVisibility(View.GONE);
-            binding.max.setVisibility(View.GONE);
-            binding.maxInfo.setVisibility(View.GONE);
-        }
     }
 
     private void setSwitchColor () {
@@ -143,7 +137,7 @@ public class ServiceFormFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentServiceFormBinding.inflate(inflater, container, false);  // Use the generated binding class directly
+        binding = FragmentProductFormBinding.inflate(inflater, container, false);  // Use the generated binding class directly
         View view = binding.getRoot();
 
         // Initialize images list
@@ -155,19 +149,28 @@ public class ServiceFormFragment extends Fragment {
 
         getCategories();
         getTypes();
-        setupImagePicker(view);
         setupDeleteButton(view);
-        binding.btnSubmit.setOnClickListener(v -> updateService());
+        binding.btnSubmit.setOnClickListener(v -> updateProduct());
 
         if (getArguments() != null) {
-            selectedService = getArguments().getParcelable("service");
-            binding.setService(selectedService);
-            if (selectedService.getId() != null)
-                setEdit();
+            selectedProduct = getArguments().getParcelable("product");
+            if (selectedProduct != null) {
+                binding.setProduct(selectedProduct);
+                if (selectedProduct.getId() != null) {
+                    setEdit();
+                    loadExistingProductImage(view);
+                }
+            } else {
+                selectedProduct = new Product();
+                binding.setProduct(selectedProduct);
+            }
         } else {
-            selectedService = new Service();
-            binding.setService(selectedService);
+            selectedProduct = new Product();
+            binding.setProduct(selectedProduct);
         }
+
+        // Setup image picker after product is initialized
+        setupImagePicker(view);
 
         return binding.getRoot();
     }
@@ -202,7 +205,7 @@ public class ServiceFormFragment extends Fragment {
     }
 
     private void setupImagePicker(View view) {
-        view.findViewById(R.id.serviceImage).setOnClickListener(v -> openImagePicker());
+        view.findViewById(R.id.productImage).setOnClickListener(v -> openImagePicker());
 
         imagePickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -212,44 +215,60 @@ public class ServiceFormFragment extends Fragment {
                         if (data != null) {
                             ArrayList<Uri> imageUris = new ArrayList<>();
 
-                            if (data.getClipData() != null) {
-                                int count = data.getClipData().getItemCount();
-                                for (int i = 0; i < count; i++) {
-                                    Uri imageUri = data.getClipData().getItemAt(i).getUri();
-                                    imageUris.add(imageUri);
-                                }
-                            } else if (data.getData() != null) {
-                                imageUris.add(data.getData());
-                            }
-
-                            Uri[] imageArray = imageUris.toArray(new Uri[0]);
-
-                            if (!imageUris.isEmpty()) {
-                                ImageView serviceImage = view.findViewById(R.id.serviceImage);
-                                serviceImage.setImageURI(imageUris.get(0)); // Show first image
-                            }
-
                             try {
-                                images = FileUtils.prepareMultipleFiles(imageUris, requireContext());
+                                if (data.getClipData() != null) {
+                                    int count = data.getClipData().getItemCount();
+                                    for (int i = 0; i < count; i++) {
+                                        Uri imageUri = data.getClipData().getItemAt(i).getUri();
+                                        if (imageUri != null) {
+                                            imageUris.add(imageUri);
+                                        }
+                                    }
+                                } else if (data.getData() != null) {
+                                    imageUris.add(data.getData());
+                                }
+
+                                if (!imageUris.isEmpty()) {
+                                    ImageView productImage = view.findViewById(R.id.productImage);
+                                    productImage.setImageURI(imageUris.get(0)); // Show first image
+                                    
+                                    // Prepare files for upload
+                                    images = FileUtils.prepareMultipleFiles(imageUris, requireContext());
+                                } else {
+                                    showError("No images were selected.");
+                                }
                             } catch (Exception e) {
-                                throw new RuntimeException(e);
+                                showError("Error processing selected images: " + e.getMessage());
+                                e.printStackTrace();
                             }
+                        } else {
+                            showError("No data received from image picker.");
                         }
+                    } else if (result.getResultCode() == Activity.RESULT_CANCELED) {
+                        // User cancelled, do nothing
+                    } else {
+                        showError("Image selection failed. Please try again.");
                     }
                 }
         );
     }
 
+    private void loadExistingProductImage(View view) {
+        // Don't load existing web images - only show the default placeholder
+        // The ImageButton should only show newly selected file images
+        ImageView productImage = view.findViewById(R.id.productImage);
+        productImage.setImageResource(R.drawable.add);
+    }
 
     private void setupDeleteButton(View view) {
         Button deleteBtn = view.findViewById(R.id.deleteBtn);
         deleteBtn.setOnClickListener(v -> {
             new AlertDialog.Builder(requireContext())
-                    .setTitle("Delete Service")
-                    .setMessage("Are you sure you want to delete this service?")
+                    .setTitle("Delete Product")
+                    .setMessage("Are you sure you want to delete this product?")
                     .setCancelable(false)
                     .setPositiveButton("Yes", (dialog, which) -> {
-                        service.delete(selectedService.getId()).enqueue(new Callback<Void>() {
+                        productService.delete(selectedProduct.getId()).enqueue(new Callback<Void>() {
                             @Override
                             public void onResponse(Call<Void> call, Response<Void> response) {
                                 goBack();
@@ -275,10 +294,10 @@ public class ServiceFormFragment extends Fragment {
     }
 
     private void setTypes() {
-        Set<EventType> set = selectedService.getEventTypes();
+        Set<EventType> set = selectedProduct.getEventTypes();
         if (set == null) {
             set = new HashSet<>();
-            selectedService.setEventTypes(set);
+            selectedProduct.setEventTypes(set);
         }
         set.clear(); // Clear existing types before adding new ones
         
@@ -297,7 +316,7 @@ public class ServiceFormFragment extends Fragment {
     }
 
 
-    private void updateService() {
+    private void updateProduct() {
         // Validate required fields
         if (!validateForm()) {
             return;
@@ -309,45 +328,50 @@ public class ServiceFormFragment extends Fragment {
             return;
         }
 
-        // Update service fields from form
-        selectedService.setVisibility(binding.visibility.isChecked());
-        selectedService.setAvailability(binding.availability.isChecked());
-        selectedService.setReservationDeadline(binding.automatic.isChecked() ? 0 : 1);
+        // Update product fields from form
+        selectedProduct.setVisibility(binding.visibility.isChecked());
+        selectedProduct.setAvailability(binding.availability.isChecked());
 
-        // If this is an existing service (has ID)
-        if (selectedService.getId() != null) {
+        // If this is an existing product (has ID)
+        if (selectedProduct.getId() != null) {
             // Update event types if any were selected
             if (!selectedList.isEmpty()) {
                 setTypes();
             }
 
-            // Create service part and update with images
-            service.update(
-                selectedService.getId(), 
-                FileUtils.createPartFromObject(selectedService), 
-                images
-            ).enqueue(new Callback<Service>() {
+            // Create product part and update with images
+            try {
+                productService.update(
+                    selectedProduct.getId(), 
+                    FileUtils.createPartFromObject(selectedProduct), 
+                    images
+                ).enqueue(new Callback<Product>() {
                 @Override
-                public void onResponse(Call<Service> call, Response<Service> response) {
+                public void onResponse(Call<Product> call, Response<Product> response) {
                     if (response.isSuccessful() && response.body() != null) {
+                        Toast.makeText(requireContext(), "Product updated successfully", Toast.LENGTH_SHORT).show();
                         goBack();
                     } else {
                         Toast.makeText(requireContext(), "Update failed with code: " + response.code(), Toast.LENGTH_LONG).show();
-                        showError("Failed to update service. Please try again.");
+                        showError("Failed to update product. Please try again.");
                     }
                 }
 
                 @Override
-                public void onFailure(Call<Service> call, Throwable t) {
+                public void onFailure(Call<Product> call, Throwable t) {
                     Toast.makeText(requireContext(), "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
                     showError("Network error. Please check your connection.");
                     t.printStackTrace();
                 }
             });
+            } catch (Exception e) {
+                e.printStackTrace();
+                showError("Error updating product: " + e.getMessage());
+            }
         } else {
-            // This is a new service
+            // This is a new product
             setTypes();
-            selectedService.setOwner(owner);
+            selectedProduct.setOwner(owner);
 
             // Handle category selection
             if (binding.newCategory.getVisibility() == View.VISIBLE) {
@@ -358,8 +382,8 @@ public class ServiceFormFragment extends Fragment {
                     binding.newCategoryDescription.getText().toString().trim(),
                     false
                 );
-                selectedService.setCategory(proposed);
-                selectedService.setStatus(Status.PENDING);
+                selectedProduct.setCategory(proposed);
+                selectedProduct.setStatus(Status.PENDING);
             } else {
                 // Existing category was selected
                 String selectedCategory = binding.categorySpinner1.getSelectedItem().toString();
@@ -367,18 +391,20 @@ public class ServiceFormFragment extends Fragment {
                     showError("Please select a category");
                     return;
                 }
-                selectedService.setCategory(getCategory(selectedCategory));
-                selectedService.setStatus(Status.ACCEPTED);
+                selectedProduct.setCategory(getCategory(selectedCategory));
+                selectedProduct.setStatus(Status.ACCEPTED);
             }
 
-            // Create service
-            service.add(
-                FileUtils.createPartFromObject(selectedService), 
-                images
-            ).enqueue(new Callback<Service>() {
+            // Create product
+            try {
+                productService.add(
+                    FileUtils.createPartFromObject(selectedProduct), 
+                    images
+                ).enqueue(new Callback<Product>() {
                 @Override
-                public void onResponse(Call<Service> call, Response<Service> response) {
+                public void onResponse(Call<Product> call, Response<Product> response) {
                     if (response.isSuccessful() && response.body() != null) {
+                        Toast.makeText(requireContext(), "Product created successfully", Toast.LENGTH_SHORT).show();
                         goBack();
                     } else {
                         Toast.makeText(requireContext(), "Creation failed with code: " + response.code(), Toast.LENGTH_LONG).show();
@@ -388,36 +414,40 @@ public class ServiceFormFragment extends Fragment {
                         } catch (Exception e) {
                             Toast.makeText(requireContext(), "Could not read error details", Toast.LENGTH_SHORT).show();
                         }
-                        showError("Failed to create service. Please try again.");
+                        showError("Failed to create product. Please try again.");
                     }
                 }
 
                 @Override
-                public void onFailure(Call<Service> call, Throwable t) {
+                public void onFailure(Call<Product> call, Throwable t) {
                     Toast.makeText(requireContext(), "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
                     showError("Network error. Please check your connection.");
                     t.printStackTrace();
                 }
             });
+            } catch (Exception e) {
+                e.printStackTrace();
+                showError("Error creating product: " + e.getMessage());
+            }
         }
     }
 
     private boolean validateForm() {
         // Validate name
         if (binding.nameEditText.getText().toString().trim().isEmpty()) {
-            showError("Please enter a service name");
+            showError("Please enter a product name");
             return false;
         }
 
         // Validate image
-        if (images.isEmpty()) {
+        if (images == null || images.isEmpty()) {
             showError("Please select at least one image");
             return false;
         }
 
         // Validate description
         if (binding.descriptionEditText.getText().toString().trim().isEmpty()) {
-            showError("Please enter a service description");
+            showError("Please enter a product description");
             return false;
         }
 
@@ -431,36 +461,6 @@ public class ServiceFormFragment extends Fragment {
         } catch (NumberFormatException e) {
             showError("Please enter a valid price");
             return false;
-        }
-
-        // Validate duration or min/max time
-        if (binding.duration.getVisibility() == View.VISIBLE) {
-            try {
-                int duration = Integer.parseInt(binding.durationInfo.getText().toString().trim());
-            } catch (NumberFormatException e) {
-                showError("Please enter a valid duration");
-                return false;
-            }
-        } else {
-            String minStr = binding.minInfo.getText().toString().trim();
-            String maxStr = binding.maxInfo.getText().toString().trim();
-
-            if (minStr.isEmpty() || maxStr.isEmpty()) {
-                showError("Minimum and maximum values cannot be empty");
-                return false;
-            }
-
-            try {
-                int min = Integer.parseInt(minStr);
-                int max = Integer.parseInt(maxStr);
-                if (min <= 0 || max <= 0 || min >= max) {
-                    showError("Please enter valid minimum and maximum times");
-                    return false;
-                }
-            } catch (NumberFormatException e) {
-                showError("Please enter valid numeric values for minimum and maximum");
-                return false;
-            }
         }
 
         // Validate event types
@@ -489,10 +489,29 @@ public class ServiceFormFragment extends Fragment {
 
 
     private void openImagePicker() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        imagePickerLauncher.launch(intent);
+        // Create a chooser intent to let user choose between gallery and file manager
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK);
+        galleryIntent.setType("image/*");
+        galleryIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        
+        Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        fileIntent.setType("image/*");
+        fileIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        
+        Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Image Source");
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{fileIntent});
+        
+        try {
+            imagePickerLauncher.launch(chooserIntent);
+        } catch (Exception e) {
+            // Fallback to simple gallery intent if chooser fails
+            try {
+                imagePickerLauncher.launch(galleryIntent);
+            } catch (Exception e2) {
+                showError("Unable to open image picker. Please check your gallery app.");
+                e2.printStackTrace();
+            }
+        }
     }
 
     public void getCategories() {
@@ -654,4 +673,3 @@ public class ServiceFormFragment extends Fragment {
 
 
 }
-

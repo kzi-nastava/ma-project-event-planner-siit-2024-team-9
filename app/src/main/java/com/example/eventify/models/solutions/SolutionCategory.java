@@ -4,30 +4,32 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.example.eventify.models.enums.Status;
+import com.google.gson.annotations.SerializedName;
 
 public class SolutionCategory implements Parcelable {
+    @SerializedName("id")
     private String id;
+    
+    @SerializedName("categoryName")
     private String categoryName;
-    private String description;
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
-    }
-
+    
+    @SerializedName("categoryDescription")
+    private String categoryDescription;
+    
+    @SerializedName("isActive")
     private boolean isActive;
+    
+    @SerializedName("isDeleted")
+    private boolean isDeleted = false;
 
     // Default constructor
     public SolutionCategory() {}
 
     // Parameterized constructor
-    public SolutionCategory(String id, String categoryName, String description, boolean isActive) {
+    public SolutionCategory(String id, String categoryName, String categoryDescription, boolean isActive) {
         this.id = id;
         this.categoryName = categoryName;
-        this.description = description;
+        this.categoryDescription = categoryDescription;
         this.isActive = isActive;
     }
 
@@ -49,21 +51,44 @@ public class SolutionCategory implements Parcelable {
     }
 
     public String getDescription() {
-        return description;
+        return categoryDescription;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDescription(String categoryDescription) {
+        this.categoryDescription = categoryDescription;
+    }
+    
+    public String getCategoryDescription() {
+        return categoryDescription;
     }
 
+    public void setCategoryDescription(String categoryDescription) {
+        this.categoryDescription = categoryDescription;
+    }
+    
+    public boolean isDeleted() {
+        return isDeleted;
+    }
 
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
 
     // Parcelable methods
     protected SolutionCategory(Parcel in) {
         id = in.readString();
         categoryName = in.readString();
-        description = in.readString();
-        isActive = Boolean.parseBoolean(in.readString()); // Assuming Status is an enum
+        categoryDescription = in.readString();
+        isActive = in.readByte() != 0;
+        isDeleted = in.readByte() != 0;
     }
 
     @Override
@@ -73,9 +98,11 @@ public class SolutionCategory implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
         dest.writeString(categoryName);
-        dest.writeString(description);
-        dest.writeString(String.valueOf(isActive));
+        dest.writeString(categoryDescription);
+        dest.writeByte((byte) (isActive ? 1 : 0));
+        dest.writeByte((byte) (isDeleted ? 1 : 0));
     }
 
     public static final Creator<SolutionCategory> CREATOR = new Creator<SolutionCategory>() {
