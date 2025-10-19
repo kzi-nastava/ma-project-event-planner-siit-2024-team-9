@@ -400,6 +400,16 @@
 
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Deactivate Account Button -->
+        <Button
+            android:id="@+id/btnDeactivateAccount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Deactivate Account"
+            android:textColor="@android:color/white"
+            android:background="@color/red_light"
+            android:layout_marginTop="16dp" />
+
         <!-- Logout Button -->
         <Button
             android:id="@+id/btnLogout"
@@ -408,7 +418,7 @@
             android:text="Logout"
             android:textColor="@android:color/white"
             android:background="@color/red_light"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="8dp" />
 
     </LinearLayout>
 
