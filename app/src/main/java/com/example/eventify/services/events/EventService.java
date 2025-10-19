@@ -2,6 +2,7 @@ package com.example.eventify.services.events;
 
 import com.example.eventify.models.events.Budget;
 import com.example.eventify.models.events.Event;
+import com.example.eventify.models.events.EventDTO;
 import com.example.eventify.models.events.EventAttendanceStatsDTO;
 import com.example.eventify.models.filters.EventFilterStatistics;
 import com.example.eventify.models.solutions.Service;
@@ -25,6 +26,9 @@ public interface EventService {
 
     @POST("events")
     Call<Event> create(@Body Event event);
+
+    @POST("events")
+    Call<Event> createEvent(@Body EventDTO event);
 
     @GET("events/{id}")
     Call<Event> get(@Path("id") String id);
